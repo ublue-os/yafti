@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "yafti"
+version = "0.1.0"
+description = "Yet another first time installer"
+authors = ["Marco Ceppi <marco@ceppi.net>"]
+license = "Apache 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^1.10.5"
+pygobject = "^3.42.2"
+pyyaml = "^6.0"
+
+[tool.poetry.plugins."yafti.plugin"]
+"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
+"yafti.plugin.run" = "yafti.plugin.run:Run"
+"run" = "yafti.plugin.run:Run"
+
+[tool.poetry.plugins."yafti.screen"]
+"yafti.screen.title" = "yafti.screen.title:TitleScreen"
+"yafti.screen.package" = "yafti.screen.package:PackageScreen"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+isort = "^5.12.0"
+pytest = "^7.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
