@@ -1,5 +1,5 @@
 from gi.repository import Gtk, Adw
-from yafti.registry import screens
+from yafti.registry import SCREENS
 
 
 _xml = """\

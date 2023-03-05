@@ -19,5 +19,5 @@ from importlib.metadata import entry_points
 _plugins = entry_points(group="yafti.plugin")
 _screens = entry_points(group="yafti.screen")
 
-PLUGINS = {k: s.load() for k, s in _plugins.items()}
-SCREENS = {k: s.load() for k, s in _screens.items()}
+PLUGINS = {s.name: s.load()() for s in _plugins}
+SCREENS = {s.name: s.load() for s in _screens}

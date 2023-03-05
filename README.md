@@ -76,17 +76,25 @@ screens:
   applications:
     source: yafti.screen.package
     values:
+      title: Package Installation
       show_terminal: true
       package_manager: yafti.plugin.flatpak
-      Core:
-      - Calculator: org.gnome.Calculator
-      - Firefox: org.mozilla.firefox
-      Gaming:
-      - Steam: com.valvesoftware.Steam
-      - Games: org.gnome.Games
-      Office:
-      - LibreOffice: org.libreoffice.LibreOffice
-      - Calendar: org.gnome.Calendar
+      groups:
+        Core:
+          description: All the good stuff
+          packages:
+          - Calculator: org.gnome.Calculator
+          - Firefox: org.mozilla.firefox
+        Gaming:
+          description: GAMES GAMES GAMES
+          packages:
+          - Steam: com.valvesoftware.Steam
+          - Games: org.gnome.Games
+        Office:
+          description: All the work stuff
+          packages:
+          - LibreOffice: org.libreoffice.LibreOffice
+          - Calendar: org.gnome.Calendar
   final-screen:
     source: yafti.screen.title
     values:
