@@ -16,8 +16,8 @@ limitations under the License.
 
 from gi.repository import Adw
 
-from yafti.screen.window import Window
 from yafti.parser import Config
+from yafti.screen.window import Window
 
 
 class Yafti(Adw.Application):

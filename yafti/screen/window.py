@@ -1,4 +1,9 @@
+from functools import partial
+
 from gi.repository import Adw, Gtk
+
+import yafti.share
+from yafti import events
 from yafti.registry import SCREENS
 
 _xml = """\
@@ -78,9 +83,19 @@ class Window(Adw.ApplicationWindow):
         super().__init__(**kwargs)
 
         self.app = kwargs.get("application")
+        events.register("btn_next")
+        events.register("btn_back")
+        events.on("btn_next", self.next)
+        events.on("btn_back", self.back)
 
-        self.btn_next.connect("clicked", self.next)
-        self.btn_back.connect("clicked", self.back)
+        # not a huge fan of this
+        yafti.share.BTN_BACK = self.btn_back
+        yafti.share.BTN_NEXT = self.btn_next
+
+        _next = partial(events.emit, "btn_next")
+        _back = partial(events.emit, "btn_back")
+        self.btn_next.connect("clicked", _next)
+        self.btn_back.connect("clicked", _back)
         self.carousel.connect("page-changed", self.changed)
 
         self.draw()
@@ -101,11 +116,16 @@ class Window(Adw.ApplicationWindow):
         if page < 0:
             page = 0
 
-        if page > self.carousel.get_n_pages():
+        print(self.idx, page, self.carousel.get_n_pages())
+        if page >= self.carousel.get_n_pages():
             page = self.carousel.get_n_pages()
 
-        screen = self.carousel.get_nth_page(page)
-        self.carousel.scroll_to(screen, animate)
+        current_screen = self.carousel.get_nth_page(self.idx)
+        next_screen = self.carousel.get_nth_page(page)
+
+        current_screen.deactivate()
+        self.carousel.scroll_to(next_screen, animate)
+        next_screen.activate()
 
     def next(self, test):
         self.goto(self.idx + 1)

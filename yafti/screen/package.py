@@ -1,19 +1,42 @@
+from functools import partial
+from typing import Optional
+
 from gi.repository import Adw, Gtk
+from pydantic import BaseModel
+
+import yafti.share
+from yafti import events
 from yafti.abc import YaftiScreen
+from yafti.registry import PLUGINS
 from yafti.screen.dialog import DialogBox
 from yafti.screen.utils import find_parent
-from yafti.registry import PLUGINS
 
-from typing import Optional, Any
-from pydantic import BaseModel
-from functools import partial
-
-
-_xml = """\
+_mainxml = """\
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0"/>
   <template class="YaftiPackageScreen" parent="AdwBin">
+    <property name="halign">fill</property>
+    <property name="valign">fill</property>
+    <property name="hexpand">true</property>
+    <child>
+      <object class="AdwCarousel" id="pkg_carousel">
+        <property name="vexpand">True</property>
+        <property name="hexpand">True</property>
+        <property name="allow_scroll_wheel">False</property>
+        <property name="allow_mouse_drag">False</property>
+        <property name="allow_long_swipes">False</property>
+      </object>
+    </child>
+  </template>
+</interface>
+"""
+
+_package_screen_xml = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="YaftiPackagePickerScreen" parent="AdwBin">
     <property name="halign">fill</property>
     <property name="valign">fill</property>
     <property name="hexpand">true</property>
@@ -36,6 +59,28 @@ _xml = """\
               </object>
             </child>
           </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+"""
+
+_installer_xml = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="YaftiPackageInstallScreen" parent="AdwBin">
+    <property name="halign">fill</property>
+    <property name="valign">fill</property>
+    <property name="hexpand">true</property>
+    <child>
+      <object class="AdwStatusPage" id="status_page">
+        <property name="halign">fill</property>
+        <property name="valign">fill</property>
+        <property name="hexpand">true</property>
+        <property name="title" translatable="yes">IT WORKED!</property>
+        <child>
         </child>
       </object>
     </child>
@@ -93,8 +138,105 @@ class PackageScreenState:
         return self.state.get(item)
 
 
+def parse_packages(packages: dict | list) -> dict:
+    output = {}
+
+    if isinstance(packages, dict):
+        for group, value in packages.items():
+            output[f"group:{group}"] = True
+            output.update(parse_packages(value["packages"]))
+        return output
+
+    for pkgcfg in packages:
+        output.update({f"pkg:{package}": True for package in pkgcfg.values()})
+    return output
+
+
+@Gtk.Template(string=_mainxml)
 class PackageScreen(YaftiScreen, Adw.Bin):
     __gtype_name__ = "YaftiPackageScreen"
+
+    pkg_carousel = Gtk.Template.Child()
+
+    class Config(BaseModel):
+        show_terminal: bool = True
+        package_manager: str
+        groups: Optional[PackageGroupConfig] = None
+        packages: Optional[list[PackageConfig]] = None
+
+    def __init__(
+        self,
+        title: str = "Package Installation",
+        package_manager: str = "yafti.plugin.flatpak",
+        packages: list[PackageConfig] = None,
+        groups: PackageGroupConfig = None,
+        show_terminal: bool = True,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.packages = groups or packages
+        self.show_terminal = show_terminal
+        self.package_manager = PLUGINS.get(package_manager)
+        self.state = PackageScreenState.from_dict(parse_packages(self.packages))
+        self.draw()
+
+    def draw(self):
+        screens = PackagePickerScreen(packages=self.packages)
+        self.pkg_carousel.append(screens)
+        self.pkg_carousel.append(PackageInstallScreen())
+
+    def on_activate(self):
+        events.on("btn_next", self.next)
+        events.on("btn_back", self.back)
+        yafti.share.BTN_NEXT.set_label("Install")
+
+    def on_deactivate(self):
+        events.detach("btn_next", self.next)
+        events.detach("btn_back", self.back)
+        yafti.share.BTN_NEXT.set_label("Next")
+
+    @property
+    def idx(self):
+        return self.pkg_carousel.get_position()
+
+    @property
+    def total(self):
+        return self.pkg_carousel.get_n_pages()
+
+    def goto(self, page: int, animate: bool = True):
+        if page < 0:
+            page = 0
+
+        if page > self.pkg_carousel.get_n_pages():
+            page = self.pkg_carousel.get_n_pages()
+
+        screen = self.pkg_carousel.get_nth_page(page)
+        self.pkg_carousel.scroll_to(screen, animate)
+
+    def next(self, _):
+        if not self.active:
+            return False
+        if self.idx + 1 == self.total:
+            return False
+        self.goto(self.idx + 1)
+
+    def back(self, _):
+        if not self.active:
+            return False
+        print(self.idx)
+        if self.idx - 1 < 0:
+            return False
+        self.goto(self.idx - 1)
+
+
+@Gtk.Template(string=_installer_xml)
+class PackageInstallScreen(YaftiScreen, Adw.Bin):
+    __gtype_name__ = "YaftiPackageInstallScreen"
+
+
+@Gtk.Template(string=_package_screen_xml)
+class PackagePickerScreen(YaftiScreen, Adw.Bin):
+    __gtype_name__ = "YaftiPackagePickerScreen"
 
     status_page = Gtk.Template.Child()
     package_list = Gtk.Template.Child()
@@ -120,21 +262,8 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         self.packages = groups or packages
         self.show_terminal = show_terminal
         self.package_manager = PLUGINS.get(package_manager)
-        self.state = PackageScreenState.from_dict(self.parse_packages(self.packages))
+        self.state = PackageScreenState.from_dict(parse_packages(self.packages))
         self.draw()
-
-    def parse_packages(self, packages: dict | list) -> dict:
-        output = {}
-
-        if isinstance(packages, dict):
-            for group, value in packages.items():
-                output[f"group:{group}"] = True
-                output.update(self.parse_packages(value["packages"]))
-            return output
-
-        for pkgcfg in packages:
-            output.update({f"pkg:{package}": True for package in pkgcfg.values()})
-        return output
 
     def draw(self):
         if isinstance(self.packages, list):
