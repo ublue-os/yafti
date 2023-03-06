@@ -1,8 +1,9 @@
-from typing import Any, Optional
+from typing import Optional
 
 from gi.repository import Adw, Gtk
 from pydantic import BaseModel
 
+from yafti.abc import YaftiScreen
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -28,7 +29,7 @@ _xml = """\
 
 
 @Gtk.Template(string=_xml)
-class TitleScreen(Adw.Bin):
+class TitleScreen(YaftiScreen, Adw.Bin):
     __gtype_name__ = "YaftiTitleScreen"
 
     status_page = Gtk.Template.Child()
@@ -37,11 +38,6 @@ class TitleScreen(Adw.Bin):
         title: str
         description: str
         icon: Optional[str] = None
-
-    @classmethod
-    def from_config(cls, cfg: Any) -> "TitleScreen":
-        c = cls.Config.parse_obj(cfg)
-        return cls(**c.dict())
 
     def __init__(
         self, title: str = None, description: str = None, icon: str = None, **kwargs

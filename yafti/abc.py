@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from typing import Any, Optional
+
 from pydantic import BaseModel
-from typing import Optional
 
 
 class YaftiPlugin:
@@ -23,7 +24,25 @@ class YaftiPlugin:
 
 
 class YaftiScreen:
-    pass
+    active = False
+
+    class Config(BaseModel):
+        pass
+
+    @classmethod
+    def from_config(cls, cfg: Any):
+        c = cls.Config.parse_obj(cfg)
+        return cls(**c.dict())
+
+    def activate(self):
+        self.active = True
+        if hasattr(self, "on_activate"):
+            self.on_activate()
+
+    def deactivate(self):
+        self.active = False
+        if hasattr(self, "on_deactivate"):
+            self.on_deactivate()
 
 
 class YaftiPluginReturn(BaseModel):

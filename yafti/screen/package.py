@@ -1,4 +1,5 @@
 from gi.repository import Adw, Gtk
+from yafti.abc import YaftiScreen
 from yafti.screen.dialog import DialogBox
 from yafti.screen.utils import find_parent
 from yafti.registry import PLUGINS
@@ -92,8 +93,7 @@ class PackageScreenState:
         return self.state.get(item)
 
 
-@Gtk.Template(string=_xml)
-class PackageScreen(Adw.Bin):
+class PackageScreen(YaftiScreen, Adw.Bin):
     __gtype_name__ = "YaftiPackageScreen"
 
     status_page = Gtk.Template.Child()
@@ -105,11 +105,6 @@ class PackageScreen(Adw.Bin):
         package_manager: str
         groups: Optional[PackageGroupConfig] = None
         packages: Optional[list[PackageConfig]] = None
-
-    @classmethod
-    def from_config(cls, cfg: Any) -> "PackageScreen":
-        c = cls.Config.parse_obj(cfg)
-        return cls(**c.dict())
 
     def __init__(
         self,
