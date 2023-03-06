@@ -1,6 +1,5 @@
-from gi.repository import Gtk, Adw
+from gi.repository import Adw, Gtk
 from yafti.registry import SCREENS
-
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

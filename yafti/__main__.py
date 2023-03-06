@@ -20,7 +20,6 @@ import yafti.setup  # noqa
 from yafti.app import Yafti
 from yafti.parser import parse
 
-
 if len(sys.argv) > 1:
     cfg = sys.argv[1]  # TODO(MC): implement proper cli arguments
 

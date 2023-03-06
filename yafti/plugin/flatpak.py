@@ -59,10 +59,12 @@ Programmatic usage example:
   f(remove={"pkg": "com.github.marcoceppi.PackageName", "force": True})
 """
 
-from yafti.plugin.run import Run
+from typing import Any, Optional
+
+from pydantic import BaseModel, ValidationError, root_validator
+
 from yafti.abc import YaftiPluginReturn
-from pydantic import BaseModel, root_validator, ValidationError
-from typing import Optional, Any
+from yafti.plugin.run import Run
 
 
 class ApplicationDetail(BaseModel):

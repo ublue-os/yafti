@@ -46,12 +46,13 @@ Programmatic usage example:
 
 """
 
-import subprocess
 import shlex
+import subprocess
+from typing import Any
+
+from pydantic import BaseModel, ValidationError
 
 from yafti.abc import YaftiPlugin, YaftiPluginReturn
-from typing import Any
-from pydantic import ValidationError, BaseModel
 
 
 class Run(YaftiPlugin):

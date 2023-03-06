@@ -24,10 +24,10 @@ def find_parent(obj, cls=None):
 
     Args:
         obj: A GTK4 derived component
-        cls: Parent GTK4 component parent to find
+        cls: Parent component to find
 
     Returns:
-        The instance of the GTK4 parent component
+        The instance of the parent component
 
     Raises:
         NoParentFound: if a cls is passed and all parents are traversed without a match

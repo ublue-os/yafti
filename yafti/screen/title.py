@@ -1,5 +1,6 @@
-from gi.repository import Adw, Gtk
 from typing import Any, Optional
+
+from gi.repository import Adw, Gtk
 from pydantic import BaseModel
 
 
