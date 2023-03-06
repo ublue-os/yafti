@@ -12,9 +12,10 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-"""
 
-"""Install, remove, list, and manage flatpaks
+\f
+
+Install, remove, list, and manage flatpaks
 
 Configuration usage example:
 
@@ -97,8 +98,8 @@ class Flatpak(Run):
     class Scheme(BaseModel):
         """Flatpak plugin configuration validation"""
 
-        install: Optional[str | dict]
-        remove: Optional[str | dict]
+        install: Optional[str | dict] = None
+        remove: Optional[str | dict] = None
 
         @root_validator
         def must_have_atleast_one(cls, values):
@@ -198,7 +199,7 @@ class Flatpak(Run):
         args = self._parse_args(
             user=user, system=system, force=force, noninteractive=noninteractive
         )
-        cmd = [self.bin]
+        cmd = [self.bin, "remove"]
         cmd.extend(args)
         cmd.append(pkg)
         return self.exec(cmd)
@@ -212,5 +213,13 @@ class Flatpak(Run):
         except ValidationError as e:
             return YaftiPluginReturn(errors=str(e), code=1)
 
-        r = self.exec(cmd)
+        # TODO: when a string is passed, make sure it maps to the "pkg" key.
+        if params.install:
+            if isinstance(params.install, str):
+                params.install = {"pkg": params.install}
+            r = self.install(**params.install)
+        else:
+            if isinstance(params.remove, str):
+                params.remove = {"pkg": params.remove}
+            r = self.remove(**params.install)
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)
