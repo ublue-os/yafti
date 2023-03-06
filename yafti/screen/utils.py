@@ -30,7 +30,7 @@ def find_parent(obj, cls=None):
         The instance of the GTK4 parent component
 
     Raises:
-        NoParentFound: when a cls is passed and all parents are traversed without a match
+        NoParentFound: if a cls is passed and all parents are traversed without a match
     """
 
     p = obj.get_parent()

@@ -16,7 +16,9 @@ _xml = """\
             <object class="AdwStatusPage" id="status_page">
                 <property name="icon-name">folder</property>
                 <property name="title" translatable="yes">Welcome!</property>
-                <property name="description" translatable="yes">Make your choices, this wizard will take care of everything.</property>
+                <property name="description" translatable="yes">
+                    Make your choices, this wizard will take care of everything.
+                </property>
             </object>
         </child>
     </template>

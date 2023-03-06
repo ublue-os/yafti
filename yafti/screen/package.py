@@ -190,7 +190,8 @@ class PackageScreen(Adw.Bin):
 
         item_list = Adw.PreferencesGroup()
         item_list.set_description(
-            "The following list includes only applications available in your preferred package manager."
+            "The following list includes only applications available in your preferred"
+            "package manager."
         )
         page = Adw.PreferencesPage()
         page.add(item_list)

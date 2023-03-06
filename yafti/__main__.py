@@ -15,11 +15,8 @@ limitations under the License.
 """
 
 import sys
-import gi
 
-gi.require_version("Gtk", "4.0")
-gi.require_version("Adw", "1")
-
+import yafti.setup  # noqa
 from yafti.app import Yafti
 from yafti.parser import parse
 

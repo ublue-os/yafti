@@ -59,7 +59,7 @@ Programmatic usage example:
 """
 
 from yafti.plugin.run import Run
-from yafti.abc import YaftiPlugin, YaftiPluginReturn
+from yafti.abc import YaftiPluginReturn
 from pydantic import BaseModel, root_validator, ValidationError
 from typing import Optional, Any
 
@@ -135,7 +135,8 @@ class Flatpak(Run):
             An object of the parsed input options
 
         Raises:
-            ValidationError: Input could not be sanitized and did not conform to validation rules
+            ValidationError: Input could not be sanitized and did not conform to
+                             validation rules
         """
         if isinstance(options, str):
             options = {"install": options}
@@ -200,7 +201,7 @@ class Flatpak(Run):
         cmd = [self.bin]
         cmd.extend(args)
         cmd.append(pkg)
-        results = self.exec(cmd)
+        return self.exec(cmd)
 
     def ls(self) -> list[ApplicationDetail]:
         pass
