@@ -240,7 +240,6 @@ class PackageScreen(YaftiScreen, Adw.Bin):
     def on_deactivate(self):
         events.detach("btn_next", self.next)
         events.detach("btn_back", self.back)
-        yafti.share.BTN_NEXT.set_label("Next")
 
     @property
     def idx(self):
@@ -290,6 +289,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     pkg_progress = Gtk.Template.Child()
     btn_console = Gtk.Template.Child()
     started = False
+    already_run = False
 
     class Config(BaseModel):
         package_manager: str = "yafti.plugin.flatpak"
@@ -305,11 +305,15 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         self.btn_console.connect("clicked", self.toggle_console)
 
     async def on_activate(self):
-        if self.started:
+        if self.started or self.already_run:
             return
         self.console = ConsoleScreen()
         self.started = True
+        events.on("btn_next", self.next)
         await self.draw()
+
+    def next(self, _):
+        return self.started
 
     def toggle_console(self, btn):
         btn.set_label("Show Console" if self.console.get_visible() else "Hide Console")
@@ -322,10 +326,23 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         await self.install(packages)
 
     async def install(self, packages: list):
-        for pkg in packages:
+        total = len(packages)
+        self.pkg_progress.set_fraction(0.01)
+        yafti.share.BTN_NEXT.set_label("Installing...")
+        yafti.share.BTN_BACK.set_visible(False)
+
+        for idx, pkg in enumerate(packages):
             r = await self.package_manager.install(pkg)
             self.console.stdout(r.stdout)
             self.console.stderr(r.stderr)
+            self.pkg_progress.set_fraction((idx + 1) / total)
+
+        self.console.stdout(b"Installation Complete!")
+
+        self.started = False
+        self.already_run = True
+        yafti.share.BTN_NEXT.set_label("Next")
+        yafti.share.BTN_BACK.set_visible(True)
 
 
 @Gtk.Template(string=_package_screen_xml)
