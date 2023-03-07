@@ -8,8 +8,8 @@ import yafti.share
 from yafti import events
 from yafti.abc import YaftiScreen
 from yafti.registry import PLUGINS
-from yafti.screen.dialog import DialogBox
 from yafti.screen.console import ConsoleScreen
+from yafti.screen.dialog import DialogBox
 from yafti.screen.utils import find_parent
 
 _mainxml = """\
@@ -119,6 +119,8 @@ _installer_xml = """\
 </interface>
 """
 
+STATE = None
+
 
 class PackageConfig(BaseModel):
     __root__: dict[str, str]
@@ -162,6 +164,13 @@ class PackageScreenState:
     def set(self, item: str, state: bool):
         self.state[item] = state
 
+    def get_on(self, prefix: str = ""):
+        return [
+            item
+            for item, value in self.state.items()
+            if item.startswith(prefix) and value is True
+        ]
+
     def keys(self):
         return self.state.keys()
 
@@ -204,17 +213,24 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         show_terminal: bool = True,
         **kwargs,
     ):
+        global STATE
         super().__init__(**kwargs)
+        self.title = title
         self.packages = groups or packages
         self.show_terminal = show_terminal
-        self.package_manager = PLUGINS.get(package_manager)
-        self.state = PackageScreenState.from_dict(parse_packages(self.packages))
+        self.package_manager = package_manager
+        if not STATE:
+            STATE = PackageScreenState.from_dict(parse_packages(self.packages))
+        self.pkg_carousel.connect("page-changed", self.changed)
         self.draw()
 
     def draw(self):
-        screens = PackagePickerScreen(packages=self.packages)
-        self.pkg_carousel.append(screens)
-        self.pkg_carousel.append(PackageInstallScreen())
+        self.pkg_carousel.append(
+            PackagePickerScreen(title=self.title, packages=self.packages)
+        )
+        self.pkg_carousel.append(
+            PackageInstallScreen(title=self.title, package_manager=self.package_manager)
+        )
 
     def on_activate(self):
         events.on("btn_next", self.next)
@@ -246,7 +262,10 @@ class PackageScreen(YaftiScreen, Adw.Bin):
 
         current_screen.deactivate()
         self.pkg_carousel.scroll_to(next_screen, animate)
-        next_screen.activate()
+
+    def changed(self, *args):
+        current_screen = self.pkg_carousel.get_nth_page(self.idx)
+        current_screen.activate()
 
     def next(self, _):
         if not self.active:
@@ -270,19 +289,43 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
 
     pkg_progress = Gtk.Template.Child()
     btn_console = Gtk.Template.Child()
+    started = False
 
-    def on_activate(self):
+    class Config(BaseModel):
+        package_manager: str = "yafti.plugin.flatpak"
+
+    def __init__(
+        self,
+        title: str = "Package Installation",
+        package_manager: str = "yafti.plugin.flatpak",
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.package_manager = PLUGINS.get(package_manager)
+        self.btn_console.connect("clicked", self.toggle_console)
+
+    async def on_activate(self):
+        if self.started:
+            return
         self.console = ConsoleScreen()
-        self.draw()
+        self.started = True
+        await self.draw()
 
     def toggle_console(self, btn):
         btn.set_label("Show Console" if self.console.get_visible() else "Hide Console")
         self.console.toggle_visible()
 
-    def draw(self):
+    async def draw(self):
         self.console.hide()
         self.append(self.console)
-        self.btn_console.connect("clicked", self.toggle_console)
+        packages = [item.replace("pkg:", "") for item in STATE.get_on("pkg:")]
+        await self.install(packages)
+
+    async def install(self, packages: list):
+        for pkg in packages:
+            r = await self.package_manager.install(pkg)
+            self.console.stdout(r.stdout)
+            self.console.stderr(r.stderr)
 
 
 @Gtk.Template(string=_package_screen_xml)
@@ -291,29 +334,20 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
 
     status_page = Gtk.Template.Child()
     package_list = Gtk.Template.Child()
-    state = None
 
     class Config(BaseModel):
-        show_terminal: bool = True
-        package_manager: str
-        groups: Optional[PackageGroupConfig] = None
-        packages: Optional[list[PackageConfig]] = None
+        title: str = "Package Installation"
+        packages: list | dict
 
     def __init__(
         self,
-        title: str = "Package Installation",
-        package_manager: str = "yafti.plugin.flatpak",
-        packages: list[PackageConfig] = None,
-        groups: PackageGroupConfig = None,
-        show_terminal: bool = True,
+        title: str,
+        packages: list | dict,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.status_page.set_title(title)
-        self.packages = groups or packages
-        self.show_terminal = show_terminal
-        self.package_manager = PLUGINS.get(package_manager)
-        self.state = PackageScreenState.from_dict(parse_packages(self.packages))
+        self.packages = packages
         self.draw()
 
     def draw(self):
@@ -325,14 +359,14 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
             action_row = Adw.ActionRow(title=name, subtitle=details.get("description"))
 
             def state_set(group, _, value):
-                self.state.set(f"group:{group}", value)
+                STATE.set(f"group:{group}", value)
                 d = self.packages.get(group)
                 for pkg in d.get("packages", []):
                     for pkg_name in pkg.values():
-                        self.state.set(f"pkg:{pkg_name}", value)
+                        STATE.set(f"pkg:{pkg_name}", value)
 
             _switcher = Gtk.Switch()
-            _switcher.set_active(self.state.get(f"group:{name}"))
+            _switcher.set_active(STATE.get(f"group:{name}"))
             _switcher.set_valign(Gtk.Align.CENTER)
 
             state_set_fn = partial(state_set, name)
@@ -392,12 +426,12 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                     title=name,
                 )
                 _app_switcher = Gtk.Switch()
-                _app_switcher.set_active(self.state.get(f"pkg:{pkg}"))
+                _app_switcher.set_active(STATE.get(f"pkg:{pkg}"))
                 _app_switcher.set_valign(Gtk.Align.CENTER)
 
                 def set_state(pkg, btn, value):
                     print(pkg, value)
-                    self.state.set(f"pkg:{pkg}", value)
+                    STATE.set(f"pkg:{pkg}", value)
 
                 set_state_func = partial(set_state, pkg)
                 _app_switcher.connect("state-set", set_state_func)

@@ -46,6 +46,7 @@ Programmatic usage example:
 
 """
 
+import asyncio
 import shlex
 import subprocess
 from typing import Any
@@ -62,8 +63,22 @@ class Run(YaftiPlugin):
     def validate(self, options: Any):
         return self.Scheme.parse_obj(options)
 
-    def exec(self, cmd: list[str]) -> subprocess.CompletedProcess:
-        return subprocess.run(cmd, capture_output=True)
+    async def exec(self, cmd):
+        proc = await asyncio.create_subprocess_shell(
+            cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+
+        stdout, stderr = await proc.communicate()
+
+        print(f"[{cmd!r} exited with {proc.returncode}]")
+        if stdout:
+            print(f"[stdout]\n{stdout.decode()}")
+        if stderr:
+            print(f"[stderr]\n{stderr.decode()}")
+
+        return subprocess.CompletedProcess(
+            cmd, returncode=proc.returncode, stdout=stdout, stderr=stderr
+        )
 
     def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
         try:

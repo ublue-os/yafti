@@ -95,6 +95,21 @@ files = [
 ]
 
 [[package]]
+name = "gbulb"
+version = "0.6.4"
+description = "GLib event loop for tulip (PEP 3156)"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "gbulb-0.6.4-py3-none-any.whl", hash = "sha256:31d64ede2e7aac8f871ce914f884b949e4891b1faa2ef45800db9eaa9c4b371b"},
+    {file = "gbulb-0.6.4.tar.gz", hash = "sha256:4a6dddd9b8f958393e9ace60def7feacee6528136504bea3407e5ffe79f1a89f"},
+]
+
+[package.dependencies]
+pygobject = ">=3.14.0"
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -394,4 +409,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "52507fc5f74bbf0a6d377b22718e55207c721e94398907133f697f95f295beeb"
+content-hash = "c2fb50a311802bee07dcd56c5316e924050c3e7b155d47526a2cfdf41964295e"

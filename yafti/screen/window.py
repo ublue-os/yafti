@@ -125,7 +125,6 @@ class Window(Adw.ApplicationWindow):
 
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
-        next_screen.activate()
 
     def next(self, test):
         self.goto(self.idx + 1)
@@ -135,3 +134,5 @@ class Window(Adw.ApplicationWindow):
 
     def changed(self, *args):
         self.btn_back.set_visible(self.idx > 0)
+        current_screen = self.carousel.get_nth_page(self.idx)
+        current_screen.activate()

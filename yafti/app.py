@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import gbulb
 from gi.repository import Adw
 
 from yafti.parser import Config
@@ -21,10 +22,12 @@ from yafti.screen.window import Window
 
 
 class Yafti(Adw.Application):
-    def __init__(self, cfg: Config = None):
+    def __init__(self, cfg: Config = None, loop=None):
         super().__init__(application_id="it.ublue.Yafti")
         self.config = cfg
+        self.loop = loop or gbulb.get_event_loop()
 
     def do_activate(self):
         win = Window(application=self)
         win.present()
+        self.loop.run()

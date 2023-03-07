@@ -59,6 +59,7 @@ Programmatic usage example:
   f(remove={"pkg": "com.github.marcoceppi.PackageName", "force": True})
 """
 
+import asyncio
 from typing import Any, Optional
 
 from pydantic import BaseModel, ValidationError, root_validator
@@ -122,11 +123,11 @@ class Flatpak(Run):
     def __init__(self):
         """Verify that flatpak binary exists on the host machine"""
         self.bin = "/usr/bin/flatpak"
-        results = self.exec([self.bin, "--version"])
-        if results.returncode != 0:
-            raise Exception("Failed to identify flatpak binary", results.stderr)
+        # results = asyncio.ensure_future(self.exec([self.bin, "--version"]))
+        # if results.returncode != 0:
+        #     raise Exception("Failed to identify flatpak binary", results.stderr)
 
-        print(results.stdout.strip())
+        # print(results.stdout.strip())
 
     def validate(self, options: Any) -> Scheme:
         """Sanitize and validate inputs
@@ -152,7 +153,7 @@ class Flatpak(Run):
 
         return [f"--{arg_map.get(k, k)}" for k, v in kwargs.items() if v is True]
 
-    def install(
+    async def install(
         self,
         pkg: str,
         user: bool = True,
@@ -187,9 +188,9 @@ class Flatpak(Run):
         cmd = [self.bin, "install"]
         cmd.extend(args)
         cmd.append(pkg)
-        return self.exec(cmd)
+        return await self.exec(" ".join(cmd))
 
-    def remove(
+    async def remove(
         self,
         pkg: str,
         user: bool = False,
@@ -219,9 +220,9 @@ class Flatpak(Run):
         if params.install:
             if isinstance(params.install, str):
                 params.install = {"pkg": params.install}
-            r = self.install(**params.install)
+            r = asyncio.ensure_future(self.install(**params.install))
         else:
             if isinstance(params.remove, str):
                 params.remove = {"pkg": params.remove}
-            r = self.remove(**params.install)
+            r = asyncio.ensure_future(self.remove(**params.install))
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)

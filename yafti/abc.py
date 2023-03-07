@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import asyncio
+from inspect import iscoroutinefunction
 from typing import Any, Optional
 
 from pydantic import BaseModel
@@ -37,12 +39,18 @@ class YaftiScreen:
     def activate(self):
         self.active = True
         if hasattr(self, "on_activate"):
-            self.on_activate()
+            if iscoroutinefunction(self.on_activate):
+                asyncio.ensure_future(self.on_activate())
+            else:
+                self.on_activate()
 
     def deactivate(self):
         self.active = False
         if hasattr(self, "on_deactivate"):
-            self.on_deactivate()
+            if iscoroutinefunction(self.on_deactivate):
+                asyncio.ensure_future(self.on_deactivate())
+            else:
+                self.on_deactivate()
 
 
 class YaftiPluginReturn(BaseModel):

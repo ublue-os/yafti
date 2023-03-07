@@ -35,15 +35,25 @@ class ConsoleScreen(YaftiScreen, Gtk.ScrolledWindow):
     console_output = Gtk.Template.Child()
 
     def stdout(self, text):
-        if isinstance(text, str):
-            text = Gtk.Text(text=text)
-        self.console_output.append(text)
+        if isinstance(text, bytes):
+            t = text.decode()
+            for line in t.split("\n"):
+                if not line:
+                    continue
+                self.stdout(Gtk.Text(text=line))
+        else:
+            self.console_output.append(text)
         self.scroll_to_bottom()
 
     def stderr(self, text):
-        if isinstance(text, str):
-            text = Gtk.Text(text=text)
-        self.console_output.append(text)
+        if isinstance(text, bytes):
+            t = text.decode()
+            for line in t.split("\n"):
+                if not line:
+                    continue
+                self.stderr(Gtk.Text(text=line))
+        else:
+            self.console_output.append(text)
         self.scroll_to_bottom()
 
     def scroll_to_bottom(self):
