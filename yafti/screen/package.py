@@ -9,6 +9,7 @@ from yafti import events
 from yafti.abc import YaftiScreen
 from yafti.registry import PLUGINS
 from yafti.screen.dialog import DialogBox
+from yafti.screen.console import ConsoleScreen
 from yafti.screen.utils import find_parent
 
 _mainxml = """\
@@ -70,19 +71,49 @@ _installer_xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0"/>
-  <template class="YaftiPackageInstallScreen" parent="AdwBin">
-    <property name="halign">fill</property>
-    <property name="valign">fill</property>
-    <property name="hexpand">true</property>
+  <template class="YaftiPackageInstallScreen" parent="GtkBox">
+    <property name="orientation">vertical</property>
     <child>
       <object class="AdwStatusPage" id="status_page">
         <property name="halign">fill</property>
         <property name="valign">fill</property>
         <property name="hexpand">true</property>
-        <property name="title" translatable="yes">IT WORKED!</property>
-        <child>
-        </child>
+        <property name="title" translatable="yes">Package Installation</property>
       </object>
+    </child>
+    <child>
+        <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <property name="halign">fill</property>
+            <property name="hexpand">True</property>
+            <property name="valign">fill</property>
+            <child>
+                <object class="GtkProgressBar" id="pkg_progress">
+                <property name="margin-start">40</property>
+                <property name="margin-end">40</property>
+                </object>
+            </child>
+            <child>
+                <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <child>
+                        <object class="GtkBox">
+                            <property name="halign">fill</property>
+                            <property name="hexpand">true</property>
+                        </object>
+                    </child>
+                    <child>
+                        <object class="GtkButton" id="btn_console">
+                            <property name="visible">True</property>
+                            <property name="margin-end">40</property>
+                            <property name="margin-top">20</property>
+                            <property name="margin-bottom">20</property>
+                            <property name="label">Show Console</property>
+                        </object>
+                    </child>
+                </object>
+            </child>
+        </object>
     </child>
   </template>
 </interface>
@@ -207,11 +238,15 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         if page < 0:
             page = 0
 
-        if page > self.pkg_carousel.get_n_pages():
+        if page >= self.pkg_carousel.get_n_pages():
             page = self.pkg_carousel.get_n_pages()
 
-        screen = self.pkg_carousel.get_nth_page(page)
-        self.pkg_carousel.scroll_to(screen, animate)
+        current_screen = self.pkg_carousel.get_nth_page(self.idx)
+        next_screen = self.pkg_carousel.get_nth_page(page)
+
+        current_screen.deactivate()
+        self.pkg_carousel.scroll_to(next_screen, animate)
+        next_screen.activate()
 
     def next(self, _):
         if not self.active:
@@ -230,8 +265,24 @@ class PackageScreen(YaftiScreen, Adw.Bin):
 
 
 @Gtk.Template(string=_installer_xml)
-class PackageInstallScreen(YaftiScreen, Adw.Bin):
+class PackageInstallScreen(YaftiScreen, Gtk.Box):
     __gtype_name__ = "YaftiPackageInstallScreen"
+
+    pkg_progress = Gtk.Template.Child()
+    btn_console = Gtk.Template.Child()
+
+    def on_activate(self):
+        self.console = ConsoleScreen()
+        self.draw()
+
+    def toggle_console(self, btn):
+        btn.set_label("Show Console" if self.console.get_visible() else "Hide Console")
+        self.console.toggle_visible()
+
+    def draw(self):
+        self.console.hide()
+        self.append(self.console)
+        self.btn_console.connect("clicked", self.toggle_console)
 
 
 @Gtk.Template(string=_package_screen_xml)

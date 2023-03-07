@@ -20,6 +20,7 @@ pyyaml = "^6.0"
 [tool.poetry.plugins."yafti.screen"]
 "yafti.screen.title" = "yafti.screen.title:TitleScreen"
 "yafti.screen.package" = "yafti.screen.package:PackageScreen"
+"yafti.screen.console" = "yafti.screen.console:ConsoleScreen"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
