@@ -88,7 +88,7 @@ class Window(Adw.ApplicationWindow):
         events.on("btn_next", self.next)
         events.on("btn_back", self.back)
 
-        # not a huge fan of this
+        # TODO(GH-2): not a huge fan of this
         yafti.share.BTN_BACK = self.btn_back
         yafti.share.BTN_NEXT = self.btn_next
 
@@ -100,7 +100,7 @@ class Window(Adw.ApplicationWindow):
 
         self.draw()
 
-    def draw(self):
+    def draw(self) -> None:
         screens = self.app.config.screens
         for name, details in screens.items():
             if details.source not in SCREENS:
@@ -109,10 +109,10 @@ class Window(Adw.ApplicationWindow):
             self.carousel.append(screen.from_config(details.values))
 
     @property
-    def idx(self):
+    def idx(self) -> float:
         return self.carousel.get_position()
 
-    def goto(self, page: int, animate: bool = True):
+    def goto(self, page: int, animate: bool = True) -> None:
         if page < 0:
             page = 0
 
@@ -125,7 +125,7 @@ class Window(Adw.ApplicationWindow):
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
 
-    def next(self, _):
+    def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
             self.app.quit()
             self.app.loop.stop()
@@ -133,10 +133,10 @@ class Window(Adw.ApplicationWindow):
         else:
             self.goto(self.idx + 1)
 
-    def back(self, _):
+    def back(self, _) -> None:
         self.goto(self.idx - 1)
 
-    def changed(self, *args):
+    def changed(self, *args) -> None:
         self.btn_back.set_visible(self.idx > 0)
         current_screen = self.carousel.get_nth_page(self.idx)
         if self.idx + 1 >= self.carousel.get_n_pages():
