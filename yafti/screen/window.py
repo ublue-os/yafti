@@ -116,7 +116,6 @@ class Window(Adw.ApplicationWindow):
         if page < 0:
             page = 0
 
-        print(self.idx, page, self.carousel.get_n_pages())
         if page >= self.carousel.get_n_pages():
             page = self.carousel.get_n_pages()
 
@@ -126,14 +125,23 @@ class Window(Adw.ApplicationWindow):
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
 
-    def next(self, test):
-        self.goto(self.idx + 1)
+    def next(self, _):
+        if self.idx + 1 >= self.carousel.get_n_pages():
+            self.app.quit()
+            self.app.loop.stop()
 
-    def back(self, test):
+        else:
+            self.goto(self.idx + 1)
+
+    def back(self, _):
         self.goto(self.idx - 1)
 
     def changed(self, *args):
         self.btn_back.set_visible(self.idx > 0)
         current_screen = self.carousel.get_nth_page(self.idx)
-        self.btn_next.set_label("Next")
+        if self.idx + 1 >= self.carousel.get_n_pages():
+            self.btn_next.set_label("Done")
+            self.btn_back.set_visible(False)
+        else:
+            self.btn_next.set_label("Next")
         current_screen.activate()
