@@ -119,6 +119,12 @@ This will launch Yafti window.
 
 This project uses pytest, black, isort, and ruff for testing and linting.
 
+```
+poetry run pytest --cov=yafti --cov-report=term-missing
+poetry run black yafti
+poetry run isort yafti
+poetry run ruff yafti
+
 ## Contributing
 
 This project follows a fork and pull request syle of contribution.

@@ -49,21 +49,14 @@ Programmatic usage example:
 import asyncio
 import shlex
 import subprocess
-from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import validate_arguments
 
 from yafti.abc import YaftiPlugin, YaftiPluginReturn
 
 
 class Run(YaftiPlugin):
-    class Scheme(BaseModel):
-        __root__: str
-
-    def validate(self, options: Any):
-        return self.Scheme.parse_obj(options)
-
-    async def exec(self, cmd):
+    async def exec(self, cmd: str) -> subprocess.CompletedProcess:
         proc = await asyncio.create_subprocess_shell(
             cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
@@ -71,23 +64,15 @@ class Run(YaftiPlugin):
         stdout, stderr = await proc.communicate()
 
         print(f"[{cmd!r} exited with {proc.returncode}]")
-        if stdout:
-            print(f"[stdout]\n{stdout.decode()}")
-        if stderr:
-            print(f"[stderr]\n{stderr.decode()}")
 
         return subprocess.CompletedProcess(
             cmd, returncode=proc.returncode, stdout=stdout, stderr=stderr
         )
 
-    def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
-        try:
-            self.validate(cmd)
-        except ValidationError as e:
-            return YaftiPluginReturn(errors=str(e), code=1)
+    @validate_arguments
+    async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
+        if isinstance(cmd, list):
+            cmd = shlex.join(cmd)
 
-        if not isinstance(cmd, list):
-            cmd = shlex.split(cmd)
-
-        r = self.exec(cmd)
+        r = await self.exec(cmd)
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)
