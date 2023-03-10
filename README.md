@@ -6,7 +6,7 @@ It is intended as a replacement for custom zenity dialogs.
 ## Project goals
 
 * Config file driven via JSON/YAML
-* Support for arbritrary pre and post-install commands
+* Support for arbitrary pre and post-install commands
 * Configuration driven screens
 * Screen independent state management with ability to set defaults
 * Extensible with drop-in Python classes / plugins to extend functionality
