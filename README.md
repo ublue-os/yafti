@@ -1,20 +1,23 @@
-# Yet another first time installer
+# Yet Another First Time Installer
+
+This application is responsible for installing Flatpaks on first boot after a user finishes installation. 
+It is intended as a replacement for custom zenity dialogs. 
 
 ## Project goals
 
-* Config (YAML/JSON) file driven
-* Support for pre-install and post-install arbitrary commands
+* Config file driven via JSON/YAML
+* Support for arbritrary pre and post-install commands
 * Configuration driven screens
 * Screen independent state management with ability to set defaults
-* Extensible with drop-in python classes / plugins to extend functionality
+* Extensible with drop-in Python classes / plugins to extend functionality
 
 ## Core features
 
-These are goals for each feature of the first time installer
+These are goals for each feature of the first time installer:
 
-### Title screen
+### Title Screen
 
-Title screen will be comprised of three primary elements. An image/icon, a header/primary text, and a paragraph description text.
+The Title screen will be comprised of three primary elements. An image/icon, a header/primary text, and a paragraph description text.
 
 ```
 
@@ -28,7 +31,7 @@ Title screen will be comprised of three primary elements. An image/icon, a heade
 
 ### Packages screen
 
-Display several groups of packages to install, allow for expansion of each group to individually select descrete packages or toggle the entire group on/off.
+Display several groups of packages to install, allow for expansion of each group to individually select discrete packages or toggle the entire group on/off.
 
 eg:
 ```
@@ -50,8 +53,7 @@ Gaming              [/] >
 Office              [/] >
 ```
 
-By default these will be flatpaks. Plugins for other packages systems may/can be developed.
-
+The application then installs the Flatpaks. Plugins for other packages systems may/can be developed.
 
 ### Configuration
 
@@ -99,21 +101,21 @@ screens:
     source: yafti.screen.title
     values:
       title: "All done"
-      icon: "/atph/to/icon"
+      icon: "/path/to/icon"
       description: |
         Thanks for installing, join the community, next steps
 ```
 
 ## Development
 
-This project use poetry and Python 3.11. Make sure you have Python 3.11 and [Poetry installed](https://python-poetry.org/docs/). Checkout the repository and navigate to root project directory.
+This project uses Poetry and Python 3.11. Make sure you have Python 3.11 and [Poetry installed](https://python-poetry.org/docs/). Checkout the repository and navigate to root project directory.
 
 ```
 poetry install
 poetry run python -m yafti tests/example.yml
 ```
 
-This will launch Yafti window.
+This will launch the Yafti window.
 
 ### Testing
 
@@ -124,6 +126,7 @@ poetry run pytest --cov=yafti --cov-report=term-missing
 poetry run black yafti
 poetry run isort yafti
 poetry run ruff yafti
+```
 
 ## Contributing
 
@@ -131,7 +134,7 @@ This project follows a fork and pull request syle of contribution.
 
 ### Creating a Fork
 
-Just head over to the GitHub page and [click the "Fork" button](https://help.github.com/articles/fork-a-repo). It's just that simple. Once you've done that, you can use your favorite git client to clone your repo or just head straight to the command line:
+Just head over to the GitHub page and [click the "Fork" button](https://help.github.com/articles/fork-a-repo). Once you've done that, you can use your favorite git client to clone your repo or just head straight to the command line:
 
 ```shell
 # Clone your fork to your local machine
@@ -204,7 +207,7 @@ style: convert tabs to spaces
 test: ensure Tayne retains clothing
 ```
 
-If you have multiple commits, when [Submitting your chages](#submitting-a-pull-request), make sure to use a conventional commit style PR title as this project does squash merges and that will be used as your contribution.
+If you have multiple commits, when [submitting your chages](#submitting-a-pull-request), make sure to use a conventional commit style PR title as this project does squash merges and that will be used as your contribution.
 
 ### Submitting a Pull Request
 
@@ -254,4 +257,4 @@ git checkout -b 9001 pull/origin/9001
 Keep in mind that these branches will be read only and you won't be able to push any changes.
 
 #### Automatically Merging a Pull Request
-In cases where the merge would be a simple fast-forward, you can automatically do the merge by just clicking the button on the pull request page on GitHub.
+In cases where the merge would be a simple fast-forward, you can automatically do the merge by  clicking the button on the pull request page on GitHub.
