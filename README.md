@@ -110,8 +110,18 @@ screens:
 
 This project uses Poetry and Python 3.11. Make sure you have Python 3.11 and [Poetry installed](https://python-poetry.org/docs/). Checkout the repository and navigate to root project directory.
 
+### Prerequisites
+
+If you're on a Ublue / immutable OS, you'll need to run these and the poetry install in a toolbox.
+
 ```
+sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
 poetry install
+```
+
+### Running
+
+```
 poetry run python -m yafti tests/example.yml
 ```
 
