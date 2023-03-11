@@ -23,7 +23,7 @@ jobs:
           virtualenvs-in-project: true
       - name: Cache Dependencies
         id: cache-deps
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
