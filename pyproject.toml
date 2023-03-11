@@ -5,6 +5,14 @@ description = "Yet another first time installer"
 authors = ["Marco Ceppi <marco@ceppi.net>"]
 license = "Apache 2.0"
 readme = "README.md"
+homepage = "https://github.com/ublue-os/yafti"
+repository = "https://github.com/ublue-os/yafti"
+classifiers = [
+    "Environment :: X11 Applications :: GTK",
+    "Framework :: AsyncIO",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: System :: Software Distribution",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
