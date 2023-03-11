@@ -28,12 +28,12 @@ jobs:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
       - name: Install Dependencies
-        run: poetry install --no-interaction --no-root
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-      - name: Install Project
         run: |
           sudo apt install libgirepository1.0-dev
-          poetry install --no-interaction
+          poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+      - name: Install Project
+        run: poetry install --no-interaction
       - name: Check code formatting
         run: poetry run black --check yafti
       - name: Lint code
