@@ -31,7 +31,9 @@ jobs:
         run: poetry install --no-interaction --no-root
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: Install Project
-        run: poetry install --no-interaction
+        run: |
+          sudo apt install libgirepository1.0-dev
+          poetry install --no-interaction
       - name: Check code formatting
         run: poetry run black --check yafti
       - name: Lint code
