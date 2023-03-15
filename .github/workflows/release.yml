@@ -22,7 +22,6 @@ jobs:
   build:
     name: Create RPM Release
     runs-on: ubuntu-latest
-    container: fedora:37
 
     steps:
       - name: Checkout code
