@@ -35,7 +35,6 @@ Yet another first time installer
 echo "OKAY"
 
 %files -n %{modname}
-%doc CHANGELOG.md
 %license LICENSE
 %{_bindir}/yafti
 %{python3_sitelib}/%{modname}/
