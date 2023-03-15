@@ -2,9 +2,6 @@ on:
   release:
     type:
       - published
-  push:
-    branches:
-      - add-rpm-build
 
 name: Create RPM Release
 
@@ -37,18 +34,14 @@ jobs:
           virtualenvs-in-project: true
       - run: |
           poetry build
-      - run: |
-          ls -lah
-          ls -lah dist
       - name: build RPM package
         id: rpm_build
         uses: ublue-os/rpmbuild@master
         with:
           spec_file: "pkg/rpm.spec"
-      - run: ls -lah /home/runner/work/yafti/yafti /home/runner/work/yafti/yafti/rpmbuild rpmbuild/SRPMS
       - name: Upload release binaries
         uses: alexellis/upload-assets@0.4.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["./${{ steps.rpm_build.outputs.source_rpm_path }}"]'
+          asset_paths: '["./${{ steps.rpm_build.outputs.source_rpm_path }}", "./${{ steps.rpm_build.outputs.rpm_dir_path }}noarch/*.rpm"]'
