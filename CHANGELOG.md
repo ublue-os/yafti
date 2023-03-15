@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/ublue-os/yafti/compare/v0.2.0...v0.2.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* **ci:** typo on workflow trigger ([#22](https://github.com/ublue-os/yafti/issues/22)) ([9e9c6a8](https://github.com/ublue-os/yafti/commit/9e9c6a833cf0834af43dd8d64138c8cec8706386))
+
 ## [0.2.0](https://github.com/ublue-os/yafti/compare/v0.1.0...v0.2.0) (2023-03-15)
 
 
