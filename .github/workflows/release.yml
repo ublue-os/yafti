@@ -45,7 +45,7 @@ jobs:
         uses: ublue-os/rpmbuild@master
         with:
           spec_file: "pkg/rpm.spec"
-      - run: ls -lah rpmbuilds/SRPMS
+      - run: ls -lah /home/runner/work/yafti/yafti /home/runner/work/yafti/yafti/rpmbuilds rpmbuilds/SRPMS
       - name: Upload release binaries
         uses: alexellis/upload-assets@0.4.0
         env:
