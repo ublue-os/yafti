@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/ublue-os/yafti/compare/v0.2.6...v0.2.7) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** rpm version needs to be dynamic ([#34](https://github.com/ublue-os/yafti/issues/34)) ([c3c06d4](https://github.com/ublue-os/yafti/commit/c3c06d4210472d441a77ffd3718217d370fb5be9))
+
 ## [0.2.6](https://github.com/ublue-os/yafti/compare/v0.2.5...v0.2.6) (2023-03-15)
 
 
