@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/ublue-os/yafti/compare/v0.2.7...v0.2.8) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** restore upload-assets action ([#36](https://github.com/ublue-os/yafti/issues/36)) ([d021ae3](https://github.com/ublue-os/yafti/commit/d021ae339346980251c3f1f0f19fdde9c070e877))
+
 ## [0.2.7](https://github.com/ublue-os/yafti/compare/v0.2.6...v0.2.7) (2023-03-15)
 
 
