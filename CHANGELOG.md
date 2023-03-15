@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/ublue-os/yafti/compare/v0.1.0...v0.2.0) (2023-03-15)
+
+
+### Features
+
+* add RPM spec ([#12](https://github.com/ublue-os/yafti/issues/12)) ([3047cb5](https://github.com/ublue-os/yafti/commit/3047cb5ce6484a5df7348117951e33ab26661224))
+
 ## 0.1.0 (2023-03-13)
 
 
