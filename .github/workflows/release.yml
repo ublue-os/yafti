@@ -51,4 +51,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["${{ steps.rpm_build.outputs.source_rpm_path }}"]'
+          asset_paths: '["./${{ steps.rpm_build.outputs.source_rpm_path }}"]'
