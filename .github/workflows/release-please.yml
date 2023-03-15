@@ -2,12 +2,53 @@ on:
   push:
     branches:
       - main
-name: release-please
+
+permissions:
+  contents: write
+  checks: write
+  actions: read
+  packages: write
+  pull-requests: write
+
+name: Release Please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.step1.outputs.releases_created }}
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
           release-type: python
           package-name: yafti
+  package:
+    name: Create RPM Release
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: needs.release-please.outputs.releases_created
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.3.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - run: |
+          poetry build
+      - name: build RPM package
+        id: rpm_build
+        uses: ublue-os/rpmbuild@master
+        with:
+          spec_file: "pkg/rpm.spec"
+      - name: Upload release binaries
+        uses: alexellis/upload-assets@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./${{ steps.rpm_build.outputs.source_rpm_path }}", "./${{ steps.rpm_build.outputs.rpm_dir_path }}noarch/*.rpm"]'
