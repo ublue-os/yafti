@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/ublue-os/yafti/compare/v0.2.5...v0.2.6) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** replace release upload action ([#32](https://github.com/ublue-os/yafti/issues/32)) ([e5ae2d2](https://github.com/ublue-os/yafti/commit/e5ae2d2132982d4185960d33331ab08bf769f1c2))
+
 ## [0.2.5](https://github.com/ublue-os/yafti/compare/v0.2.4...v0.2.5) (2023-03-15)
 
 
