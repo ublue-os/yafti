@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/ublue-os/yafti/compare/v0.2.1...v0.2.2) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** consolidate release process ([#24](https://github.com/ublue-os/yafti/issues/24)) ([6450bce](https://github.com/ublue-os/yafti/commit/6450bceb5669f73c6105297932b70a4699a8c58c))
+
 ## [0.2.1](https://github.com/ublue-os/yafti/compare/v0.2.0...v0.2.1) (2023-03-15)
 
 
