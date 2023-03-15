@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/ublue-os/yafti/compare/v0.2.3...v0.2.4) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** supply file paths for artifacts ([#28](https://github.com/ublue-os/yafti/issues/28)) ([7b1e9ba](https://github.com/ublue-os/yafti/commit/7b1e9bac84acc35a5a05562cfc4b959cc2a4a695))
+
 ## [0.2.3](https://github.com/ublue-os/yafti/compare/v0.2.2...v0.2.3) (2023-03-15)
 
 
