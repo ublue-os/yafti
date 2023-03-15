@@ -1,6 +1,6 @@
 on:
   release:
-    type:
+    types:
       - published
 
 name: Create RPM Release
