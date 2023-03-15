@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/ublue-os/yafti/compare/v0.2.2...v0.2.3) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** pass in tag reference on build ([#26](https://github.com/ublue-os/yafti/issues/26)) ([88d8850](https://github.com/ublue-os/yafti/commit/88d885062edb4c1f194869f9fcd77563276c11a9))
+
 ## [0.2.2](https://github.com/ublue-os/yafti/compare/v0.2.1...v0.2.2) (2023-03-15)
 
 
