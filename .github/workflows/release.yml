@@ -37,7 +37,9 @@ jobs:
           virtualenvs-in-project: true
       - run: |
           poetry build
-      - run: ls -lah
+      - run: |
+          ls -lah
+          ls -lah dist
       - name: build RPM package
         id: rpm_build
         uses: ublue-os/rpmbuild@master
