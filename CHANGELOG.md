@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/ublue-os/yafti/compare/v0.2.4...v0.2.5) (2023-03-15)
+
+
+### Bug Fixes
+
+* **release:** adjust asset path to fit current model ([#30](https://github.com/ublue-os/yafti/issues/30)) ([dcf364b](https://github.com/ublue-os/yafti/commit/dcf364b7ad3300238c51790ca857587e88138d75))
+
 ## [0.2.4](https://github.com/ublue-os/yafti/compare/v0.2.3...v0.2.4) (2023-03-15)
 
 
