@@ -11,10 +11,11 @@ Source0:        https://pypi.io/packages/source/y/%{modname}/%{modname}-%{versio
 
 BuildArch:      noarch
 
-BuildRequires:  python3-devel
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  poetry
 
+%generate_buildrequires
+%pyproject_buildrequires
 
 %?python_enable_dependency_generator
 
@@ -28,10 +29,10 @@ Yet another first time installer
 %autosetup -n %{modname}-%{version}
 
 %build
-%py3_build
+%pyproject_wheel
 
 %install
-%py3_install
+%pyproject_install
 
 %check
 echo "OKAY"
