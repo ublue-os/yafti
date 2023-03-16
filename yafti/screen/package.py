@@ -266,14 +266,14 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         current_screen = self.pkg_carousel.get_nth_page(self.idx)
         current_screen.activate()
 
-    def next(self, _):
+    async def next(self, _):
         if not self.active:
             return False
         if self.idx + 1 == self.total:
             return False
         self.goto(self.idx + 1)
 
-    def back(self, _):
+    async def back(self, _):
         if not self.active:
             return False
         print(self.idx)
@@ -312,7 +312,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         events.on("btn_next", self.next)
         await self.draw()
 
-    def next(self, _):
+    async def next(self, _):
         return self.started
 
     def toggle_console(self, btn):

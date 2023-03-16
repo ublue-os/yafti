@@ -1,3 +1,4 @@
+import asyncio
 from functools import partial
 
 from gi.repository import Adw, Gtk
@@ -14,7 +15,7 @@ _xml = """\
   <template class="YaftiWindow" parent="AdwApplicationWindow">
     <property name="default-width">750</property>
     <property name="default-height">640</property>
-    <property name="title">Welcome!</property>
+    <property name="title">Yafti</property>
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>
@@ -92,8 +93,11 @@ class Window(Adw.ApplicationWindow):
         yafti.share.BTN_BACK = self.btn_back
         yafti.share.BTN_NEXT = self.btn_next
 
-        _next = partial(events.emit, "btn_next")
-        _back = partial(events.emit, "btn_back")
+        def do_emit(*args, **kwargs):
+            asyncio.create_task(events.emit(*args, **kwargs))
+
+        _next = partial(do_emit, "btn_next")
+        _back = partial(do_emit, "btn_back")
         self.btn_next.connect("clicked", _next)
         self.btn_back.connect("clicked", _back)
         self.carousel.connect("page-changed", self.changed)
@@ -125,15 +129,13 @@ class Window(Adw.ApplicationWindow):
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
 
-    def next(self, _) -> None:
+    async def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
-            self.app.quit()
-            self.app.loop.stop()
-
+            await self.app.quit()
         else:
             self.goto(self.idx + 1)
 
-    def back(self, _) -> None:
+    async def back(self, _) -> None:
         self.goto(self.idx - 1)
 
     def changed(self, *args) -> None:

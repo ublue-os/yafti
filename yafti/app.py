@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import asyncio
 import gbulb
 from gi.repository import Adw
 
@@ -31,3 +32,14 @@ class Yafti(Adw.Application):
         win = Window(application=self)
         win.present()
         self.loop.run()
+
+    async def do_action(action):
+        pass
+
+    async def quit(self):
+        for action in self.config.actions.post:
+            print("hi")
+            await self.do_action(action)
+
+        super().quit()
+        self.loop.stop()

@@ -21,8 +21,8 @@ from pydantic import BaseModel
 
 
 class ActionConfig(BaseModel):
-    pre: Optional[list[dict[str, str | dict]]]
-    post: Optional[list[dict[str, str | dict]]]
+    pre: Optional[list[dict[str, str | dict]]] = []
+    post: Optional[list[dict[str, str | dict]]] = []
 
 
 class ScreenConfig(BaseModel):
