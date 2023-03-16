@@ -42,9 +42,14 @@ jobs:
           version: 1.4.0
           virtualenvs-create: true
           virtualenvs-in-project: true
-      - run: |
+      - name: Build and upload to PyPI
+        run: |
+          poetry config pypi-token.pypi "$PYPI_UPLOAD_TOKEN"
           poetry build
-      - name: build RPM package
+          poetry publish
+        env:
+          PYPI_UPLOAD_TOKEN: ${{ secrets.PYPI_UPLOAD_TOKEN }}
+      - name: Build RPM Package
         id: rpm_build
         uses: ublue-os/rpmbuild@master
         with:
