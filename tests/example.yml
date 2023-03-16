@@ -6,7 +6,7 @@ actions:
   - yafti.plugin.flatpak:
       install: org.gnome.Calculator
   post:
-  - run: /run/these/commands --after --all --screens
+  - run: echo "hello world"
 screens:
   first-screen:
     source: yafti.screen.title
