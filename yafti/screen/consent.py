@@ -36,6 +36,7 @@ from typing import Optional
 
 from gi.repository import Adw, Gtk
 
+import yafti.share
 from yafti import events
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
@@ -90,6 +91,7 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
 
     async def on_activate(self):
         events.on("btn_next", self.next)
+        yafti.share.BTN_NEXT.set_label("Accept")
 
     async def on_deactivate(self):
         events.detach("btn_next", self.next)
