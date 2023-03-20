@@ -130,6 +130,19 @@ poetry run python -m yafti tests/example.yml
 
 This will launch the Yafti window.
 
+#### Running from a Containerfile
+
+One of yafti's main use cases is to be used in Containerfiles to handle installation of Flatpaks on first boot.
+Add this to your Containerfile to add yafti to your image:
+
+    pip install --prefix=/usr yafti
+    
+Additionally, you need a script to copy over the .desktop file to the user's home directory:
+- [Example firstboot script](https://github.com/ublue-os/bluefin/blob/main/etc/profile.d/bluefin-firstboot.sh)
+- [Example firstboot .desktop file](https://github.com/ublue-os/bluefin/blob/main/etc/skel.d/.config/autostart/bluefin-firstboot.desktop)
+
+Then add a file in `/etc/yafti.yml` with your customizations. Check the [example file](https://github.com/ublue-os/yafti/blob/main/tests/example.yml) for ideas. 
+
 ### Testing
 
 This project uses pytest, black, isort, and ruff for testing and linting.
