@@ -25,16 +25,35 @@ class YaftiPlugin:
     pass
 
 
+async def _show_screen(condition):
+    from yafti.registry import PLUGINS
+
+    plugin_name = list(condition.keys())[0]
+    plugin = PLUGINS.get(plugin_name)
+    result = await plugin(condition[plugin_name])
+    return result.code == 0
+
+
+class YaftiScreenConfig(BaseModel):
+    condition: Optional[dict[str, str | dict]] = None
+
+
 class YaftiScreen:
     active = False
 
-    class Config(BaseModel):
+    class Config(YaftiScreenConfig):
         pass
 
     @classmethod
-    def from_config(cls, cfg: Any):
+    async def from_config(cls, cfg: Any):
         c = cls.Config.parse_obj(cfg)
-        return cls(**c.dict())
+        show = True
+        if c.condition:
+            show = await _show_screen(c.condition)
+        if not show:
+            return None
+
+        return cls(**c.dict(exclude={"condition"}))
 
     def activate(self):
         self.active = True

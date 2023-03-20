@@ -1,9 +1,8 @@
 from typing import Optional
 
 from gi.repository import Adw, Gtk
-from pydantic import BaseModel
 
-from yafti.abc import YaftiScreen
+from yafti.abc import YaftiScreen, YaftiScreenConfig
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -34,7 +33,7 @@ class TitleScreen(YaftiScreen, Adw.Bin):
 
     status_page = Gtk.Template.Child()
 
-    class Config(BaseModel):
+    class Config(YaftiScreenConfig):
         title: str
         description: str
         icon: Optional[str] = None

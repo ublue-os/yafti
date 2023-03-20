@@ -3,12 +3,12 @@ properties:
   mode: "run-on-change"
 actions:
   pre:
-  - run: /full/path/to/bin --with --params
-  - run: /another/command run
-  - yafti.plugin.flatpak:
-      install: org.gnome.Calculator
+    - run: /full/path/to/bin --with --params
+    - run: /another/command run
+    - yafti.plugin.flatpak:
+        install: org.gnome.Calculator
   post:
-  - run: /run/these/commands --after --all --screens
+    - run: /run/these/commands --after --all --screens
 screens:
   first-screen:
     source: yafti.screen.title
@@ -17,6 +17,18 @@ screens:
       icon: "/path/to/icon"
       description: |
         Time to play overwatch
+  can-we-modify-your-flatpaks:
+    source: yafti.screen.consent
+    values:
+      title: Welcome traveler
+      condition:
+        run: flatpak remotes --system | grep fedora
+      description: |
+        This tool modifies your flatpaks and flatpak sources. If you do not want to do this exit the installer.
+        For new users just do it (tm)
+      actions:
+        - run: flatpak remote-delete fedora --force
+        - run: flatpak remove --system --noninteractive --all
   applications:
     source: yafti.screen.package
     values:
@@ -27,18 +39,18 @@ screens:
         Core:
           description: All the good stuff
           packages:
-          - Calculator: org.gnome.Calculator
-          - Firefox: org.mozilla.firefox
+            - Calculator: org.gnome.Calculator
+            - Firefox: org.mozilla.firefox
         Gaming:
           description: GAMES GAMES GAMES
           packages:
-          - Steam: com.valvesoftware.Steam
-          - Games: org.gnome.Games
+            - Steam: com.valvesoftware.Steam
+            - Games: org.gnome.Games
         Office:
           description: All the work stuff
           packages:
-          - LibreOffice: org.libreoffice.LibreOffice
-          - Calendar: org.gnome.Calendar
+            - LibreOffice: org.libreoffice.LibreOffice
+            - Calendar: org.gnome.Calendar
   final-screen:
     source: yafti.screen.title
     values:

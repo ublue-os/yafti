@@ -1,3 +1,4 @@
+import asyncio
 from functools import partial
 
 from gi.repository import Adw, Gtk
@@ -92,21 +93,30 @@ class Window(Adw.ApplicationWindow):
         yafti.share.BTN_BACK = self.btn_back
         yafti.share.BTN_NEXT = self.btn_next
 
-        _next = partial(events.emit, "btn_next")
-        _back = partial(events.emit, "btn_back")
+        def do_emit(*args, **kwargs):
+            asyncio.create_task(events.emit(*args, **kwargs))
+
+        _next = partial(do_emit, "btn_next")
+        _back = partial(do_emit, "btn_back")
+
+        self.connect("show", self.draw)
         self.btn_next.connect("clicked", _next)
         self.btn_back.connect("clicked", _back)
         self.carousel.connect("page-changed", self.changed)
 
-        self.draw()
+    def draw(self, _) -> None:
+        asyncio.ensure_future(self.build_screens())
 
-    def draw(self) -> None:
+    async def build_screens(self):
         screens = self.app.config.screens
         for name, details in screens.items():
             if details.source not in SCREENS:
                 continue
             screen = SCREENS.get(details.source)
-            self.carousel.append(screen.from_config(details.values))
+            s = await screen.from_config(details.values)
+            if s is None:
+                continue
+            self.carousel.append(s)
 
     @property
     def idx(self) -> float:
@@ -125,13 +135,13 @@ class Window(Adw.ApplicationWindow):
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
 
-    def next(self, _) -> None:
+    async def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
             self.app.quit()
         else:
             self.goto(self.idx + 1)
 
-    def back(self, _) -> None:
+    async def back(self, _) -> None:
         self.goto(self.idx - 1)
 
     def changed(self, *args) -> None:

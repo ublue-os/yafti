@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 import yafti.share
 from yafti import events
-from yafti.abc import YaftiScreen
+from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
 from yafti.screen.console import ConsoleScreen
 from yafti.screen.dialog import DialogBox
@@ -198,7 +198,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
 
     pkg_carousel = Gtk.Template.Child()
 
-    class Config(BaseModel):
+    class Config(YaftiScreenConfig):
         show_terminal: bool = True
         package_manager: str
         groups: Optional[PackageGroupConfig] = None
@@ -266,14 +266,14 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         current_screen = self.pkg_carousel.get_nth_page(self.idx)
         current_screen.activate()
 
-    def next(self, _):
+    async def next(self, _):
         if not self.active:
             return False
         if self.idx + 1 == self.total:
             return False
         self.goto(self.idx + 1)
 
-    def back(self, _):
+    async def back(self, _):
         if not self.active:
             return False
         print(self.idx)
@@ -291,7 +291,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     started = False
     already_run = False
 
-    class Config(BaseModel):
+    class Config(YaftiScreenConfig):
         package_manager: str = "yafti.plugin.flatpak"
 
     def __init__(
@@ -312,7 +312,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         events.on("btn_next", self.next)
         await self.draw()
 
-    def next(self, _):
+    async def next(self, _):
         return self.started
 
     def toggle_console(self, btn):
