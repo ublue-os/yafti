@@ -59,6 +59,9 @@ The application then installs the Flatpaks. Plugins for other packages systems m
 
 ```yaml
 title: uBlue First Boot
+properties:
+  mode: "run-on-change"
+  path: "~/.config/yafti-first-run"
 actions:
   pre:
   - run: /full/path/to/bin --with --params

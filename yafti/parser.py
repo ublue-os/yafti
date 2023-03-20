@@ -15,7 +15,8 @@ limitations under the License.
 """
 
 from typing import Optional
-
+from pathlib import Path
+from enum import Enum
 import yaml
 from pydantic import BaseModel
 
@@ -30,8 +31,20 @@ class ScreenConfig(BaseModel):
     values: Optional[dict]
 
 
+class YaftiRunModes(str, Enum):
+    changed = "run-on-change"
+    ignore = "run-once"
+    disable = "disabled"
+
+
+class YaftiProperties(BaseModel):
+    path: Optional[Path] = Path("~/.config/yafti-last-run")
+    mode: YaftiRunModes = YaftiRunModes.changed
+
+
 class Config(BaseModel):
     title: str
+    properties: YaftiProperties = YaftiProperties()
     actions: Optional[ActionConfig]
     screens: Optional[dict[str, ScreenConfig]]  # Screens are parsed per plugin
 
