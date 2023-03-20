@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/ublue-os/yafti/compare/v0.3.0...v0.3.1) (2023-03-20)
+
+
+### Bug Fixes
+
+* quit app when close requested ([#55](https://github.com/ublue-os/yafti/issues/55)) ([924a8aa](https://github.com/ublue-os/yafti/commit/924a8aaf1332e9dfe91157f352a35b55448d860f))
+
 ## [0.3.0](https://github.com/ublue-os/yafti/compare/v0.2.8...v0.3.0) (2023-03-20)
 
 
