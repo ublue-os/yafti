@@ -128,8 +128,6 @@ class Window(Adw.ApplicationWindow):
     def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
             self.app.quit()
-            self.app.loop.stop()
-
         else:
             self.goto(self.idx + 1)
 

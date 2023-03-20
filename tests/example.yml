@@ -1,4 +1,6 @@
 title: uBlue First Boot
+properties:
+  mode: "run-on-change"
 actions:
   pre:
   - run: /full/path/to/bin --with --params
