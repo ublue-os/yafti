@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import gbulb
-from gi.repository import Adw
 import hashlib
+
+import gbulb
 import yaml
+from gi.repository import Adw
 
 from yafti.parser import Config, YaftiRunModes
 from yafti.screen.window import Window

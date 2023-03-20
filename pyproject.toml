@@ -33,6 +33,7 @@ gbulb = "^0.6.4"
 "yafti.screen.title" = "yafti.screen.title:TitleScreen"
 "yafti.screen.package" = "yafti.screen.package:PackageScreen"
 "yafti.screen.console" = "yafti.screen.console:ConsoleScreen"
+"yafti.screen.consent" = "yafti.screen.consent:ConsentScreen"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

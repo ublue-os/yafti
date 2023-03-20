@@ -53,11 +53,11 @@ def detach(event_name: str, fn: Any):
     _listeners[event_name].remove(fn)
 
 
-def emit(event_name, *args, **kwargs):
+async def emit(event_name, *args, **kwargs):
     if event_name not in _listeners:
         raise EventNotRegisteredError("event name not registered", event=event_name)
 
     for fn in _listeners[event_name]:
-        result = fn(*args, **kwargs)
+        result = await fn(*args, **kwargs)
         if result is not False:
             break
