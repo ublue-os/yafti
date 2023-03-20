@@ -43,11 +43,13 @@ screens:
             - Firefox: org.mozilla.firefox
         Gaming:
           description: GAMES GAMES GAMES
+          default: false
           packages:
             - Steam: com.valvesoftware.Steam
             - Games: org.gnome.Games
         Office:
           description: All the work stuff
+          default: false
           packages:
             - LibreOffice: org.libreoffice.LibreOffice
             - Calendar: org.gnome.Calendar

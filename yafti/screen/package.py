@@ -128,6 +128,7 @@ class PackageConfig(BaseModel):
 
 class PackageGroupConfigDetails(BaseModel):
     description: str
+    default: bool = True
     packages: list[PackageConfig]
 
 
@@ -382,6 +383,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                     for pkg_name in pkg.values():
                         STATE.set(f"pkg:{pkg_name}", value)
 
+            state_set(name, None, details.get("default", True))
             _switcher = Gtk.Switch()
             _switcher.set_active(STATE.get(f"group:{name}"))
             _switcher.set_valign(Gtk.Align.CENTER)
