@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/ublue-os/yafti/compare/v0.2.8...v0.3.0) (2023-03-20)
+
+
+### Features
+
+* add "first run" protections and configuration ([#46](https://github.com/ublue-os/yafti/issues/46)) ([290b06e](https://github.com/ublue-os/yafti/commit/290b06ee836421673410a6313234c7d2d45e15c1))
+* add consent screen and screen conditions ([#47](https://github.com/ublue-os/yafti/issues/47)) ([4ff07c4](https://github.com/ublue-os/yafti/commit/4ff07c484f8f451978870c54a2db224dae8eb0f9))
+* customize which groups are enabled by default ([#53](https://github.com/ublue-os/yafti/issues/53)) ([dfa363a](https://github.com/ublue-os/yafti/commit/dfa363a8a72f7b50ceb20870a7dc6890723bd3e2))
+
+
+### Bug Fixes
+
+* **deps:** lock pydantic dep to match fedora 38 ([#38](https://github.com/ublue-os/yafti/issues/38)) ([7dc7fac](https://github.com/ublue-os/yafti/commit/7dc7fac7a32d9edc54148e69abf02c35f569302e))
+* **packaging:** use pyproject-rpm-macros ([#40](https://github.com/ublue-os/yafti/issues/40)) ([3885b89](https://github.com/ublue-os/yafti/commit/3885b892456036bca93a1cfb629754a4e772cf35))
+
 ## [0.2.8](https://github.com/ublue-os/yafti/compare/v0.2.7...v0.2.8) (2023-03-15)
 
 

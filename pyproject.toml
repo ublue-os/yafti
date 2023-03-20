@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yafti"
-version = "0.2.8"
+version = "0.3.0"
 description = "Yet another first time installer"
 authors = ["Marco Ceppi <marco@ceppi.net>"]
 license = "Apache 2.0"
