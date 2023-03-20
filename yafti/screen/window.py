@@ -100,6 +100,7 @@ class Window(Adw.ApplicationWindow):
         _back = partial(do_emit, "btn_back")
 
         self.connect("show", self.draw)
+        self.connect("close-request", self.app.quit)
         self.btn_next.connect("clicked", _next)
         self.btn_back.connect("clicked", _back)
         self.carousel.connect("page-changed", self.changed)

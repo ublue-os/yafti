@@ -58,7 +58,7 @@ class Yafti(Adw.Application):
         p = self.config.properties.path.expanduser()
         p.write_text(self.config_sha)
 
-    def quit(self):
+    def quit(self, *args, **kwargs):
         self.loop.stop()
         self.sync_first_run()
         super().quit()
