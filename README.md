@@ -135,7 +135,7 @@ This will launch the Yafti window.
 One of yafti's main use cases is to be used in Containerfiles to handle installation of Flatpaks on first boot.
 Add this to your Containerfile to add yafti to your image:
 
-    pip install --prefix=/usr yafti
+    RUN pip install --prefix=/usr yafti
     
 Additionally, you need a script to copy over the .desktop file to the user's home directory:
 - [Example firstboot script](https://github.com/ublue-os/bluefin/blob/main/etc/profile.d/bluefin-firstboot.sh)
