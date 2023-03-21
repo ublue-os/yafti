@@ -5,7 +5,7 @@ from gi.repository import Adw, Gtk
 from pydantic import BaseModel
 
 import yafti.share
-from yafti import events
+from yafti import events, log
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
 from yafti.screen.console import ConsoleScreen
@@ -277,7 +277,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
     async def back(self, _):
         if not self.active:
             return False
-        print(self.idx)
+
         if self.idx - 1 < 0:
             return False
         self.goto(self.idx - 1)
@@ -449,7 +449,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                 _app_switcher.set_valign(Gtk.Align.CENTER)
 
                 def set_state(pkg, btn, value):
-                    print(pkg, value)
+                    log.debug("state-set", pkg=pkg, value=value)
                     STATE.set(f"pkg:{pkg}", value)
 
                 set_state_func = partial(set_state, pkg)

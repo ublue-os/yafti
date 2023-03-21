@@ -14,22 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
+import logging
+
+import typer
+import yaml
 
 import yafti.setup  # noqa
+from yafti import log
 from yafti.app import Yafti
-from yafti.parser import parse
+from yafti.parser import Config
 
 
-def run():
-    cfg = "tests/example.yml"
-    if len(sys.argv) > 1:
-        cfg = sys.argv[1]  # TODO(MC): implement proper cli arguments
-
-    config = parse(cfg)
+def run(config: typer.FileText = typer.Argument("/etc/yafti.yml"), debug: bool = False):
+    log.set_level(logging.DEBUG if debug else logging.INFO)
+    log.debug("starting up", config=config, debug=debug)
+    config = Config.parse_obj(yaml.safe_load(config))
     app = Yafti(config)
     app.run(None)
 
 
 if __name__ == "__main__":
-    run()
+    typer.run(run)

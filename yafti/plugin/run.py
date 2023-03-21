@@ -52,18 +52,27 @@ import subprocess
 
 from pydantic import validate_arguments
 
+from yafti import log
 from yafti.abc import YaftiPlugin, YaftiPluginReturn
 
 
 class Run(YaftiPlugin):
     async def exec(self, cmd: str) -> subprocess.CompletedProcess:
+        log.debug("running command", cmd=cmd)
         proc = await asyncio.create_subprocess_shell(
             cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
 
         stdout, stderr = await proc.communicate()
 
-        print(f"[{cmd!r} exited with {proc.returncode}]")
+        log.info("command complete", cmd=cmd, code=proc.returncode)
+        log.debug(
+            "command complete",
+            cmd=cmd,
+            code=proc.returncode,
+            stdout=stdout,
+            stderr=stderr,
+        )
 
         return subprocess.CompletedProcess(
             cmd, returncode=proc.returncode, stdout=stdout, stderr=stderr
@@ -71,6 +80,7 @@ class Run(YaftiPlugin):
 
     @validate_arguments
     async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
+        log.debug("run called", cmd=cmd)
         if isinstance(cmd, list):
             cmd = shlex.join(cmd)
 

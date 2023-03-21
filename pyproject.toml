@@ -23,6 +23,8 @@ pydantic = "1.10.2"  # This needs to match the minimum supported version in Fedo
 pygobject = "^3.42.2"
 pyyaml = "^6.0"
 gbulb = "^0.6.4"
+rich = "^13.3.2"
+typer = "^0.7.0"
 
 [tool.poetry.plugins."yafti.plugin"]
 "yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
