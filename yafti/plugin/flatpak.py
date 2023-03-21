@@ -123,11 +123,6 @@ class Flatpak(Run):
     def __init__(self):
         """Verify that flatpak binary exists on the host machine"""
         self.bin = "/usr/bin/flatpak"
-        # results = asyncio.ensure_future(self.exec([self.bin, "--version"]))
-        # if results.returncode != 0:
-        #     raise Exception("Failed to identify flatpak binary", results.stderr)
-
-        # print(results.stdout.strip())
 
     def validate(self, options: Any) -> Scheme:
         """Sanitize and validate inputs
