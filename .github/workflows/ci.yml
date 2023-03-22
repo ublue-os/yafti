@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
       - name: Install Dependencies
         run: |
-          sudo apt install libgirepository1.0-dev
+          sudo apt install libgirepository1.0-dev gir1.2-gtk-4.0
           poetry install --no-interaction --no-root
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: Install Project
