@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/ublue-os/yafti/compare/v0.3.1...v0.4.0) (2023-03-22)
+
+
+### Features
+
+* add logging mechanics & actual CLI ([#59](https://github.com/ublue-os/yafti/issues/59)) ([9df69c6](https://github.com/ublue-os/yafti/commit/9df69c6225f6d6b285182cdd5a65eb959fac8604))
+
+
+### Documentation
+
+* explain how to use yafti in a containerfile ([#58](https://github.com/ublue-os/yafti/issues/58)) ([8be1d27](https://github.com/ublue-os/yafti/commit/8be1d27965e1f5f6bb84a95f310f51fa83881cae))
+* fix RUN command ([#61](https://github.com/ublue-os/yafti/issues/61)) ([8ed4232](https://github.com/ublue-os/yafti/commit/8ed4232dfc6ddd6759dd149bb17739fa3d196f19))
+
 ## [0.3.1](https://github.com/ublue-os/yafti/compare/v0.3.0...v0.3.1) (2023-03-20)
 
 
