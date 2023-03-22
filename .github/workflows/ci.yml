@@ -29,7 +29,7 @@ jobs:
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
       - name: Install Dependencies
         run: |
-          sudo apt install libgirepository1.0-dev gir1.2-gtk-4.0
+          sudo apt install libgirepository1.0-dev libgtk-3-dev libadwaita-1-dev
           poetry install --no-interaction --no-root
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: Install Project
