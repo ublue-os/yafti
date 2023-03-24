@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/ublue-os/yafti/compare/v0.4.0...v0.4.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* make sure bin entrypoint matches -m entrypoint ([#64](https://github.com/ublue-os/yafti/issues/64)) ([b2423b8](https://github.com/ublue-os/yafti/commit/b2423b81355496dde8b930ddeaaeca5d2eaf0baa))
+
 ## [0.4.0](https://github.com/ublue-os/yafti/compare/v0.3.1...v0.4.0) (2023-03-22)
 
 
