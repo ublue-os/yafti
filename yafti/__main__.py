@@ -33,5 +33,9 @@ def run(config: typer.FileText = typer.Argument("/etc/yafti.yml"), debug: bool =
     app.run(None)
 
 
-if __name__ == "__main__":
+def app():
     typer.run(run)
+
+
+if __name__ == "__main__":
+    app()
