@@ -71,8 +71,10 @@ class TitleScreen(YaftiScreen, Adw.Bin):
             title = list(link.keys())[0]
 
             events.register("on_action_row_open")
-            events.on("on_action_row_open", lambda x: self.on_action_row_open(link[title]))
-            
+            events.on(
+                "on_action_row_open", lambda x: self.on_action_row_open(link[title])
+            )
+
             def do_emit(*args, **kwargs):
                 asyncio.create_task(events.emit(*args, **kwargs))
 
