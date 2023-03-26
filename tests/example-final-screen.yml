@@ -18,6 +18,7 @@ screens:
       title: "All done"
       icon: "/path/to/icon"
       links:
-        - "Gnome Software": /usr/bin/gnome-software
+        - "Gnome Software": 
+            run: /usr/bin/gnome-software
       description: |
         Thanks for installing, join the community, next steps

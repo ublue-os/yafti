@@ -66,9 +66,9 @@ class Run(YaftiPlugin):
         is_container = os.path.isfile("/run/.containerenv") or os.path.isfile("/.dockerenv")
         if not os.path.isfile(cmd) and is_container:
             if which("distrobox-host-exec"):
-                cmd = "distrobox-host-exec {cmd}".format(cmd=cmd)
+                cmd = f"distrobox-host-exec {cmd}"
             elif which("flatpak-spawn"):
-                cmd = "flatpak-spawn --host {cmd}".format(cmd=cmd)
+                cmd = f"flatpak-spawn --host {cmd}"
 
         proc = await asyncio.create_subprocess_shell(
             cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE

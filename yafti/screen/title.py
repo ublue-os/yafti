@@ -41,7 +41,7 @@ class TitleScreen(YaftiScreen, Adw.Bin):
         title: str
         description: str
         icon: Optional[str] = None
-        links: List[dict[str, str]] = None
+        links: List[dict[str, dict]] = None
 
     def __init__(
         self,
@@ -68,11 +68,12 @@ class TitleScreen(YaftiScreen, Adw.Bin):
 
     def append_action_rows(self, links, links_list_box):
         for link in links:
-            title = list(link.keys())[0]
-
+            title, action = list(link.items())[0]
+            plugin, config = list(action.items())[0]
             events.register("on_action_row_open")
+            
             events.on(
-                "on_action_row_open", lambda x: self.on_action_row_open(link[title])
+                "on_action_row_open", lambda _: self.on_action_row_open(plugin, config)
             )
 
             def do_emit(*args, **kwargs):
