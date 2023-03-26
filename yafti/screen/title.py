@@ -6,7 +6,7 @@ from gi.repository import Adw, Gtk
 
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti import events
-from yafti.plugin.run import Run
+from yafti.registry import PLUGINS
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -71,7 +71,7 @@ class TitleScreen(YaftiScreen, Adw.Bin):
             title, action = list(link.items())[0]
             plugin, config = list(action.items())[0]
             events.register("on_action_row_open")
-            
+
             events.on(
                 "on_action_row_open", lambda _: self.on_action_row_open(plugin, config)
             )
@@ -93,6 +93,5 @@ class TitleScreen(YaftiScreen, Adw.Bin):
 
             links_list_box.append(link_action_row)
 
-    async def on_action_row_open(self, program):
-        r = Run()
-        await r(program)
+    async def on_action_row_open(self, plugin, config):
+        await PLUGINS.get(plugin)(config)
