@@ -1,0 +1,23 @@
+title: uBlue First Boot
+properties:
+  mode: "run-on-change"
+actions:
+  pre:
+  post:
+screens:
+  first-screen:
+    source: yafti.screen.title
+    values:
+      title: "That was pretty cool"
+      icon: "/path/to/icon"
+      description: |
+        Time to play overwatch
+  final-screen:
+    source: yafti.screen.title
+    values:
+      title: "All done"
+      icon: "/path/to/icon"
+      links:
+        - "Gnome Software": /usr/bin/gnome-software
+      description: |
+        Thanks for installing, join the community, next steps

@@ -1,8 +1,12 @@
-from typing import Optional
+import asyncio
+from functools import partial
+from typing import Optional, List
 
 from gi.repository import Adw, Gtk
 
 from yafti.abc import YaftiScreen, YaftiScreenConfig
+from yafti import events
+from yafti.plugin.run import Run
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -37,10 +41,55 @@ class TitleScreen(YaftiScreen, Adw.Bin):
         title: str
         description: str
         icon: Optional[str] = None
+        links: List[dict[str, str]] = None
 
     def __init__(
-        self, title: str = None, description: str = None, icon: str = None, **kwargs
+        self,
+        title: str = None,
+        description: str = None,
+        icon: str = None,
+        links: List[dict[str, str]] = None,
+        **kwargs
     ):
         super().__init__(**kwargs)
         self.status_page.set_title(title)
         self.status_page.set_description(description)
+
+        if links:
+            links_list_box = self.render_links_list_box()
+            self.append_action_rows(links, links_list_box)
+
+    def render_links_list_box(self):
+        links_list_box = Gtk.ListBox()
+        links_list_box.set_selection_mode(Gtk.SelectionMode.NONE)
+        links_list_box.add_css_class("boxed-list")
+        self.status_page.set_child(links_list_box)
+        return links_list_box
+
+    def append_action_rows(self, links, links_list_box):
+        for link in links:
+            title = list(link.keys())[0]
+
+            events.register("on_action_row_open")
+            events.on("on_action_row_open", lambda x: self.on_action_row_open(link[title]))
+            
+            def do_emit(*args, **kwargs):
+                asyncio.create_task(events.emit(*args, **kwargs))
+
+            _on_clicked = partial(do_emit, "on_action_row_open")
+
+            link_action_row = Adw.ActionRow()
+
+            action_btn = Gtk.Button()
+            action_btn.set_label("Open")
+            action_btn.set_valign(Gtk.Align.CENTER)
+            action_btn.connect("clicked", _on_clicked)
+
+            link_action_row.set_title(title)
+            link_action_row.add_suffix(action_btn)
+
+            links_list_box.append(link_action_row)
+
+    async def on_action_row_open(self, program):
+        r = Run()
+        await r(program)
