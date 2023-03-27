@@ -49,6 +49,8 @@ Programmatic usage example:
 import asyncio
 import shlex
 import subprocess
+from os.path import isfile
+from shutil import which
 
 from pydantic import validate_arguments
 
@@ -59,6 +61,15 @@ from yafti.abc import YaftiPlugin, YaftiPluginReturn
 class Run(YaftiPlugin):
     async def exec(self, cmd: str) -> subprocess.CompletedProcess:
         log.debug("running command", cmd=cmd)
+
+        # spawn command in host when running from container
+        is_container = isfile("/run/.containerenv") or isfile("/.dockerenv")
+        if not isfile(cmd) and is_container:
+            if which("distrobox-host-exec"):
+                cmd = f"distrobox-host-exec {cmd}"
+            elif which("flatpak-spawn"):
+                cmd = f"flatpak-spawn --host {cmd}"
+
         proc = await asyncio.create_subprocess_shell(
             cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
