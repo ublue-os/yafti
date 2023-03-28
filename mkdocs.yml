@@ -1,0 +1,73 @@
+site_name: Yafti
+repo_url: https://github.com/ublue-os/yafti
+repo_name: ublue-os/yafti
+
+nav:
+  - Home: "index.md"
+  - Getting Started: "getting-started.md"
+  - Developers: "developers.md"
+  - Contributing: "contributing.md"
+  - Reference: "reference.md"
+
+theme:
+  name: "material"
+  features:
+    - content.action.edit
+    - navigation.expand
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - toc.integrate
+  icon:
+    edit: material/pencil
+    repo: fontawesome/brands/github
+    view: material/eye
+  palette:
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: pink
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [.]
+          options:
+            show_source: true
+  - search
+  - git-revision-date-localized:
+      fallback_to_build_date: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
