@@ -577,6 +577,21 @@ Markdown = ">=3.3"
 mkdocs = ">=1.1"
 
 [[package]]
+name = "mkdocs-gen-files"
+version = "0.4.0"
+description = "MkDocs plugin to programmatically generate documentation pages during the build"
+category = "dev"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "mkdocs-gen-files-0.4.0.tar.gz", hash = "sha256:377bff8ee8e93515916689f483d971643f83a94eed7e92318854da8f344f0163"},
+    {file = "mkdocs_gen_files-0.4.0-py3-none-any.whl", hash = "sha256:3241a4c947ecd11763ca77cc645015305bf71a0e1b9b886801c114fcf9971e71"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.0.3,<2.0.0"
+
+[[package]]
 name = "mkdocs-git-revision-date-localized-plugin"
 version = "1.2.0"
 description = "Mkdocs plugin that enables displaying the localized date of the last git modification of a markdown file."
@@ -593,6 +608,21 @@ babel = ">=2.7.0"
 GitPython = "*"
 mkdocs = ">=1.0"
 pytz = "*"
+
+[[package]]
+name = "mkdocs-literate-nav"
+version = "0.6.0"
+description = "MkDocs plugin to specify the navigation in Markdown instead of YAML"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mkdocs_literate_nav-0.6.0-py3-none-any.whl", hash = "sha256:8c1b84714e5974da5e44e011ec0069275ae7647270c13a679662cf6ffce675a4"},
+    {file = "mkdocs_literate_nav-0.6.0.tar.gz", hash = "sha256:81ccbea18163ae8e10bd0bd39237fe70c32a1f2dff6c170779f5d52dd98a0470"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.0.3"
 
 [[package]]
 name = "mkdocs-material"
@@ -1265,4 +1295,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "56a04cdd5d84be9e323f34f59011b5055f9de3f061814720e8f8494a378747ea"
+content-hash = "0868c936a255ed15d3f0f14c592e4133359315e1c7410868442742dc8df673be"
