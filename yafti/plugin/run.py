@@ -4,10 +4,10 @@
 """
 Run a command on the system
 
-Configuration usage example:
+Configuration:
 
-  ```yaml
-  commands:
+    ```yaml
+    commands:
     pre:
     # Simple config
     - run: /usr/bin/whoami
@@ -17,22 +17,23 @@ Configuration usage example:
     - run: /bin/ls -lah
     - run: ["/bin/ls", "-lah"]
     - run:
-      - /bin/ls
-      - "-lah"
-  ```
+        - /bin/ls
+        - "-lah"
+    ```
 
-Programmatic usage example:
+Example
 
-  ```python
-  from yafti.plugin.run import Run
-  r = Run()
-  r.exec(["/usr/bin/whoami"])
-  f.exec(pkg="com.github.marcoceppi.PackageName", reinstall=True)
+```python
+from yafti.plugin.run import Run
+r = Run()
 
-  r("/usr/bin/whoami")
-  r(cmd="/usr/bin/whoami")
-  r(cmd=["/usr/bin/whoami"])
-  ```
+await r.exec(["/usr/bin/whoami"])
+await f.exec(pkg="com.github.marcoceppi.PackageName", reinstall=True)
+
+await r("/usr/bin/whoami")
+await r(cmd="/usr/bin/whoami")
+await r(cmd=["/usr/bin/whoami"])
+```
 
 """
 
