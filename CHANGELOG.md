@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/ublue-os/yafti/compare/v0.4.1...v0.5.0) (2023-03-27)
+
+
+### Features
+
+* extend title screen to include additional actions ([#66](https://github.com/ublue-os/yafti/issues/66)) ([a2fa984](https://github.com/ublue-os/yafti/commit/a2fa9848258b91c3f833a11751af1bf4c1a5bae2))
+
 ## [0.4.1](https://github.com/ublue-os/yafti/compare/v0.4.0...v0.4.1) (2023-03-24)
 
 
