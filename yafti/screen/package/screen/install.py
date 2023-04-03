@@ -118,10 +118,10 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         yafti.share.BTN_NEXT.set_label("Installing...")
         yafti.share.BTN_BACK.set_visible(False)
         for idx, pkg in enumerate(packages):
-            self.pulse = False
             r = await self.package_manager.install(pkg)
             self.console.stdout(r.stdout)
             self.console.stderr(r.stderr)
+            self.pulse = False
             self.pkg_progress.set_fraction((idx + 1) / total)
 
         self.console.stdout(b"Installation Complete!")
