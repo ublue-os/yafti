@@ -1,3 +1,4 @@
+import asyncio
 from gi.repository import Gtk
 
 import yafti.share
@@ -67,6 +68,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     btn_console = Gtk.Template.Child()
     started = False
     already_run = False
+    pulse = True
 
     class Config(YaftiScreenConfig):
         package_manager: str = "yafti.plugin.flatpak"
@@ -98,22 +100,28 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         btn.set_label("Show Console" if self.console.get_visible() else "Hide Console")
         self.console.toggle_visible()
 
-    async def draw(self):
+    async def do_pulse(self):
+        self.pkg_progress.set_pulse_step(1.0)
+        while self.pulse:
+            self.pkg_progress.pulse()
+            await asyncio.sleep(0.5)
+
+    def draw(self):
         self.console.hide()
         self.append(self.console)
         packages = [item.replace("pkg:", "") for item in STATE.get_on("pkg:")]
-        await self.install(packages)
+        asyncio.create_task(self.do_pulse())
+        return self.install(packages)
 
     async def install(self, packages: list):
         total = len(packages)
-        self.pkg_progress.set_fraction(0.01)
         yafti.share.BTN_NEXT.set_label("Installing...")
         yafti.share.BTN_BACK.set_visible(False)
-
         for idx, pkg in enumerate(packages):
             r = await self.package_manager.install(pkg)
             self.console.stdout(r.stdout)
             self.console.stderr(r.stderr)
+            self.pulse = False
             self.pkg_progress.set_fraction((idx + 1) / total)
 
         self.console.stdout(b"Installation Complete!")
