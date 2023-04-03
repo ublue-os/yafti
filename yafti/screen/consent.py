@@ -5,30 +5,32 @@
 Present the user with confirmation (consent) to proceed with modifications
 on their system
 
-Configuration usage example:
-
-  screens:
-    can-we-modify-your-flatpaks:
-      source: yafti.screen.consent
-      values:
-        title: Welcome traveler
-        condition:
-          run: flatpak remotes --system | grep fedora
-        description: |
-          This tool modifies your flatpaks and flatpak sources.
-          If you do not want to do this exit the installer.
-          For new users just do it (tm)
-        actions:
-          - run: flatpak remote-delete fedora --force
-          - run: flatpak remove --system --noninteractive --all
-
 Configuration:
 
 * title: Header of the screen
 * description: long form text
-* condition: dict of plugin: plugin config. Plugin must return a 0 code to display
+* condition: `dict[plugin, config]`. Plugin must return a 0 code to display
              screen. Any other code will result in the screen being skipped
 * actions: list of plugins to execute once screen is accepted
+
+Example
+
+```yaml
+screens:
+can-we-modify-your-flatpaks:
+  source: yafti.screen.consent
+  values:
+    title: Welcome traveler
+    condition:
+      run: flatpak remotes --system | grep fedora
+    description: |
+      This tool modifies your flatpaks and flatpak sources.
+      If you do not want to do this exit the installer.
+      For new users just do it (tm)
+    actions:
+    - run: flatpak remote-delete fedora --force
+    - run: flatpak remove --system --noninteractive --all
+```
 """
 
 import asyncio

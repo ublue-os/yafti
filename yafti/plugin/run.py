@@ -1,25 +1,13 @@
+# Copyright 2023 Marco Ceppi
+# SPDX-License-Identifier: Apache-2.0
+
 """
-Copyright 2023 Marco Ceppi
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-/f
-
 Run a command on the system
 
-Configuration usage example:
+Configuration:
 
-  commands:
+    ```yaml
+    commands:
     pre:
     # Simple config
     - run: /usr/bin/whoami
@@ -29,20 +17,23 @@ Configuration usage example:
     - run: /bin/ls -lah
     - run: ["/bin/ls", "-lah"]
     - run:
-      - /bin/ls
-      - "-lah"
+        - /bin/ls
+        - "-lah"
+    ```
 
+Example
 
-Programmatic usage example:
+```python
+from yafti.plugin.run import Run
+r = Run()
 
-  from yafti.plugin.run import Run
-  r = Run()
-  r.exec(["/usr/bin/whoami"])
-  f.exec(pkg="com.github.marcoceppi.PackageName", reinstall=True)
+await r.exec(["/usr/bin/whoami"])
+await f.exec(pkg="com.github.marcoceppi.PackageName", reinstall=True)
 
-  r("/usr/bin/whoami")
-  r(cmd="/usr/bin/whoami")
-  r(cmd=["/usr/bin/whoami"])
+await r("/usr/bin/whoami")
+await r(cmd="/usr/bin/whoami")
+await r(cmd=["/usr/bin/whoami"])
+```
 
 """
 
