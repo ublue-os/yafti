@@ -70,7 +70,11 @@ class PackageScreen(YaftiScreen, Adw.Bin):
             PackagePickerScreen(title=self.title, packages=self.packages)
         )
         self.pkg_carousel.append(
-            PackageInstallScreen(title=self.title, package_manager=self.package_manager, package_manager_args=self.package_manager_args)
+            PackageInstallScreen(
+                title=self.title,
+                package_manager=self.package_manager,
+                package_manager_args=self.package_manager_args,
+            )
         )
 
     def on_activate(self):
