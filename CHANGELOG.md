@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/ublue-os/yafti/compare/v0.5.0...v0.6.0) (2023-04-12)
+
+
+### Features
+
+* enable both user and system flatpak installs ([#82](https://github.com/ublue-os/yafti/issues/82)) ([8413bee](https://github.com/ublue-os/yafti/commit/8413beeadb5604407fa8a31e643c92fed29fbd7e))
+* show a bouncing progress bar during package installation ([#74](https://github.com/ublue-os/yafti/issues/74)) ([e1fdd65](https://github.com/ublue-os/yafti/commit/e1fdd65d6cec405f1926524ed1e54c7319a8a147))
+
 ## [0.5.0](https://github.com/ublue-os/yafti/compare/v0.4.1...v0.5.0) (2023-03-27)
 
 
