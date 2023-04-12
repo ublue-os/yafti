@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class PackageConfig(BaseModel):
-    __root__: dict[str, str]
+    __root__: dict[str, str | dict]
 
 
 class PackageGroupConfigDetails(BaseModel):

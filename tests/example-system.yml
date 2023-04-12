@@ -35,7 +35,7 @@ screens:
       title: Package Installation
       show_terminal: true
       package_manager: yafti.plugin.flatpak
-      package_manager_args:
+      package_manager_defaults:
         user: false
         system: true
       groups:
@@ -43,7 +43,10 @@ screens:
           description: All the good stuff
           packages:
             - Calculator: org.gnome.Calculator
-            - Firefox: org.mozilla.firefox
+            - Firefox:
+                package: org.mozilla.firefox
+                system: false
+                user: true
         Gaming:
           description: GAMES GAMES GAMES
           default: false

@@ -150,7 +150,7 @@ class Flatpak(Run):
 
     async def install(
         self,
-        pkg: str,
+        package: str,
         user: bool = True,
         system: bool = False,
         assumeyes: bool = True,
@@ -161,7 +161,7 @@ class Flatpak(Run):
         """Install flatpak package on the host system
 
         Args:
-          pkg: Name of the flatpak package to install
+          package: Name of the flatpak package to install
           user: Install on the user installation
           system: Install on the system-wide installation
           assumeyes:
@@ -182,12 +182,12 @@ class Flatpak(Run):
         )
         cmd = [self.bin, "install"]
         cmd.extend(args)
-        cmd.append(pkg)
+        cmd.append(package)
         return await self.exec(" ".join(cmd))
 
     async def remove(
         self,
-        pkg: str,
+        package: str,
         user: bool = False,
         system: bool = True,
         force: bool = False,
@@ -199,7 +199,7 @@ class Flatpak(Run):
         )
         cmd = [self.bin, "remove"]
         cmd.extend(args)
-        cmd.append(pkg)
+        cmd.append(package)
         return self.exec(cmd)
 
     def ls(self) -> list[ApplicationDetail]:
@@ -214,10 +214,10 @@ class Flatpak(Run):
         # TODO: when a string is passed, make sure it maps to the "pkg" key.
         if params.install:
             if isinstance(params.install, str):
-                params.install = {"pkg": params.install}
+                params.install = {"package": params.install}
             r = asyncio.ensure_future(self.install(**params.install))
         else:
             if isinstance(params.remove, str):
-                params.remove = {"pkg": params.remove}
+                params.remove = {"package": params.remove}
             r = asyncio.ensure_future(self.remove(**params.install))
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)

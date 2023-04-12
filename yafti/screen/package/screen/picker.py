@@ -1,4 +1,5 @@
 from functools import partial
+import json
 
 from gi.repository import Adw, Gtk
 from pydantic import BaseModel
@@ -79,6 +80,8 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                 d = self.packages.get(group)
                 for pkg in d.get("packages", []):
                     for pkg_name in pkg.values():
+                        if isinstance(pkg_name, dict):
+                            pkg_name = json.dumps(pkg_name)
                         STATE.set(f"pkg:{pkg_name}", value)
 
             state_set(name, None, details.get("default", True))
@@ -143,6 +146,8 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                     title=name,
                 )
                 _app_switcher = Gtk.Switch()
+                if isinstance(pkg, dict):
+                    pkg = json.dumps(pkg)
                 _app_switcher.set_active(STATE.get(f"pkg:{pkg}"))
                 _app_switcher.set_valign(Gtk.Align.CENTER)
 
