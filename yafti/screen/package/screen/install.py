@@ -72,17 +72,20 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
 
     class Config(YaftiScreenConfig):
         package_manager: str = "yafti.plugin.flatpak"
+        package_manager_args: dict = {"user": True, "system": False}
 
     def __init__(
         self,
         title: str = "Package Installation",
         package_manager: str = "yafti.plugin.flatpak",
+        package_manager_args: dict = {"user": True, "system": False},
         **kwargs,
     ):
         super().__init__(**kwargs)
         from yafti.registry import PLUGINS
 
         self.package_manager = PLUGINS.get(package_manager)
+        self.package_manager_args = package_manager_args
         self.btn_console.connect("clicked", self.toggle_console)
 
     async def on_activate(self):
@@ -118,7 +121,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         yafti.share.BTN_NEXT.set_label("Installing...")
         yafti.share.BTN_BACK.set_visible(False)
         for idx, pkg in enumerate(packages):
-            r = await self.package_manager.install(pkg)
+            r = await self.package_manager.install(pkg, **self.package_manager_args)
             self.console.stdout(r.stdout)
             self.console.stderr(r.stderr)
             self.pulse = False

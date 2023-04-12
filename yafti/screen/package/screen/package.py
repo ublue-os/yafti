@@ -41,6 +41,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
     class Config(YaftiScreenConfig):
         show_terminal: bool = True
         package_manager: str
+        package_manager_args: dict = {}
         groups: Optional[PackageGroupConfig] = None
         packages: Optional[list[PackageConfig]] = None
 
@@ -48,6 +49,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         self,
         title: str = "Package Installation",
         package_manager: str = "yafti.plugin.flatpak",
+        package_manager_args: dict = {},
         packages: list[PackageConfig] = None,
         groups: PackageGroupConfig = None,
         show_terminal: bool = True,
@@ -58,6 +60,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         self.packages = groups or packages
         self.show_terminal = show_terminal
         self.package_manager = package_manager
+        self.package_manager_args = package_manager_args
         STATE.load(parse_packages(self.packages))
         self.pkg_carousel.connect("page-changed", self.changed)
         self.draw()
@@ -67,7 +70,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
             PackagePickerScreen(title=self.title, packages=self.packages)
         )
         self.pkg_carousel.append(
-            PackageInstallScreen(title=self.title, package_manager=self.package_manager)
+            PackageInstallScreen(title=self.title, package_manager=self.package_manager, package_manager_args=self.package_manager_args)
         )
 
     def on_activate(self):
