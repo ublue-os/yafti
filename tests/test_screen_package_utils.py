@@ -7,7 +7,13 @@ def test_parse_packages_groups():
             "description": "hello world",
             "packages": [
                 {"Calculator": "org.gnome.Calculator"},
-                {"Firefox": "org.mozilla.firefox"},
+                {
+                    "Firefox": {
+                        "package": "org.mozilla.firefox",
+                        "system": True,
+                        "user": False,
+                    },
+                },
             ],
         },
         "Gaming": {
@@ -23,7 +29,7 @@ def test_parse_packages_groups():
     expected = {
         "group:Core": True,
         "pkg:org.gnome.Calculator": True,
-        "pkg:org.mozilla.firefox": True,
+        'pkg:{"package": "org.mozilla.firefox", "system": true, "user": false}': True,
         "group:Gaming": True,
         "pkg:com.valvesoftware.Steam": True,
         "pkg:org.gnome.Games": True,

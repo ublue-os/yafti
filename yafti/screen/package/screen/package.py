@@ -43,6 +43,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         package_manager: str
         groups: Optional[PackageGroupConfig] = None
         packages: Optional[list[PackageConfig]] = None
+        package_manager_defaults: Optional[dict] = None
 
     def __init__(
         self,
@@ -51,6 +52,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         packages: list[PackageConfig] = None,
         groups: PackageGroupConfig = None,
         show_terminal: bool = True,
+        package_manager_defaults: Optional[dict] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -58,6 +60,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         self.packages = groups or packages
         self.show_terminal = show_terminal
         self.package_manager = package_manager
+        self.package_manager_defaults = package_manager_defaults
         STATE.load(parse_packages(self.packages))
         self.pkg_carousel.connect("page-changed", self.changed)
         self.draw()
@@ -67,7 +70,11 @@ class PackageScreen(YaftiScreen, Adw.Bin):
             PackagePickerScreen(title=self.title, packages=self.packages)
         )
         self.pkg_carousel.append(
-            PackageInstallScreen(title=self.title, package_manager=self.package_manager)
+            PackageInstallScreen(
+                title=self.title,
+                package_manager=self.package_manager,
+                package_manager_defaults=self.package_manager_defaults,
+            )
         )
 
     def on_activate(self):

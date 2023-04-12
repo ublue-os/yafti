@@ -1,11 +1,11 @@
 import asyncio
 from functools import partial
-from typing import Optional, List
+from typing import List, Optional
 
 from gi.repository import Adw, Gtk
 
-from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti import events
+from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
 
 _xml = """\

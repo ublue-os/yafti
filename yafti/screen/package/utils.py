@@ -1,3 +1,6 @@
+import json
+
+
 def parse_packages(packages: dict | list) -> dict:
     output = {}
 
@@ -8,5 +11,8 @@ def parse_packages(packages: dict | list) -> dict:
         return output
 
     for pkgcfg in packages:
-        output.update({f"pkg:{package}": True for package in pkgcfg.values()})
+        for package in pkgcfg.values():
+            if isinstance(package, dict):
+                package = json.dumps(package)
+            output[f"pkg:{package}"] = True
     return output

@@ -1,9 +1,13 @@
 import asyncio
+import json
+
 from gi.repository import Gtk
+from typing import Optional
 
 import yafti.share
 from yafti import events
-from yafti.abc import YaftiScreen, YaftiScreenConfig
+from yafti import log
+from yafti.abc import YaftiScreen
 from yafti.screen.console import ConsoleScreen
 from yafti.screen.package.state import STATE
 
@@ -70,19 +74,18 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     already_run = False
     pulse = True
 
-    class Config(YaftiScreenConfig):
-        package_manager: str = "yafti.plugin.flatpak"
-
     def __init__(
         self,
         title: str = "Package Installation",
         package_manager: str = "yafti.plugin.flatpak",
+        package_manager_defaults: Optional[dict] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
         from yafti.registry import PLUGINS
 
         self.package_manager = PLUGINS.get(package_manager)
+        self.package_manager_defaults = package_manager_defaults or {}
         self.btn_console.connect("clicked", self.toggle_console)
 
     async def on_activate(self):
@@ -113,14 +116,26 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         asyncio.create_task(self.do_pulse())
         return self.install(packages)
 
+    def run_package_manager(self, packge_config):
+        try:
+            config = json.loads(packge_config)
+        except json.decoder.JSONDecodeError as e:
+            log.debug("could not parse", config=packge_config, e=e)
+            config = {"package": packge_config}
+
+        log.debug("parsed packages config", config=config)
+        opts = self.package_manager_defaults.copy()
+        opts.update(config)
+        return self.package_manager.install(**opts)
+
     async def install(self, packages: list):
         total = len(packages)
         yafti.share.BTN_NEXT.set_label("Installing...")
         yafti.share.BTN_BACK.set_visible(False)
         for idx, pkg in enumerate(packages):
-            r = await self.package_manager.install(pkg)
-            self.console.stdout(r.stdout)
-            self.console.stderr(r.stderr)
+            results = await self.run_package_manager(pkg)
+            self.console.stdout(results.stdout)
+            self.console.stderr(results.stderr)
             self.pulse = False
             self.pkg_progress.set_fraction((idx + 1) / total)
 
