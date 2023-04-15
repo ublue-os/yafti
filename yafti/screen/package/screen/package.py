@@ -39,6 +39,7 @@ class PackageScreen(YaftiScreen, Adw.Bin):
     pkg_carousel = Gtk.Template.Child()
 
     class Config(YaftiScreenConfig):
+        title: str
         show_terminal: bool = True
         package_manager: str
         groups: Optional[PackageGroupConfig] = None

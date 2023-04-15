@@ -68,6 +68,7 @@ _xml = """\
 class PackageInstallScreen(YaftiScreen, Gtk.Box):
     __gtype_name__ = "YaftiPackageInstallScreen"
 
+    status_page = Gtk.Template.Child()
     pkg_progress = Gtk.Template.Child()
     btn_console = Gtk.Template.Child()
     started = False
@@ -84,6 +85,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         super().__init__(**kwargs)
         from yafti.registry import PLUGINS
 
+        self.status_page.set_title(title)
         self.package_manager = PLUGINS.get(package_manager)
         self.package_manager_defaults = package_manager_defaults or {}
         self.btn_console.connect("clicked", self.toggle_console)

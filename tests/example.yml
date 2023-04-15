@@ -32,7 +32,7 @@ screens:
   applications:
     source: yafti.screen.package
     values:
-      title: Package Installation
+      title: Install flatpaks
       show_terminal: true
       package_manager: yafti.plugin.flatpak
       groups:
