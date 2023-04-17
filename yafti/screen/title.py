@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 from functools import partial
 from typing import List, Optional
 
@@ -49,7 +50,7 @@ class TitleScreen(YaftiScreen, Adw.Bin):
         description: str = None,
         icon: str = None,
         links: List[dict[str, str]] = None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.status_page.set_title(title)
@@ -70,16 +71,21 @@ class TitleScreen(YaftiScreen, Adw.Bin):
         for link in links:
             title, action = list(link.items())[0]
             plugin, config = list(action.items())[0]
-            events.register("on_action_row_open")
-
-            events.on(
-                "on_action_row_open", lambda _: self.on_action_row_open(plugin, config)
+            hash_title = hashlib.md5(
+                title.encode("utf-8"), usedforsecurity=False
+            ).hexdigest()
+            event_name = f"on_action_row_open_{hash_title}"
+            event_fn = partial(
+                TitleScreen.on_action_row_open, plugin=plugin, config=config
             )
+
+            events.register(event_name)
+            events.on(event_name, event_fn)
 
             def do_emit(*args, **kwargs):
                 asyncio.create_task(events.emit(*args, **kwargs))
 
-            _on_clicked = partial(do_emit, "on_action_row_open")
+            _on_clicked = partial(do_emit, event_name)
 
             link_action_row = Adw.ActionRow()
 
@@ -93,5 +99,8 @@ class TitleScreen(YaftiScreen, Adw.Bin):
 
             links_list_box.append(link_action_row)
 
-    async def on_action_row_open(self, plugin, config):
+    @staticmethod
+    async def on_action_row_open(*args, plugin=None, config=None):
+        if not plugin and not config:
+            return
         await PLUGINS.get(plugin)(config)
