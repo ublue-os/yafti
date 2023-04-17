@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1](https://github.com/ublue-os/yafti/compare/v0.6.0...v0.6.1) (2023-04-17)
+
+
+### Bug Fixes
+
+* multiple links in "final-screen" values results in error ([#84](https://github.com/ublue-os/yafti/issues/84)) ([457ffe8](https://github.com/ublue-os/yafti/commit/457ffe83865079c61101d0a2b705cd1485a7340b))
+* yafti.screen.package title doesn't show up ([#85](https://github.com/ublue-os/yafti/issues/85)) ([8641b56](https://github.com/ublue-os/yafti/commit/8641b5614d89e28b912ae5a6fe0ba646f22c70ee))
+
 ## [0.6.0](https://github.com/ublue-os/yafti/compare/v0.5.0...v0.6.0) (2023-04-12)
 
 
