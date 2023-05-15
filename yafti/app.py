@@ -19,6 +19,7 @@ import hashlib
 import gbulb
 import yaml
 from gi.repository import Adw
+from pathlib import Path
 
 from yafti.parser import Config, YaftiRunModes
 from yafti.screen.window import Window
@@ -32,7 +33,16 @@ class Yafti(Adw.Application):
 
     def run(self, *args, **kwargs):
         configured_mode = self.config.properties.mode
-        _p = self.config.properties.path.expanduser()
+        _p: Path = self.config.properties.path.expanduser()
+        # TODO(GH-#103): Remove this prior to 1.0 release. Start.
+        _old_p = Path("~/.config/yafti-last-run").expanduser()
+        if _old_p.exists() and _old_p.resolve() != _p.resolve():
+            if not _p.parent.is_dir():
+                _p.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+            if _p.is_file():
+                _p.unlink()
+            _old_p.rename(_p)
+        # TODO(GH-#103): End.
         if configured_mode == YaftiRunModes.disable:
             return
 
