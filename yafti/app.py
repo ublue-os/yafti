@@ -54,7 +54,7 @@ class Yafti(Adw.Application):
     def config_sha(self):
         return hashlib.sha256(yaml.dump(self.config.dict()).encode()).hexdigest()
 
-    def sync_first_run(self):
+    def sync_last_run(self):
         p = self.config.properties.path.expanduser()
         if not p.parent.is_dir():
             p.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
@@ -62,5 +62,5 @@ class Yafti(Adw.Application):
 
     def quit(self, *args, **kwargs):
         self.loop.stop()
-        self.sync_first_run()
+        self.sync_last_run()
         super().quit()
