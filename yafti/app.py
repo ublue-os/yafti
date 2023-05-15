@@ -56,6 +56,8 @@ class Yafti(Adw.Application):
 
     def sync_first_run(self):
         p = self.config.properties.path.expanduser()
+        if not p.parent.is_dir():
+            p.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
         p.write_text(self.config_sha)
 
     def quit(self, *args, **kwargs):
