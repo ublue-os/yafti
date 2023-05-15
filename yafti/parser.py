@@ -39,7 +39,7 @@ class YaftiRunModes(str, Enum):
 
 
 class YaftiProperties(BaseModel):
-    path: Optional[Path] = Path("~/.config/yafti-last-run")
+    path: Optional[Path] = Path("~/.config/yafti/last-run")
     mode: YaftiRunModes = YaftiRunModes.changed
 
 
