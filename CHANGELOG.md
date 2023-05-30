@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/ublue-os/yafti/compare/v0.6.1...v0.6.2) (2023-05-30)
+
+
+### Bug Fixes
+
+* move user data to sub-folder and ensure folder existence ([#102](https://github.com/ublue-os/yafti/issues/102)) ([7fce7fb](https://github.com/ublue-os/yafti/commit/7fce7fb7e1f1f4e82d359c4653494fcd0c4b593a))
+
 ## [0.6.1](https://github.com/ublue-os/yafti/compare/v0.6.0...v0.6.1) (2023-04-17)
 
 
