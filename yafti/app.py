@@ -27,7 +27,7 @@ from yafti.screen.window import Window
 
 class Yafti(Adw.Application):
     def __init__(self, cfg: Config = None, loop=None):
-        super().__init__(application_id="it.ublue.Yafti", title=cfg.title)
+        super().__init__(application_id="it.ublue.Yafti")
         self.config = cfg
         self.loop = loop or gbulb.get_event_loop()
 
