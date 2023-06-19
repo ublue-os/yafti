@@ -16,10 +16,11 @@ limitations under the License.
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
+from pydantic.env_settings import SettingsSourceCallable
 
 
 class ActionConfig(BaseModel):
@@ -49,15 +50,39 @@ class YaftiProperties(BaseModel):
     save_state: YaftSaveState = YaftSaveState.always
 
 
-class Config(BaseModel):
+class Config(BaseSettings):
     title: str
     properties: YaftiProperties = YaftiProperties()
     actions: Optional[ActionConfig]
     screens: Optional[dict[str, ScreenConfig]]  # Screens are parsed per plugin
 
+    class Config:
+        env_prefix = "yafti_"
+        env_nested_delimiter = "__"
+        env_file = "/etc/yafti.yml"
 
-def parse(config_file: str) -> Config:
-    """Parse the YAML or JSON file passed and return a rendered Config object"""
-    with open(config_file) as f:
-        cfg = yaml.safe_load(f)
-    return Config.parse_obj(cfg)
+        @classmethod
+        def customise_sources(
+            cls,
+            init_settings: SettingsSourceCallable,
+            env_settings: SettingsSourceCallable,
+            file_secret_settings: SettingsSourceCallable,
+        ):
+            return (
+                init_settings,
+                yaml_config_settings_source,
+                env_settings,
+                file_secret_settings,
+            )
+
+
+def yaml_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
+    """
+    A simple settings source that loads variables from a JSON file
+    at the project's root.
+
+    Here we happen to choose to use the `env_file_encoding` from Config
+    when reading `config.json`
+    """
+    encoding = settings.__config__.env_file_encoding
+    return yaml.safe_load(Path(settings.__config__.env_file).read_text(encoding))

@@ -39,7 +39,7 @@ from gi.repository import Adw, Gtk
 import yafti.share
 from yafti import events
 from yafti.abc import YaftiScreen, YaftiScreenConfig
-from yafti.registry import PLUGINS
+from yafti.core.registry import PLUGINS
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

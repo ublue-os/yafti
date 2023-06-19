@@ -5,7 +5,7 @@ from gi.repository import Adw, Gtk
 
 import yafti.share
 from yafti import events
-from yafti.registry import SCREENS
+from yafti.core.registry import SCREENS
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

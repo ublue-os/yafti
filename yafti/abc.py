@@ -26,7 +26,7 @@ class YaftiPlugin:
 
 
 async def _show_screen(condition):
-    from yafti.registry import PLUGINS
+    from yafti.core.registry import PLUGINS
 
     plugin_name = list(condition.keys())[0]
     plugin = PLUGINS.get(plugin_name)

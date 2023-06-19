@@ -84,7 +84,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         **kwargs,
     ):
         super().__init__(**kwargs)
-        from yafti.registry import PLUGINS
+        from yafti.core.registry import PLUGINS
 
         self.status_page.set_title(title)
         self.package_manager = PLUGINS.get(package_manager)

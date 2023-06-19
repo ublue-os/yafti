@@ -23,7 +23,7 @@ import yaml
 import yafti.setup  # noqa
 from yafti import log
 from yafti.app import Yafti
-from yafti.parser import Config
+from yafti.core.config import Config
 
 
 def run(
