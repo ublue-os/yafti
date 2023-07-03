@@ -89,6 +89,18 @@ class Run(YaftiPlugin):
             cmd, returncode=proc.returncode, stdout=stdout, stderr=stderr
         )
 
+    async def install(self, package: str) -> YaftiPluginReturn:
+        """Execute a command on the host system
+
+        Args:
+          package: The command to execute
+
+        Returns:
+          An object containing the stdout and stderr from the command
+        """
+        cmd = package
+        return await self.exec(cmd)
+
     @validate_arguments
     async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
         log.debug("run called", cmd=cmd)
