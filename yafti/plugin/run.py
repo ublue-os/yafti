@@ -98,8 +98,7 @@ class Run(YaftiPlugin):
         Returns:
           An object containing the stdout and stderr from the command
         """
-        cmd = package
-        return await self.exec(cmd)
+        return await self.exec(package)
 
     @validate_arguments
     async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
