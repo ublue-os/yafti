@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/ublue-os/yafti/compare/v0.6.2...v0.7.0) (2023-07-05)
+
+
+### Features
+
+* Allow run plugin to be used as a package manager ([#128](https://github.com/ublue-os/yafti/issues/128)) ([7912e09](https://github.com/ublue-os/yafti/commit/7912e0984b6431f25482e681604944f2dc603215))
+
+
+### Bug Fixes
+
+* add application title ([#113](https://github.com/ublue-os/yafti/issues/113)) ([7f6b475](https://github.com/ublue-os/yafti/commit/7f6b4757632b4885eb882156c8e1f8e79711b070))
+
+
+### Reverts
+
+* "fix: add application title" ([#116](https://github.com/ublue-os/yafti/issues/116)) ([fb3c8ee](https://github.com/ublue-os/yafti/commit/fb3c8eee34548428efec7bf4f25883d39e76e23d))
+
 ## [0.6.2](https://github.com/ublue-os/yafti/compare/v0.6.1...v0.6.2) (2023-05-30)
 
 
