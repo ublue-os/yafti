@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/ublue-os/yafti/compare/v0.7.0...v0.7.1) (2023-08-07)
+
+
+### Bug Fixes
+
+* support for multiple package screens in one config ([#139](https://github.com/ublue-os/yafti/issues/139)) ([c9db948](https://github.com/ublue-os/yafti/commit/c9db948fb84838676cc304023be43c97a215d6ba))
+
 ## [0.7.0](https://github.com/ublue-os/yafti/compare/v0.6.2...v0.7.0) (2023-07-05)
 
 
