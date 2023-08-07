@@ -136,6 +136,10 @@ class Window(Adw.ApplicationWindow):
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
 
+    @property
+    def is_last_page(self):
+        return self.idx + 1 >= self.carousel.get_n_pages()
+
     async def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
             self.app.quit()
