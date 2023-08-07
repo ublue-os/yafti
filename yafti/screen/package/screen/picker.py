@@ -58,7 +58,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
 
     def __init__(
         self,
-        id: str,
+        state: PackageScreenState,
         title: str,
         packages: list | dict,
         **kwargs,
@@ -66,7 +66,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
         super().__init__(**kwargs)
         self.status_page.set_title(title)
         self.packages = packages
-        self.state = PackageScreenState(id)
+        self.state = state
         self.draw()
 
     def draw(self):
