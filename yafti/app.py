@@ -31,7 +31,7 @@ class Yafti(Adw.Application):
         self.config = cfg
         self.loop = loop or gbulb.get_event_loop()
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, force_run: bool = False, **kwargs):
         configured_mode = self.config.properties.mode
         _p: Path = self.config.properties.path.expanduser()
         # TODO(GH-#103): Remove this prior to 1.0 release. Start.
@@ -43,15 +43,16 @@ class Yafti(Adw.Application):
                 _p.unlink()
             _old_p.rename(_p)
         # TODO(GH-#103): End.
-        if configured_mode == YaftiRunModes.disable:
-            return
-
-        if configured_mode == YaftiRunModes.changed:
-            if _p.exists() and _p.read_text() == self.config_sha:
+        if not force_run:
+            if configured_mode == YaftiRunModes.disable:
                 return
 
-        if configured_mode == YaftiRunModes.ignore and _p.exists():
-            return
+            if configured_mode == YaftiRunModes.changed:
+                if _p.exists() and _p.read_text() == self.config_sha:
+                    return
+
+            if configured_mode == YaftiRunModes.ignore and _p.exists():
+                return
 
         super().run(*args, **kwargs)
 
