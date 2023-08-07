@@ -1,4 +1,10 @@
 import json
+from typing import Any
+from hashlib import sha256
+
+
+def generate_fingerprint(obj: Any):
+    return sha256(json.dumps(obj).encode()).hexdigest()
 
 
 def parse_packages(packages: dict | list) -> dict:

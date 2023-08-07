@@ -4,6 +4,16 @@ from pydantic import validate_arguments
 class PackageScreenState:
     __slots__ = ["state"]
 
+    def __new__(cls, id: str):
+        if not hasattr(cls, "instances"):
+            cls.instances = {}
+        if id not in cls.instances:
+            cls.instances[id] = super(PackageScreenState, cls).__new__(cls)
+        return cls.instances[id]
+
+    def __init__(self, id: str):
+        self.state = {}
+
     @classmethod
     def from_dict(cls, data: dict) -> "PackageScreenState":
         self = cls()
@@ -14,9 +24,6 @@ class PackageScreenState:
     def load(self, data: dict):
         for k, v in data.items():
             self.set(k, v)
-
-    def __init__(self):
-        self.state = {}
 
     @validate_arguments
     def remove(self, item: str) -> None:
@@ -53,6 +60,3 @@ class PackageScreenState:
     @validate_arguments
     def get(self, item: str) -> bool:
         return self.state.get(item)
-
-
-STATE = PackageScreenState()
