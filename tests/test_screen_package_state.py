@@ -4,34 +4,27 @@ from pydantic import ValidationError
 
 
 def test_state_set():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_set")
     state.set("hello", True)
     assert state.get("hello") is True
 
 
 def test_state_set_fail():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_set_fail")
     with pytest.raises(ValidationError):
         state.set("hello", "world")
 
 
 def test_state_load():
     input = {"hello": True, "world": False}
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_load")
     state.load(input)
     assert state.get("hello") is True
     assert state.get("world") is False
 
 
-def test_state_from_dict():
-    input = {"hello": True, "world": False}
-    state = PackageScreenState.from_dict(input)
-    assert state.get("hello") is True
-    assert state.get("world") is False
-
-
 def test_state_remove():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_remove")
     state.set("kenobi", False)
     state.set("general", True)
     assert state.get("kenobi") is False
@@ -42,7 +35,7 @@ def test_state_remove():
 
 
 def test_state_on_off():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_on_off")
     state.on("grievous")
     assert state.get("grievous") is True
     state.off("grievous")
@@ -55,7 +48,7 @@ def test_state_on_off():
 
 
 def test_state_toggle():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_toggle")
     state.on("chewy")
     assert state.get("chewy") is True
     state.toggle("chewy")
@@ -65,13 +58,13 @@ def test_state_toggle():
 
 
 def test_state_toggle_error():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_toggle_error")
     with pytest.raises(KeyError):
         state.toggle("barf")
 
 
 def test_state_get_on():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_get_on")
     state.on("chewy")
     state.on("han")
     state.off("greedo")
@@ -81,7 +74,7 @@ def test_state_get_on():
 
 
 def test_state_keys():
-    state = PackageScreenState()
+    state = PackageScreenState("test_state_keys")
     state.on("AA")
     state.on("BB")
     state.off("CC")

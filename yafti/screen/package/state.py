@@ -14,12 +14,6 @@ class PackageScreenState:
     def __init__(self, id: str):
         self.state = {}
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "PackageScreenState":
-        self = cls()
-        self.load(data)
-        return self
-
     @validate_arguments
     def load(self, data: dict):
         for k, v in data.items():
