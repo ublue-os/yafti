@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import logging
+from typing import Annotated
 
 import typer
 import yaml
@@ -25,12 +26,18 @@ from yafti.app import Yafti
 from yafti.parser import Config
 
 
-def run(config: typer.FileText = typer.Argument("/etc/yafti.yml"), debug: bool = False):
+def run(
+    config: typer.FileText = typer.Argument("/etc/yafti.yml"),
+    debug: bool = False,
+    force_run: Annotated[
+        bool, typer.Option("-f", "--force", help="Ignore run mode and force run")
+    ] = False,
+):
     log.set_level(logging.DEBUG if debug else logging.INFO)
     log.debug("starting up", config=config, debug=debug)
     config = Config.parse_obj(yaml.safe_load(config))
     app = Yafti(config)
-    app.run(None)
+    app.run(None, force_run=force_run)
 
 
 def app():
