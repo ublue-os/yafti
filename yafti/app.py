@@ -21,7 +21,7 @@ import yaml
 from gi.repository import Adw
 from pathlib import Path
 
-from yafti.parser import Config, YaftiRunModes
+from yafti.parser import Config, YaftiRunModes, YaftSaveState
 from yafti.screen.window import Window
 
 
@@ -57,8 +57,8 @@ class Yafti(Adw.Application):
         super().run(*args, **kwargs)
 
     def do_activate(self):
-        win = Window(application=self)
-        win.present()
+        self._win = Window(application=self)
+        self._win.present()
         self.loop.run()
 
     @property
@@ -73,5 +73,14 @@ class Yafti(Adw.Application):
 
     def quit(self, *args, **kwargs):
         self.loop.stop()
-        self.sync_last_run()
+        if self.config.properties.save_state == YaftSaveState.always:
+            self.sync_last_run()
+
+        if (
+            self.config.properties.save_state == YaftSaveState.end
+            and self._win
+            and self._win.is_last_page
+        ):
+            self.sync_last_run()
+
         super().quit()
