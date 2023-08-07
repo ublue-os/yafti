@@ -29,6 +29,15 @@ screens:
       actions:
         - run: flatpak remote-delete fedora --force
         - run: flatpak remove --system --noninteractive --all
+  applications-three:
+    source: yafti.screen.package
+    values:
+      title: Install more flatpaks
+      show_terminal: true
+      package_manager: yafti.plugin.flatpak
+      packages:
+        - Steam: com.valvesoftware.Steam
+        - Games: org.gnome.Games
   applications:
     source: yafti.screen.package
     values:
@@ -41,12 +50,6 @@ screens:
           packages:
             - Calculator: org.gnome.Calculator
             - Firefox: org.mozilla.firefox
-        Gaming:
-          description: GAMES GAMES GAMES
-          default: false
-          packages:
-            - Steam: com.valvesoftware.Steam
-            - Games: org.gnome.Games
   applications-two:
     source: yafti.screen.package
     values:
