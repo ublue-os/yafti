@@ -71,7 +71,8 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
 
     def draw(self):
         if isinstance(self.packages, list):
-            # TODO: Implement a list of packages and not package groups
+            for item in self._build_apps(self.packages):
+                self.package_list.add(item)
             return
 
         for name, details in self.packages.items():
