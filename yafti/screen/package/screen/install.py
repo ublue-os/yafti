@@ -77,7 +77,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
 
     def __init__(
         self,
-        id: str,
+        state: PackageScreenState,
         title: str = "Package Installation",
         package_manager: str = "yafti.plugin.flatpak",
         package_manager_defaults: Optional[dict] = None,
@@ -90,7 +90,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         self.package_manager = PLUGINS.get(package_manager)
         self.package_manager_defaults = package_manager_defaults or {}
         self.btn_console.connect("clicked", self.toggle_console)
-        self.state = PackageScreenState(id)
+        self.state = state
 
     async def on_activate(self):
         if self.started or self.already_run:

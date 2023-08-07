@@ -71,13 +71,13 @@ class PackageScreen(YaftiScreen, Adw.Bin):
     def draw(self):
         self.pkg_carousel.append(
             PackagePickerScreen(
-                id=self.fingerprint, title=self.title, packages=self.packages
+                state=self.state, title=self.title, packages=self.packages
             )
         )
         self.pkg_carousel.append(
             PackageInstallScreen(
                 title=self.title,
-                id=self.fingerprint,
+                state=self.state,
                 package_manager=self.package_manager,
                 package_manager_defaults=self.package_manager_defaults,
             )
