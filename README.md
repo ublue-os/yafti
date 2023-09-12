@@ -118,7 +118,7 @@ This project uses Poetry and Python 3.11. Make sure you have Python 3.11 and [Po
 If you're on a Ublue / immutable OS, you'll need to run these and the poetry install in a toolbox.
 
 ```
-sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
+sudo dnf install poetry python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
 poetry install
 ```
 
