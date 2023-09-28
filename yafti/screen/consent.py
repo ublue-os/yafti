@@ -20,6 +20,7 @@ Configuration usage example:
           For new users just do it (tm)
         actions:
           - run: flatpak remote-delete fedora --force
+          - run: flatpak remote-delete fedora-testing --force
           - run: flatpak remove --system --noninteractive --all
 
 Configuration:
