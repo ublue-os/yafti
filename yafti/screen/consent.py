@@ -38,7 +38,7 @@ from gi.repository import Adw, Gtk
 
 import yafti.share
 from yafti import events
-from yafti.abc import YaftiScreen, YaftiScreenConfig
+from yafti.core.abc import YaftiScreen, YaftiScreenConfig
 from yafti.core.registry import PLUGINS
 
 _xml = """\

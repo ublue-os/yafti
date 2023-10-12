@@ -1,20 +1,6 @@
+# Copyright 2023 Marco Ceppi
+# SPDX-License-Identifier: Apache-2.0
 """
-Copyright 2023 Marco Ceppi
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-/f
-
 Run a command on the system
 
 Configuration usage example:
@@ -38,7 +24,6 @@ Programmatic usage example:
   from yafti.plugin.run import Run
   r = Run()
   r.exec(["/usr/bin/whoami"])
-  f.exec(pkg="com.github.marcoceppi.PackageName", reinstall=True)
 
   r("/usr/bin/whoami")
   r(cmd="/usr/bin/whoami")
@@ -54,11 +39,13 @@ from shutil import which
 
 from pydantic import validate_arguments
 
-from yafti import log
-from yafti.abc import YaftiPlugin, YaftiPluginReturn
+from yafti.core import log
+from yafti.core.abc import YaftiPlugin, YaftiPluginReturn
 
 
 class Run(YaftiPlugin):
+    """Run Plugin"""
+
     async def exec(self, cmd: str) -> subprocess.CompletedProcess:
         log.debug("running command", cmd=cmd)
 
@@ -70,6 +57,7 @@ class Run(YaftiPlugin):
             elif which("flatpak-spawn"):
                 cmd = f"flatpak-spawn --host {cmd}"
 
+        log.debug("running command", cmd=cmd, is_container=is_container)
         proc = await asyncio.create_subprocess_shell(
             cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
@@ -88,17 +76,6 @@ class Run(YaftiPlugin):
         return subprocess.CompletedProcess(
             cmd, returncode=proc.returncode, stdout=stdout, stderr=stderr
         )
-
-    async def install(self, package: str) -> YaftiPluginReturn:
-        """Execute a command on the host system
-
-        Args:
-          package: The command to execute
-
-        Returns:
-          An object containing the stdout and stderr from the command
-        """
-        return await self.exec(package)
 
     @validate_arguments
     async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:

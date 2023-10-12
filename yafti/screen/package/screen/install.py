@@ -6,8 +6,8 @@ from typing import Optional
 
 import yafti.share
 from yafti import events
-from yafti import log
-from yafti.abc import YaftiScreen
+from yafti.core import log
+from yafti.core.abc import YaftiScreen
 from yafti.screen.console import ConsoleScreen
 from yafti.screen.package.state import PackageScreenState
 

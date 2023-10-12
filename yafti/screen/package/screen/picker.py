@@ -4,8 +4,8 @@ import json
 from gi.repository import Adw, Gtk
 from pydantic import BaseModel
 
-from yafti import log
-from yafti.abc import YaftiScreen
+from yafti.core import log
+from yafti.core.abc import YaftiScreen
 from yafti.screen.dialog import DialogBox
 from yafti.screen.package.state import PackageScreenState
 from yafti.screen.utils import find_parent

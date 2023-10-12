@@ -1,4 +1,8 @@
+# Copyright 2023 Marco Ceppi
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
+import inspect
 
 __all__ = ["info", "warn", "error", "debug", "set_level"]
 
@@ -6,7 +10,10 @@ _l = logging.getLogger("yafti")
 
 
 def _fmt(msg: dict) -> str:
-    return " ".join([f"{k}={v}" for k, v in msg.items()])
+    frame = inspect.stack()[-1]
+    mod = inspect.getmodule(frame[0])
+    args = {"module": mod.__name__} | msg
+    return " ".join([f"{k}={v}" for k, v in args.items()])
 
 
 def set_level(level):
