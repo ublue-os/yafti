@@ -122,7 +122,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
 
         item_list = Adw.PreferencesGroup()
         item_list.set_description(
-            "The following list includes only applications available in your preferred"
+            "The following list includes only applications available in your preferred "
             "package manager."
         )
         page = Adw.PreferencesPage()
