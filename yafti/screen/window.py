@@ -37,7 +37,7 @@ _xml = """\
                 <property name="visible">False</property>
               </object>
             </child>
-            <child>
+            <child type="end">
               <object class="GtkButton" id="btn_next">
                 <property name="label" translatable="yes">Next</property>
                 <property name="halign">center</property>
