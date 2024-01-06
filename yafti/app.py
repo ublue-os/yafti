@@ -21,7 +21,7 @@ import yaml
 from gi.repository import Adw
 from pathlib import Path
 
-from yafti.parser import Config, YaftiRunModes
+from yafti.parser import Config, YaftiRunModes, YaftSaveState
 from yafti.screen.window import Window
 
 
@@ -31,7 +31,7 @@ class Yafti(Adw.Application):
         self.config = cfg
         self.loop = loop or gbulb.get_event_loop()
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, force_run: bool = False, **kwargs):
         configured_mode = self.config.properties.mode
         _p: Path = self.config.properties.path.expanduser()
         # TODO(GH-#103): Remove this prior to 1.0 release. Start.
@@ -43,21 +43,22 @@ class Yafti(Adw.Application):
                 _p.unlink()
             _old_p.rename(_p)
         # TODO(GH-#103): End.
-        if configured_mode == YaftiRunModes.disable:
-            return
-
-        if configured_mode == YaftiRunModes.changed:
-            if _p.exists() and _p.read_text() == self.config_sha:
+        if not force_run:
+            if configured_mode == YaftiRunModes.disable:
                 return
 
-        if configured_mode == YaftiRunModes.ignore and _p.exists():
-            return
+            if configured_mode == YaftiRunModes.changed:
+                if _p.exists() and _p.read_text() == self.config_sha:
+                    return
+
+            if configured_mode == YaftiRunModes.ignore and _p.exists():
+                return
 
         super().run(*args, **kwargs)
 
     def do_activate(self):
-        win = Window(application=self)
-        win.present()
+        self._win = Window(application=self)
+        self._win.present()
         self.loop.run()
 
     @property
@@ -72,5 +73,14 @@ class Yafti(Adw.Application):
 
     def quit(self, *args, **kwargs):
         self.loop.stop()
-        self.sync_last_run()
+        if self.config.properties.save_state == YaftSaveState.always:
+            self.sync_last_run()
+
+        if (
+            self.config.properties.save_state == YaftSaveState.end
+            and self._win
+            and self._win.is_last_page
+        ):
+            self.sync_last_run()
+
         super().quit()

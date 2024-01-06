@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from yafti import log
 from yafti.abc import YaftiScreen
 from yafti.screen.dialog import DialogBox
-from yafti.screen.package.state import STATE
+from yafti.screen.package.state import PackageScreenState
 from yafti.screen.utils import find_parent
 
 _xml = """\
@@ -58,6 +58,7 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
 
     def __init__(
         self,
+        state: PackageScreenState,
         title: str,
         packages: list | dict,
         **kwargs,
@@ -65,28 +66,30 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
         super().__init__(**kwargs)
         self.status_page.set_title(title)
         self.packages = packages
+        self.state = state
         self.draw()
 
     def draw(self):
         if isinstance(self.packages, list):
-            # TODO: Implement a list of packages and not package groups
+            for item in self._build_apps(self.packages):
+                self.package_list.add(item)
             return
 
         for name, details in self.packages.items():
             action_row = Adw.ActionRow(title=name, subtitle=details.get("description"))
 
             def state_set(group, _, value):
-                STATE.set(f"group:{group}", value)
+                self.state.set(f"group:{group}", value)
                 d = self.packages.get(group)
                 for pkg in d.get("packages", []):
                     for pkg_name in pkg.values():
                         if isinstance(pkg_name, dict):
                             pkg_name = json.dumps(pkg_name)
-                        STATE.set(f"pkg:{pkg_name}", value)
+                        self.state.set(f"pkg:{pkg_name}", value)
 
             state_set(name, None, details.get("default", True))
             _switcher = Gtk.Switch()
-            _switcher.set_active(STATE.get(f"group:{name}"))
+            _switcher.set_active(self.state.get(f"group:{name}"))
             _switcher.set_valign(Gtk.Align.CENTER)
 
             state_set_fn = partial(state_set, name)
@@ -148,12 +151,12 @@ class PackagePickerScreen(YaftiScreen, Adw.Bin):
                 _app_switcher = Gtk.Switch()
                 if isinstance(pkg, dict):
                     pkg = json.dumps(pkg)
-                _app_switcher.set_active(STATE.get(f"pkg:{pkg}"))
+                _app_switcher.set_active(self.state.get(f"pkg:{pkg}"))
                 _app_switcher.set_valign(Gtk.Align.CENTER)
 
                 def set_state(pkg, btn, value):
                     log.debug("state-set", pkg=pkg, value=value)
-                    STATE.set(f"pkg:{pkg}", value)
+                    self.state.set(f"pkg:{pkg}", value)
 
                 set_state_func = partial(set_state, pkg)
                 _app_switcher.connect("state-set", set_state_func)

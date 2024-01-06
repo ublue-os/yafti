@@ -1,0 +1,72 @@
+title: uBlue First Boot
+properties:
+  mode: "run-on-change"
+actions:
+  pre:
+    - run: /full/path/to/bin --with --params
+    - run: /another/command run
+    - yafti.plugin.flatpak:
+        install: org.gnome.Calculator
+  post:
+    - run: /run/these/commands --after --all --screens
+screens:
+  first-screen:
+    source: yafti.screen.title
+    values:
+      title: "That was pretty cool"
+      icon: "/path/to/icon"
+      description: |
+        Time to play overwatch
+  can-we-modify-your-flatpaks:
+    source: yafti.screen.consent
+    values:
+      title: Welcome traveler
+      condition:
+        run: flatpak remotes --system | grep fedora
+      description: |
+        This tool modifies your flatpaks and flatpak sources. If you do not want to do this exit the installer.
+        For new users just do it (tm)
+      actions:
+        - run: flatpak remote-delete fedora --force
+        - run: flatpak remove --system --noninteractive --all
+  applications-three:
+    source: yafti.screen.package
+    values:
+      title: Install more flatpaks
+      show_terminal: true
+      package_manager: yafti.plugin.flatpak
+      packages:
+        - Steam: com.valvesoftware.Steam
+        - Games: org.gnome.Games
+  applications:
+    source: yafti.screen.package
+    values:
+      title: Install flatpaks
+      show_terminal: true
+      package_manager: yafti.plugin.flatpak
+      groups:
+        Core:
+          description: All the good stuff
+          packages:
+            - Calculator: org.gnome.Calculator
+            - Firefox: org.mozilla.firefox
+  applications-two:
+    source: yafti.screen.package
+    values:
+      title: Install more flatpaks
+      show_terminal: true
+      package_manager: yafti.plugin.flatpak
+      groups:
+        Office:
+          description: All the work stuff
+          default: false
+          packages:
+            - LibreOffice: org.libreoffice.LibreOffice
+            - Calendar: org.gnome.Calendar
+  final-screen:
+    source: yafti.screen.title
+    values:
+      title: "All done"
+      icon: "/atph/to/icon"
+      description: |
+        Thanks for installing, join the community, next steps

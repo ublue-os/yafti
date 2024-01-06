@@ -7,8 +7,8 @@ from yafti import events
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.screen.package.models import PackageConfig, PackageGroupConfig
 from yafti.screen.package.screen import PackageInstallScreen, PackagePickerScreen
-from yafti.screen.package.state import STATE
-from yafti.screen.package.utils import parse_packages
+from yafti.screen.package.state import PackageScreenState
+from yafti.screen.package.utils import parse_packages, generate_fingerprint
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,17 +62,22 @@ class PackageScreen(YaftiScreen, Adw.Bin):
         self.show_terminal = show_terminal
         self.package_manager = package_manager
         self.package_manager_defaults = package_manager_defaults
-        STATE.load(parse_packages(self.packages))
+        self.fingerprint = generate_fingerprint(self.packages)
+        self.state = PackageScreenState(self.fingerprint)
+        self.state.load(parse_packages(self.packages))
         self.pkg_carousel.connect("page-changed", self.changed)
         self.draw()
 
     def draw(self):
         self.pkg_carousel.append(
-            PackagePickerScreen(title=self.title, packages=self.packages)
+            PackagePickerScreen(
+                state=self.state, title=self.title, packages=self.packages
+            )
         )
         self.pkg_carousel.append(
             PackageInstallScreen(
                 title=self.title,
+                state=self.state,
                 package_manager=self.package_manager,
                 package_manager_defaults=self.package_manager_defaults,
             )

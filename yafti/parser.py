@@ -38,9 +38,15 @@ class YaftiRunModes(str, Enum):
     disable = "disabled"
 
 
+class YaftSaveState(str, Enum):
+    always = "always"
+    end = "last-screen"
+
+
 class YaftiProperties(BaseModel):
     path: Optional[Path] = Path("~/.config/yafti/last-run")
     mode: YaftiRunModes = YaftiRunModes.changed
+    save_state: YaftSaveState = YaftSaveState.always
 
 
 class Config(BaseModel):

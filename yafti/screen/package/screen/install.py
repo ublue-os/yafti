@@ -9,7 +9,7 @@ from yafti import events
 from yafti import log
 from yafti.abc import YaftiScreen
 from yafti.screen.console import ConsoleScreen
-from yafti.screen.package.state import STATE
+from yafti.screen.package.state import PackageScreenState
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -77,6 +77,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
 
     def __init__(
         self,
+        state: PackageScreenState,
         title: str = "Package Installation",
         package_manager: str = "yafti.plugin.flatpak",
         package_manager_defaults: Optional[dict] = None,
@@ -89,6 +90,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         self.package_manager = PLUGINS.get(package_manager)
         self.package_manager_defaults = package_manager_defaults or {}
         self.btn_console.connect("clicked", self.toggle_console)
+        self.state = state
 
     async def on_activate(self):
         if self.started or self.already_run:
@@ -114,7 +116,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     def draw(self):
         self.console.hide()
         self.append(self.console)
-        packages = [item.replace("pkg:", "") for item in STATE.get_on("pkg:")]
+        packages = [item.replace("pkg:", "") for item in self.state.get_on("pkg:")]
         asyncio.create_task(self.do_pulse())
         return self.install(packages)
 

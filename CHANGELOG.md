@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.8.0](https://github.com/ublue-os/yafti/compare/v0.7.1...v0.8.0) (2023-08-07)
+
+
+### Features
+
+* add save_state config property for changing when last-save state is recorded ([#145](https://github.com/ublue-os/yafti/issues/145)) ([0bc73af](https://github.com/ublue-os/yafti/commit/0bc73afe72d5b0a42a0e872efd07e1dbe2d6fb97))
+* support for packages key for packages screen ([#148](https://github.com/ublue-os/yafti/issues/148)) ([381f73e](https://github.com/ublue-os/yafti/commit/381f73edbfff46a47cdf864593a2e762443738da))
+
+
+### Bug Fixes
+
+* pass state explicitly instead of overwriting id builtin ([#147](https://github.com/ublue-os/yafti/issues/147)) ([9fd3d79](https://github.com/ublue-os/yafti/commit/9fd3d7995d72b0364f4edfedfb147b764a40ac17))
+
+## [0.7.1](https://github.com/ublue-os/yafti/compare/v0.7.0...v0.7.1) (2023-08-07)
+
+
+### Bug Fixes
+
+* support for multiple package screens in one config ([#139](https://github.com/ublue-os/yafti/issues/139)) ([c9db948](https://github.com/ublue-os/yafti/commit/c9db948fb84838676cc304023be43c97a215d6ba))
+
 ## [0.7.0](https://github.com/ublue-os/yafti/compare/v0.6.2...v0.7.0) (2023-07-05)
 
 

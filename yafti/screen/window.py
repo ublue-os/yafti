@@ -37,7 +37,7 @@ _xml = """\
                 <property name="visible">False</property>
               </object>
             </child>
-            <child>
+            <child type="end">
               <object class="GtkButton" id="btn_next">
                 <property name="label" translatable="yes">Next</property>
                 <property name="halign">center</property>
@@ -135,6 +135,10 @@ class Window(Adw.ApplicationWindow):
 
         current_screen.deactivate()
         self.carousel.scroll_to(next_screen, animate)
+
+    @property
+    def is_last_page(self):
+        return self.idx + 1 >= self.carousel.get_n_pages()
 
     async def next(self, _) -> None:
         if self.idx + 1 >= self.carousel.get_n_pages():
