@@ -26,10 +26,8 @@ def run(
     app = Yafti(config)
     app.run(None, force_run=force_run)
 
-
 def app():
     typer.run(run)
-
 
 if __name__ == "__main__":
     app()
