@@ -6,8 +6,11 @@ from pathlib import Path
 from typing import Optional, Any
 
 import yaml
-from pydantic import BaseModel, BaseSettings
-from pydantic.env_settings import SettingsSourceCallable
+from pydantic import BaseModel
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+)
 
 
 class ActionConfig(BaseModel):
@@ -51,9 +54,9 @@ class Config(BaseSettings):
         @classmethod
         def customise_sources(
             cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
+            init_settings: PydanticBaseSettingsSource,
+            env_settings: PydanticBaseSettingsSource,
+            file_secret_settings: PydanticBaseSettingsSource,
         ):
             return (
                 init_settings,

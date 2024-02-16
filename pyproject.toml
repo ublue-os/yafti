@@ -19,7 +19,8 @@ yafti = "yafti.__main__:app"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "1.10.2"  # This needs to match the minimum supported version in Fedora
+pydantic = "^2.0.0"          # This needs to match the minimum supported version in Fedora
+pydantic-settings = "^2.0.0"
 pygobject = "^3.42.2"
 pyyaml = "^6.0"
 gbulb = "^0.6.4"

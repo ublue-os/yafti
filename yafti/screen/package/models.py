@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,RootModel
 
 
-class PackageConfig(BaseModel):
-    __root__: dict[str, str | dict]
+class PackageConfig(RootModel):
+    root: dict[str, str | dict]
 
 
 class PackageGroupConfigDetails(BaseModel):
@@ -11,5 +11,5 @@ class PackageGroupConfigDetails(BaseModel):
     packages: list[PackageConfig]
 
 
-class PackageGroupConfig(BaseModel):
-    __root__: dict[str, PackageGroupConfigDetails]
+class PackageGroupConfig(RootModel):
+    root: dict[str, PackageGroupConfigDetails]
