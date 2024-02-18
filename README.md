@@ -1,15 +1,15 @@
 # Yet Another First Time Installer
 
-This application is responsible for installing Flatpaks on first boot after a user finishes installation. 
-It is intended as a replacement for custom zenity dialogs. 
+This application is responsible for installing Flatpaks on first boot after a user finishes installation.
+It is intended as a replacement for custom zenity dialogs.
 
 ## Project goals
 
-* Config file driven via JSON/YAML
-* Support for arbitrary pre and post-install commands
-* Configuration driven screens
-* Screen independent state management with ability to set defaults
-* Extensible with drop-in Python classes / plugins to extend functionality
+- Config file driven via JSON/YAML
+- Support for arbitrary pre and post-install commands
+- Configuration driven screens
+- Screen independent state management with ability to set defaults
+- Extensible with drop-in Python classes / plugins to extend functionality
 
 ## Core features
 
@@ -34,6 +34,7 @@ The Title screen will be comprised of three primary elements. An image/icon, a h
 Display several groups of packages to install, allow for expansion of each group to individually select discrete packages or toggle the entire group on/off.
 
 eg:
+
 ```
 Core                [/] >
 Gaming              [/] >
@@ -64,12 +65,12 @@ properties:
   path: "~/.config/yafti/last-run"
 actions:
   pre:
-  - run: /full/path/to/bin --with --params
-  - run: /another/command run
-  - yafti.plugin.flatpak:
-      install: org.gnome.Calculator
+    - run: /full/path/to/bin --with --params
+    - run: /another/command run
+    - yafti.plugin.flatpak:
+        install: org.gnome.Calculator
   post:
-  - run: /run/these/commands --after --all --screens
+    - run: /run/these/commands --after --all --screens
 screens:
   first-screen:
     source: yafti.screen.title
@@ -88,18 +89,18 @@ screens:
         Core:
           description: All the good stuff
           packages:
-          - Calculator: org.gnome.Calculator
-          - Firefox: org.mozilla.firefox
+            - Calculator: org.gnome.Calculator
+            - Firefox: org.mozilla.firefox
         Gaming:
           description: GAMES GAMES GAMES
           packages:
-          - Steam: com.valvesoftware.Steam
-          - Games: org.gnome.Games
+            - Steam: com.valvesoftware.Steam
+            - Games: org.gnome.Games
         Office:
           description: All the work stuff
           packages:
-          - LibreOffice: org.libreoffice.LibreOffice
-          - Calendar: org.gnome.Calendar
+            - LibreOffice: org.libreoffice.LibreOffice
+            - Calendar: org.gnome.Calendar
   final-screen:
     source: yafti.screen.title
     values:
@@ -115,10 +116,26 @@ This project uses Poetry and Python 3.11. Make sure you have Python 3.11 and [Po
 
 ### Prerequisites
 
-If you're on a Ublue / immutable OS, you'll need to run these and the poetry install in a toolbox.
+There are a couple ways to get started with development
+
+You can use the provided distrobox for development
 
 ```
-sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
+just create-yaftibox
+```
+
+This will construct the yaftibox distrobox and enter it. Then, install dependencies
+
+```
+poetry install
+```
+
+OR,
+
+If you're on a Ublue / immutable OS, you'll need to run these and the poetry install in a fedora toolbox.
+
+```
+sudo dnf install poetry just gtk3 gtk4 python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel libadwaita-devel
 poetry install
 ```
 
@@ -136,12 +153,13 @@ One of yafti's main use cases is to be used in Containerfiles to handle installa
 Add this to your Containerfile to add yafti to your image:
 
     RUN pip install --prefix=/usr yafti
-    
+
 Additionally, you need a script to copy over the .desktop file to the user's home directory:
+
 - [Example firstboot script](https://github.com/ublue-os/bluefin/blob/main/etc/profile.d/bluefin-firstboot.sh)
 - [Example firstboot .desktop file](https://github.com/ublue-os/bluefin/blob/main/etc/skel.d/.config/autostart/bluefin-firstboot.desktop)
 
-Then add a file in `/etc/yafti.yml` with your customizations. Check the [example file](https://github.com/ublue-os/yafti/blob/main/tests/example.yml) for ideas. 
+Then add a file in `/etc/yafti.yml` with your customizations. Check the [example file](https://github.com/ublue-os/yafti/blob/main/tests/example.yml) for ideas.
 
 ### Testing
 
@@ -283,4 +301,5 @@ git checkout -b 9001 pull/origin/9001
 Keep in mind that these branches will be read only and you won't be able to push any changes.
 
 #### Automatically Merging a Pull Request
-In cases where the merge would be a simple fast-forward, you can automatically do the merge by  clicking the button on the pull request page on GitHub.
+
+In cases where the merge would be a simple fast-forward, you can automatically do the merge by clicking the button on the pull request page on GitHub.

@@ -10,7 +10,7 @@ logging.basicConfig(
     datefmt="[%X]",
     handlers=[
         RichHandler(
-            show_path=False,
+            show_path=True,
             show_time=False,
             rich_tracebacks=True,
             tracebacks_suppress=[gi, logging],
@@ -18,7 +18,7 @@ logging.basicConfig(
     ],
 )
 
-gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
+gi.require_version("Gtk", "4.0")
 
 gbulb.install(gtk=True)
