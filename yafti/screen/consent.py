@@ -83,19 +83,8 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
         **kwargs
     ):
         super().__init__(**kwargs)
-        print(description)
         self.status_page.set_title(title.strip())
-        
-        # Generate a string of the actions to be performed
-        commands = ''
-        for action in actions:
-            print(action)
-            plugin_name = list(action.keys())[0]
-            plugin = PLUGINS.get(plugin_name)
-            commands = commands + plugin_name + ' ' + str(action[plugin_name]) + '\n'
-            
-        self.status_page.set_description(description.strip() + '\n\nThis tool will execute the following actions:')
-        self.status_page.set_description(self.status_page.get_description() + '\n' + commands)
+        self.status_page.set_description(description.strip())
         
         self.actions = actions
         self.condition = condition
