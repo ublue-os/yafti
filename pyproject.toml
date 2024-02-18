@@ -2,7 +2,7 @@
 name = "yafti"
 version = "0.8.0"
 description = "Yet another first time installer"
-authors = ["Marco Ceppi <marco@ceppi.net>"]
+authors = ["Marco Ceppi <marco@ceppi.net>", "uBlue Devs"]
 license = "Apache 2.0"
 readme = "README.md"
 homepage = "https://github.com/ublue-os/yafti"
