@@ -22,6 +22,7 @@ def run(
 ):
     log.set_level(logging.DEBUG if debug else logging.INFO)
     log.debug("starting up", config=config, debug=debug)
+    
     config = Config.parse_obj(yaml.safe_load(config))
     app = Yafti(config)
     app.run(None, force_run=force_run)

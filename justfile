@@ -3,11 +3,12 @@ set shell := ["bash", "-uc"]
 default:
   just --list
 
-enter:
+create-yaftibox:
+  distrobox-assemble create --file yaftibox.ini
+  just yaftibox
+
+enter-yaftibox:
   distrobox-enter yaftibox
 
-spinup-container:
-  distrobox-assemble create --file yaftibox.ini
-
-run-yafti :
+yafti :
   poetry run yafti tests/example.yml -f

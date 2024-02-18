@@ -5,6 +5,7 @@ from gi.repository import Adw, Gtk
 
 import yafti.share
 from yafti import events
+from yafti.core import log
 from yafti.core.registry import SCREENS
 
 _xml = """\
@@ -55,6 +56,7 @@ _xml = """\
               <object class="AdwCarousel" id="carousel">
                 <property name="vexpand">True</property>
                 <property name="hexpand">True</property>
+                <property name="reveal_duration">50</property>
                 <property name="allow_scroll_wheel">False</property>
                 <property name="allow_mouse_drag">False</property>
                 <property name="allow_long_swipes">False</property>
@@ -73,12 +75,13 @@ _xml = """\
 class Window(Adw.ApplicationWindow):
     __gtype_name__ = "YaftiWindow"
 
-    carousel_indicator = Gtk.Template.Child()
-    carousel = Gtk.Template.Child()
-    headerbar = Gtk.Template.Child()
+    toasts = Gtk.Template.Child()
     btn_back = Gtk.Template.Child()
     btn_next = Gtk.Template.Child()
-    toasts = Gtk.Template.Child()
+    headerbar = Gtk.Template.Child()
+    
+    carousel = Gtk.Template.Child()
+    carousel_indicator = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -98,11 +101,15 @@ class Window(Adw.ApplicationWindow):
 
         _next = partial(do_emit, "btn_next")
         _back = partial(do_emit, "btn_back")
+        
 
         self.connect("show", self.draw)
         self.connect("close-request", self.app.quit)
+        
         self.btn_next.connect("clicked", _next)
         self.btn_back.connect("clicked", _back)
+        
+        self.carousel.set_scroll_params(Adw.SpringParams.new (1, 0.35, 750))
         self.carousel.connect("page-changed", self.changed)
 
     def draw(self, _) -> None:
@@ -126,7 +133,6 @@ class Window(Adw.ApplicationWindow):
     def goto(self, page: int, animate: bool = True) -> None:
         if page < 0:
             page = 0
-
         if page >= self.carousel.get_n_pages():
             page = self.carousel.get_n_pages()
 
@@ -150,11 +156,15 @@ class Window(Adw.ApplicationWindow):
         self.goto(self.idx - 1)
 
     def changed(self, *args) -> None:
+        log.info("changed", idx=self.idx)
+        
         self.btn_back.set_visible(self.idx > 0)
         current_screen = self.carousel.get_nth_page(self.idx)
+
         if self.idx + 1 >= self.carousel.get_n_pages():
             self.btn_next.set_label("Done")
             self.btn_back.set_visible(False)
         else:
             self.btn_next.set_label("Next")
+
         current_screen.activate()
