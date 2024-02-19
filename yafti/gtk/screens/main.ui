@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0" />
+  
+  <template class="YaftiWindow" parent="AdwApplicationWindow">
+    <property name="default-width">750</property>
+    <property name="default-height">640</property>
+    <property name="title">Welcome!</property>
+    <child>
+
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="headerbar">
+            <style>
+              <class name="flat" />
+            </style>
+            <property name="title_widget">
+              <object class="AdwCarouselIndicatorDots" id="carousel_indicator">
+                <property name="carousel">carousel</property>
+                <property name="orientation">horizontal</property>
+              </object>
+            </property>
+            <child type="start">
+              <object class="GtkButton" id="btn_back">
+                <property name="label" translatable="yes">Back</property>
+                <property name="halign">center</property>
+                <property name="visible">False</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="btn_next">
+                <property name="label" translatable="yes">Next</property>
+                <property name="halign">center</property>
+                <property name="visible">True</property>
+                <style>
+                  <class name="suggested-action" />
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <property name="content">
+          <object class="AdwToastOverlay" id="toasts">
+            <child>
+              <object class="AdwCarousel" id="carousel">
+                <property name="vexpand">True</property>
+                <property name="hexpand">True</property>
+                <property name="reveal_duration">50</property>
+                <property name="allow_scroll_wheel">False</property>
+                <property name="allow_mouse_drag">False</property>
+                <property name="allow_long_swipes">False</property>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+
+    </child>
+  </template>
+</interface>
