@@ -85,7 +85,7 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
         super().__init__(**kwargs)
         self.status_page.set_title(title.strip())
         self.status_page.set_description(description.strip())
-        
+
         self.actions = actions
         self.condition = condition
         self.already_run = False

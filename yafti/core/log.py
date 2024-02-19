@@ -1,18 +1,37 @@
 # Copyright 2024 uBlue
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 import inspect
+import logging
 
-__all__ = ["info", "warn", "error", "debug", "set_level"]
+import gi
+from rich.logging import RichHandler
 
 _l = logging.getLogger("yafti")
+__all__ = ["info", "warn", "error", "debug", "set_level"]
+
+
+def setup():
+    logging.basicConfig(
+        level="DEBUG",
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[
+            RichHandler(
+                show_path=True,
+                show_time=False,
+                rich_tracebacks=True,
+                tracebacks_suppress=[gi, logging],
+            )
+        ],
+    )
 
 
 def _fmt(msg: dict) -> str:
     mod = inspect.getmodule(inspect.stack()[1][0])
     args = {"module": mod.__name__ if mod else ""} | msg
     return " ".join([f"{k}={v}" for k, v in args.items()])
+
 
 def set_level(level):
     _l.setLevel(level)

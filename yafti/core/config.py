@@ -17,23 +17,28 @@ class ActionConfig(BaseModel):
     pre: Optional[list[dict[str, str | dict]]]
     post: Optional[list[dict[str, str | dict]]]
 
+
 class ScreenConfig(BaseModel):
     source: str
     values: Optional[dict]
+
 
 class YaftiRunModes(str, Enum):
     changed = "run-on-change"
     ignore = "run-once"
     disable = "disabled"
 
+
 class YaftSaveState(str, Enum):
     always = "always"
     end = "last-screen"
+
 
 class YaftiProperties(BaseModel):
     mode: YaftiRunModes = YaftiRunModes.changed
     save_state: YaftSaveState = YaftSaveState.always
     path: Optional[Path] = Path("~/.config/yafti/last-run")
+
 
 class Config(BaseSettings):
     title: str

@@ -1,4 +1,4 @@
-from pydantic import BaseModel,RootModel
+from pydantic import BaseModel, RootModel
 
 
 class PackageConfig(RootModel):

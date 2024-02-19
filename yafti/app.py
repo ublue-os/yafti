@@ -21,37 +21,29 @@ import yaml
 from gi.repository import Adw
 from pathlib import Path
 
-from yafti.core.config import Config, YaftiRunModes, YaftSaveState
+from yafti.const import Constants
 from yafti.screen.window import Window
+from yafti.core.config import Config, YaftiRunModes, YaftSaveState
 
 
 class Yafti(Adw.Application):
     def __init__(self, cfg: Config = None, loop=None):
-        super().__init__(application_id="it.ublue.Yafti")
+        super().__init__(application_id=Constants.APPID)
         self.config = cfg
         self.loop = loop or gbulb.get_event_loop()
 
     def run(self, *args, force_run: bool = False, **kwargs):
         configured_mode = self.config.properties.mode
-        _p: Path = self.config.properties.path.expanduser()
-        # TODO(GH-#103): Remove this prior to 1.0 release. Start.
-        _old_p = Path("~/.config/yafti-last-run").expanduser()
-        if _old_p.exists() and _old_p.resolve() != _p.resolve():
-            if not _p.parent.is_dir():
-                _p.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
-            if _p.is_file():
-                _p.unlink()
-            _old_p.rename(_p)
-        # TODO(GH-#103): End.
+        path: Path = self.config.properties.path.expanduser()
         if not force_run:
             if configured_mode == YaftiRunModes.disable:
                 return
 
             if configured_mode == YaftiRunModes.changed:
-                if _p.exists() and _p.read_text() == self.config_sha:
+                if path.exists() and path.read_text() == self.config_sha:
                     return
 
-            if configured_mode == YaftiRunModes.ignore and _p.exists():
+            if configured_mode == YaftiRunModes.ignore and path.exists():
                 return
 
         super().run(*args, **kwargs)
@@ -79,7 +71,7 @@ class Yafti(Adw.Application):
         if (
             self.config.properties.save_state == YaftSaveState.end
             and self._win
-            and self._win.is_last_page
+            and self._win.is_lastpathage
         ):
             self.sync_last_run()
 
