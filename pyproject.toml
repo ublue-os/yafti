@@ -28,9 +28,9 @@ rich = "^13.3.2"
 typer = ">=0.7,<0.10"
 
 [tool.poetry.plugins."yafti.plugin"]
-"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
-"yafti.plugin.run" = "yafti.plugin.run:Run"
 "run" = "yafti.plugin.run:Run"
+"yafti.plugin.run" = "yafti.plugin.run:Run"
+"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
 
 [tool.poetry.plugins."yafti.screen"]
 "yafti.screen.title" = "yafti.screen.title:TitleScreen"

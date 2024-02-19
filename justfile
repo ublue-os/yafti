@@ -5,7 +5,7 @@ default:
 
 create-yaftibox:
   distrobox-assemble create --file yaftibox.ini
-  just yaftibox
+  just enter-yaftibox
 
 enter-yaftibox:
   distrobox-enter yaftibox
