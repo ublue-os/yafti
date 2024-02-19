@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from collections import namedtuple
 
 yafti = namedtuple("yafti", "APPID PATHID ROOT_DIR")

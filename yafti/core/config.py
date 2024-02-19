@@ -3,14 +3,11 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any, Optional
 
 import yaml
 from pydantic import BaseModel
-from pydantic_settings import (
-    BaseSettings,
-    PydanticBaseSettingsSource,
-)
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 
 
 class ActionConfig(BaseModel):

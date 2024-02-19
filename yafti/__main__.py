@@ -8,8 +8,8 @@ import typer
 import yaml
 
 import yafti.setup  # noqa
-from yafti.core import log
 from yafti.app import Yafti
+from yafti.core import log
 from yafti.core.config import Config
 
 

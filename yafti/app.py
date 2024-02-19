@@ -15,15 +15,15 @@ limitations under the License.
 """
 
 import hashlib
+from pathlib import Path
 
 import gbulb
 import yaml
 from gi.repository import Adw
-from pathlib import Path
 
 from yafti.const import Constants
-from yafti.screen.window import Window
 from yafti.core.config import Config, YaftiRunModes, YaftSaveState
+from yafti.screen.window import Window
 
 
 class Yafti(Adw.Application):

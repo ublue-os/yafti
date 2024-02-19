@@ -1,8 +1,8 @@
 import asyncio
 import json
+from typing import Optional
 
 from gi.repository import Gtk
-from typing import Optional
 
 import yafti.share
 from yafti import events

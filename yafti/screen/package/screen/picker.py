@@ -1,5 +1,5 @@
-from functools import partial
 import json
+from functools import partial
 
 from gi.repository import Adw, Gtk
 from pydantic import BaseModel
