@@ -1,4 +1,3 @@
-# Copyright 2023 Marco Ceppi
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -38,8 +37,8 @@ from gi.repository import Adw, Gtk
 
 import yafti.share
 from yafti import events
-from yafti.abc import YaftiScreen, YaftiScreenConfig
-from yafti.registry import PLUGINS
+from yafti.core.abc import YaftiScreen, YaftiScreenConfig
+from yafti.core.registry import PLUGINS
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -83,8 +82,9 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
         **kwargs
     ):
         super().__init__(**kwargs)
-        self.status_page.set_title(title)
-        self.status_page.set_description(description)
+        self.status_page.set_title(title.strip())
+        self.status_page.set_description(description.strip())
+
         self.actions = actions
         self.condition = condition
         self.already_run = False

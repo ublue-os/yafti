@@ -2,7 +2,7 @@
 name = "yafti"
 version = "0.8.0"
 description = "Yet another first time installer"
-authors = ["Marco Ceppi <marco@ceppi.net>"]
+authors = ["Marco Ceppi <marco@ceppi.net>", "uBlue Devs"]
 license = "Apache 2.0"
 readme = "README.md"
 homepage = "https://github.com/ublue-os/yafti"
@@ -19,7 +19,8 @@ yafti = "yafti.__main__:app"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "1.10.2"  # This needs to match the minimum supported version in Fedora
+pydantic = "^2.0.0"          # This needs to match the minimum supported version in Fedora
+pydantic-settings = "^2.0.0"
 pygobject = "^3.42.2"
 pyyaml = "^6.0"
 gbulb = "^0.6.4"
@@ -27,9 +28,9 @@ rich = "^13.3.2"
 typer = ">=0.7,<0.10"
 
 [tool.poetry.plugins."yafti.plugin"]
-"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
-"yafti.plugin.run" = "yafti.plugin.run:Run"
 "run" = "yafti.plugin.run:Run"
+"yafti.plugin.run" = "yafti.plugin.run:Run"
+"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
 
 [tool.poetry.plugins."yafti.screen"]
 "yafti.screen.title" = "yafti.screen.title:TitleScreen"

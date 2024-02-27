@@ -1,6 +1,6 @@
 from gi.repository import Gtk
 
-from yafti.abc import YaftiScreen
+from yafti.core.abc import YaftiScreen
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

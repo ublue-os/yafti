@@ -4,11 +4,11 @@ from gi.repository import Adw, Gtk
 
 import yafti.share
 from yafti import events
-from yafti.abc import YaftiScreen, YaftiScreenConfig
+from yafti.core.abc import YaftiScreen, YaftiScreenConfig
 from yafti.screen.package.models import PackageConfig, PackageGroupConfig
 from yafti.screen.package.screen import PackageInstallScreen, PackagePickerScreen
 from yafti.screen.package.state import PackageScreenState
-from yafti.screen.package.utils import parse_packages, generate_fingerprint
+from yafti.screen.package.utils import generate_fingerprint, parse_packages
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

@@ -1,6 +1,6 @@
 import json
-from typing import Any
 from hashlib import sha256
+from typing import Any
 
 
 def generate_fingerprint(obj: Any):

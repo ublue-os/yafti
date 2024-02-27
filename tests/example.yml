@@ -1,6 +1,8 @@
 title: uBlue First Boot
+
 properties:
   mode: "run-on-change"
+
 actions:
   pre:
     - run: /full/path/to/bin --with --params
@@ -9,6 +11,7 @@ actions:
         install: org.gnome.Calculator
   post:
     - run: /run/these/commands --after --all --screens
+
 screens:
   first-screen:
     source: yafti.screen.title
@@ -29,6 +32,7 @@ screens:
       actions:
         - run: flatpak remote-delete fedora --force
         - run: flatpak remove --system --noninteractive --all
+
   applications:
     source: yafti.screen.package
     values:

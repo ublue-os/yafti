@@ -1,13 +1,13 @@
 import asyncio
 import json
+from typing import Optional
 
 from gi.repository import Gtk
-from typing import Optional
 
 import yafti.share
 from yafti import events
-from yafti import log
-from yafti.abc import YaftiScreen
+from yafti.core import log
+from yafti.core.abc import YaftiScreen
 from yafti.screen.console import ConsoleScreen
 from yafti.screen.package.state import PackageScreenState
 
@@ -84,7 +84,7 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         **kwargs,
     ):
         super().__init__(**kwargs)
-        from yafti.registry import PLUGINS
+        from yafti.core.registry import PLUGINS
 
         self.status_page.set_title(title)
         self.package_manager = PLUGINS.get(package_manager)
