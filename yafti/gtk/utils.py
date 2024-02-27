@@ -2,8 +2,6 @@ from pathlib import Path
 
 from yafti.const import Constants
 
-# data = importlib.resources.files('data')
-
 
 def get_screen(name: str = "main"):
     return (

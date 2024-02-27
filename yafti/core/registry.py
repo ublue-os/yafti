@@ -1,4 +1,3 @@
-# Copyright 2024 uBlue
 # SPDX-License-Identifier: Apache-2.0
 
 from importlib.metadata import entry_points
