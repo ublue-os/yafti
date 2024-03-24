@@ -67,6 +67,7 @@ class Run(YaftiPlugin):
         if not isfile(cmd) and is_container:
             if which("distrobox-host-exec"):
                 cmd = f"distrobox-host-exec {cmd}"
+
             elif which("flatpak-spawn"):
                 cmd = f"flatpak-spawn --host {cmd}"
 
@@ -98,6 +99,7 @@ class Run(YaftiPlugin):
         Returns:
           An object containing the stdout and stderr from the command
         """
+
         return await self.exec(package)
 
     @validate_arguments
@@ -107,4 +109,5 @@ class Run(YaftiPlugin):
             cmd = shlex.join(cmd)
 
         r = await self.exec(cmd)
+
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)

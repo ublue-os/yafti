@@ -1,7 +1,7 @@
-from functools import partial
 import json
+from functools import partial
 
-from gi.repository import Adw, Gtk
+import gi
 from pydantic import BaseModel
 
 from yafti import log
@@ -9,6 +9,9 @@ from yafti.abc import YaftiScreen
 from yafti.screen.dialog import DialogBox
 from yafti.screen.package.state import PackageScreenState
 from yafti.screen.utils import find_parent
+
+gi.require_version("Adw", "1")
+from gi.repository import Adw, Gtk
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>

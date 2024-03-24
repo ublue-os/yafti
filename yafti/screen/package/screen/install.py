@@ -1,15 +1,18 @@
 import asyncio
 import json
-
-from gi.repository import Gtk
 from typing import Optional
 
+import gi
+
+import yafti.screen.package.utils
 import yafti.share
-from yafti import events
-from yafti import log
+from yafti import events, log
 from yafti.abc import YaftiScreen
 from yafti.screen.console import ConsoleScreen
 from yafti.screen.package.state import PackageScreenState
+
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
 
 _xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -95,9 +98,11 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
     async def on_activate(self):
         if self.started or self.already_run:
             return
+
         self.console = ConsoleScreen()
+
         self.started = True
-        events.on("btn_next", self.next)
+        # events.on("btn_next", self.next)
         await self.draw()
 
     async def next(self, _):
@@ -117,10 +122,20 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         self.console.hide()
         self.append(self.console)
         packages = [item.replace("pkg:", "") for item in self.state.get_on("pkg:")]
+
+        log.debug(packages)
+
         asyncio.create_task(self.do_pulse())
+        if len(packages) == 0:
+            self.status_page.set_title("No Action Required")
+            self.pulse = False
+
         return self.install(packages)
 
     def run_package_manager(self, packge_config):
+        """
+        this needs to be realtime
+        """
         try:
             config = json.loads(packge_config)
         except json.decoder.JSONDecodeError as e:
@@ -130,20 +145,56 @@ class PackageInstallScreen(YaftiScreen, Gtk.Box):
         log.debug("parsed packages config", config=config)
         opts = self.package_manager_defaults.copy()
         opts.update(config)
+
         return self.package_manager.install(**opts)
 
     async def install(self, packages: list):
+        """
+        this needs to be realtime
+        """
         total = len(packages)
-        yafti.share.BTN_NEXT.set_label("Installing...")
-        yafti.share.BTN_BACK.set_visible(False)
-        for idx, pkg in enumerate(packages):
-            results = await self.run_package_manager(pkg)
-            self.console.stdout(results.stdout)
-            self.console.stderr(results.stderr)
-            self.pulse = False
-            self.pkg_progress.set_fraction((idx + 1) / total)
 
-        self.console.stdout(b"Installation Complete!")
+        log.debug(f"total packages: {total}, package list {packages}")
+
+        current = await self.package_manager.ls()
+        decoded_current = current.stdout.decode("utf-8").replace(
+            "current packages: ", ""
+        )
+
+        headers = ["ref", "name", "runtime", "installation", "version", "options"]
+        new_abc = {}
+        log.debug(f"packages -- {decoded_current.splitlines()}")
+
+        output = {}
+        for p in decoded_current.splitlines():
+            chunks = p.split("\t")
+
+            log.debug(f"turds: {chunks}")
+            for i, t in enumerate(chunks):
+                output[headers[i]] = t
+
+                if i == 0:
+                    new_abc[t] = output.copy()
+
+            log.debug(f"{output}")
+
+        log.debug(f"current packages: {new_abc}")
+        if total > 0:
+            yafti.share.BTN_NEXT.set_label("Installing...")
+            yafti.share.BTN_BACK.set_visible(False)
+
+            for idx, pkg in enumerate(packages):
+                results = await self.run_package_manager(pkg)
+                self.console.stdout(results.stdout)
+                self.console.stderr(results.stderr)
+                self.pulse = False
+                self.pkg_progress.set_fraction((idx + 1) / total)
+
+            self.console.stdout(b"Installation Complete!")
+        else:
+            yafti.share.BTN_NEXT.set_label("No packages requirements...")
+            yafti.share.BTN_BACK.set_visible(False)
+            self.console.stdout(b"No Package Installs Required!")
 
         self.started = False
         self.already_run = True

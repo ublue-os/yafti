@@ -9,30 +9,8 @@ from yafti import events
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
 
-_xml = """\
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-    <requires lib="gtk" version="4.0"/>
-    <requires lib="libadwaita" version="1.0" />
-    <template class="YaftiTitleScreen" parent="AdwBin">
-        <property name="halign">fill</property>
-        <property name="valign">fill</property>
-        <property name="hexpand">true</property>
-        <child>
-            <object class="AdwStatusPage" id="status_page">
-                <property name="icon-name">folder</property>
-                <property name="title" translatable="yes">Welcome!</property>
-                <property name="description" translatable="yes">
-                    Make your choices, this wizard will take care of everything.
-                </property>
-            </object>
-        </child>
-    </template>
-</interface>
-"""
 
-
-@Gtk.Template(string=_xml)
+@Gtk.Template(filename="yafti/screen/assets/title.ui")
 class TitleScreen(YaftiScreen, Adw.Bin):
     __gtype_name__ = "YaftiTitleScreen"
 
@@ -64,7 +42,9 @@ class TitleScreen(YaftiScreen, Adw.Bin):
         links_list_box = Gtk.ListBox()
         links_list_box.set_selection_mode(Gtk.SelectionMode.NONE)
         links_list_box.add_css_class("boxed-list")
+
         self.status_page.set_child(links_list_box)
+
         return links_list_box
 
     def append_action_rows(self, links, links_list_box):
@@ -103,4 +83,5 @@ class TitleScreen(YaftiScreen, Adw.Bin):
     async def on_action_row_open(*args, plugin=None, config=None):
         if not plugin and not config:
             return
+
         await PLUGINS.get(plugin)(config)

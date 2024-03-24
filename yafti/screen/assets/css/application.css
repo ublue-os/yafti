@@ -1,0 +1,117 @@
+/*
+    Contains the CSS for the Adw.ApplicationWindow which is an Adw.NavigationSplitView
+
+    NavigationSplitView is the main widget used in the Adw library. It is a container
+    that allows you to have a sidebar and a content area. The sidebar can be collapsed
+    and expanded by the user.
+
+    https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/class.NavigationSplitView.html#css-nodes
+
+    When collapsed, the split view has the following CSS nodes:
+
+        navigation-split-view
+        ╰── navigation-view
+            ├── [sidebar child]
+            ╰── [content child]
+
+    When expanded, the split view has the following CSS nodes:
+
+        navigation-split-view
+        ├── widget.sidebar-pane
+        │   ╰── [sidebar child]
+        ╰── widget.content-pane
+            ╰── [content child]
+*/
+
+/*  ### Sidebar ###  */
+
+/* Expanded sidebar window focused */
+navigation-split-view widget.sidebar-pane navigation-view-page {
+    /* background-color: @headerbar_bg_color; */ /* Hides the sidebar separator */
+    border-right-width: 5px;
+}
+navigation-split-view widget.sidebar-pane toolbarview list {
+    background-color: @headerbar_bg_color;
+    border-right-width: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+navigation-split-view widget.sidebar-pane list {
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
+
+/* Expanded sidebar window deselected */
+navigation-split-view widget.sidebar-pane navigation-view-page:backdrop {
+    background-color: @sidebar_backdrop_color;
+    border-right-width: 1px;
+}
+navigation-split-view widget.sidebar-pane toolbarview list:backdrop {
+    background-color: @sidebar_backdrop_color;
+    border-right-width: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+/* Collapsed sidebar */
+navigation-split-view navigation-view-page toolbarview list {
+    background-color: @theme_bg_color;
+    border-right-width: 1px;
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
+
+/* Sidebar Action row button settings */
+
+.action-row-rounded box box {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.action-row-rounded {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    min-height: 36px;
+    font-weight: 400;
+    line-height: 36px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+.action-row-rounded box {
+    min-height: 36px;
+    line-height: 36px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+.action-row-rounded:selected {
+    background-color: alpha(@theme_selected_fg_color, 0.1);
+    outline-color: alpha(@theme_selected_bg_color, 0.3);
+    outline-width: 1px;
+    outline-offset: -1px;
+    min-height: 36px;
+    font-weight: 400;
+    line-height: 36px;
+}
+
+
+/* ### Content Pane ### */
+
+navigation-split-view widget.content-pane label.title {
+    font-weight: 500;
+}
+
+navigation-split-view widget.sidebar-pane revealer.top-bar {
+    font-weight: 700;
+}
+
+/* ### Named Colors ### */
+.cc_card_fg_color {
+    color: @theme_text_color;
+}
+
+.cc_theme_selected_bg_color {
+    color: @theme_selected_bg_color;
+}

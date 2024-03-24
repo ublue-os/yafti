@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="it.ublue.Yafti.window" path="/it/ublue/Yafti/window/">
+        <key name="width" type="i">
+        <default>800</default>
+        </key>
+        <key name="height" type="i">
+        <default>800</default>
+        </key>
+        <key name="is-maximized" type="b">
+        <default>false</default>
+        </key>
+        <key name="is-fullscreen" type="b">
+        <default>false</default>
+        </key>
+        <key name="dark-mode" type="b">
+        <default>false</default>
+        </key>
+    </schema>
+    <schema id="it.ublue.Yafti.settings" path="/it/ublue/Yafti/settings/"  gettext-domain="settings">
+        <key name="interval" type="d">
+        <default>1.0</default>
+        </key>
+        <key name="consent-accepted" type="b">
+        <default>false</default>
+        </key>
+        <key name="start-on-startup" type="b">
+        <default>false</default>
+        </key>
+        <key name="save-format" type="s">
+        <choices>
+            <choice value='json'/>
+            <choice value='csv'/>
+            <choice value='kv'/>
+        </choices>
+        <default>'json'</default>
+    </key>
+    </schema>
+</schemalist>

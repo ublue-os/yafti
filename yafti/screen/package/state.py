@@ -9,6 +9,7 @@ class PackageScreenState:
             cls.instances = {}
         if id not in cls.instances:
             cls.instances[id] = super(PackageScreenState, cls).__new__(cls)
+
         return cls.instances[id]
 
     def __init__(self, id: str):

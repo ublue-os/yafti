@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <interface>
+    <requires lib="gtk" version="4.0"/>
+    <requires lib="libadwaita" version="1.0" />
+    <template class="YaftiPackages" parent="GtkScrolledWindow">
+<!--      <property name="title" translatable="yes">Welcome To Project Bluefin</property>-->
+      <property name="child">
+        <object class="AdwClamp">
+          <property name="maximum-size">700</property>
+          <property name="tightening-threshold">300</property>
+          <property name="child">
+            <object class="GtkBox" id="packages_overview">
+              <property name="orientation">vertical</property>
+              <property name="margin-start">12</property>
+              <property name="margin-end">12</property>
+              <property name="spacing">12</property>
+              <child>
+                <object class="GtkListBox" id="package_list">
+<!--                <object class="AdwBin" id="package_list">-->
+                  <property name="visible">True</property>
+                  <property name="selection-mode">none</property>
+                  <style>
+                    <class name="boxed-list" />
+                  </style>
+                </object>
+              </child>
+            </object>
+          </property>
+        </object>
+      </property>
+    </template>
+</interface>

@@ -33,9 +33,9 @@ typer = ">=0.7,<0.10"
 
 [tool.poetry.plugins."yafti.screen"]
 "yafti.screen.title" = "yafti.screen.title:TitleScreen"
-"yafti.screen.package" = "yafti.screen.package:PackageScreen"
 "yafti.screen.console" = "yafti.screen.console:ConsoleScreen"
 "yafti.screen.consent" = "yafti.screen.consent:ConsentScreen"
+"yafti.screen.package" = "yafti.screen.package:PackageScreen"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
@@ -45,6 +45,23 @@ ruff = ">=0.0.254,<0.3.1"
 coverage = "^7.2.1"
 pytest-cov = "^4.0.0"
 pytest-asyncio = ">=0.20.3,<0.22.0"
+pygobject-stubs = "^2.10.0"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+furo = "*"
+myst-parser = "*"
+myst-nb = "*"
+sphinx = "*"
+sphinx-autobuild = "*"
+sphinx-autodoc-typehints = "*"
+sphinx-copybutton = "*"
+sphinxcontrib-mermaid = "*"
+sphinxcontrib-napoleon = "*"
+sphinx-design  = "*"
+sphinx-inline-tabs = "*"
 
 [tool.isort]
 profile = "black"

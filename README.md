@@ -117,8 +117,54 @@ This project uses Poetry and Python 3.11. Make sure you have Python 3.11 and [Po
 
 If you're on a Ublue / immutable OS, you'll need to run these and the poetry install in a toolbox.
 
+[cairographics](https://www.cairographics.org/download/)
+
+
+#### distrobox
+
+the following just commands will create a distro box container
+
+```shell
+just create-distrobox
+just enter-distrobox
+```
+
+After entering the distro box 
+
+```shell
+# prints fedora info
+neofetch
+
+# launches the app
+just run
+```
+
+#### deb based developer prerequisites
+
+```shell
+sudo apt update
+sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev ibgirepository1.0-dev libcairo2-dev
+```
+
+#### https://iconduck.com/icons/164466/emblem-system-symbolic
+
+
+#### rhel based developer prerequisites 
+
 ```
 sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
+```
+
+#### pyenv installer
+
+```shell
+curl https://pyenv.run | bash
+pyenv install 3.11.8
+pyenv virtualenv 3.11.8 yafti
+pyenv activate yafti
+pip install --upgrade pip
+pip install poetry
+
 poetry install
 ```
 

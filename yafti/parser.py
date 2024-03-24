@@ -60,4 +60,5 @@ def parse(config_file: str) -> Config:
     """Parse the YAML or JSON file passed and return a rendered Config object"""
     with open(config_file) as f:
         cfg = yaml.safe_load(f)
+
     return Config.parse_obj(cfg)

@@ -64,6 +64,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ValidationError, root_validator
 
+from yafti import log
 from yafti.abc import YaftiPluginReturn
 from yafti.plugin.run import Run
 
@@ -140,6 +141,7 @@ class Flatpak(Run):
         if isinstance(options, str):
             options = {"install": options}
 
+        print(options)
         return self.Scheme.parse_obj(options)
 
     def _parse_args(self, **kwargs):
@@ -183,6 +185,7 @@ class Flatpak(Run):
         cmd = [self.bin, "install"]
         cmd.extend(args)
         cmd.append(package)
+
         return await self.exec(" ".join(cmd))
 
     async def remove(
@@ -200,24 +203,55 @@ class Flatpak(Run):
         cmd = [self.bin, "remove"]
         cmd.extend(args)
         cmd.append(package)
+
         return self.exec(cmd)
 
-    def ls(self) -> list[ApplicationDetail]:
-        pass
+    async def ls(self) -> list[ApplicationDetail]:
+        # Name
+        # Description
+        # Application
+        # ID
+        # Version
+        # Branch
+        # Arch
+        # Origin
+        # Installation
+        # Ref
+        # Active
+        # commit
+        # Latest
+        # commit
+        # Installed
+        # size
+        # Options
+
+        cmd = [
+            self.bin,
+            "list",
+            " --columns=ref,name,runtime,installation,version,options",
+        ]
+
+        return await self.exec(" ".join(cmd))
 
     def __call__(self, options) -> YaftiPluginReturn:
         try:
             params = self.validate(options)
         except ValidationError as e:
+            log.error(str(e))
             return YaftiPluginReturn(errors=str(e), code=1)
 
         # TODO: when a string is passed, make sure it maps to the "pkg" key.
         if params.install:
             if isinstance(params.install, str):
                 params.install = {"package": params.install}
+
             r = asyncio.ensure_future(self.install(**params.install))
         else:
             if isinstance(params.remove, str):
                 params.remove = {"package": params.remove}
+
             r = asyncio.ensure_future(self.remove(**params.install))
+
+        log.debug(**params.install)
+
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)
