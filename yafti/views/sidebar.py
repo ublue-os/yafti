@@ -39,7 +39,7 @@ class Sidebar(Adw.NavigationPage):
         self.theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.theme.add_search_path(path="icons")
 
-        # TODO: get image  and label from config file.
+        # TODO: get image and label from config file.
         self.header_logo = Gtk.Image.new_from_file("yafti/assets/small_logo.png")
         self.header_label = Gtk.Label(label="Bluefin Portal")
 

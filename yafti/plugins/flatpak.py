@@ -84,6 +84,7 @@ class ApplicationDetail(BaseModel):
 
 class FlatpakListItem(BaseModel):
     """Flatpak application list results"""
+    application: str
     ref: str
     name: str
     runtime: str
@@ -245,7 +246,7 @@ class Flatpak(Run):
         :return: list of Flatpack list
 
         """
-        headers = ["ref", "name", "runtime", "installation", "version", "options", "origin"]
+        headers = ["application", "ref", "name", "runtime", "installation", "version", "options", "origin"]
         cmd = [
             self.bin,
             "list",
@@ -289,7 +290,7 @@ class Flatpak(Run):
             size
             Options
         """
-        headers = ["ref", "name", "runtime", "installation", "version", "options"]
+        headers = ["application", "ref", "name", "runtime", "installation", "version", "options"]
         cmd = [
             self.bin,
             "list",

@@ -4,7 +4,8 @@ import pprint
 import time
 from typing import Optional
 
-from gi.repository import Adw, Gio, Gtk
+from gi.repository import Adw, Gio, Gtk, GObject
+from poetry.console.commands import self
 
 from yafti import log
 from yafti.abc import YaftiScreenConfig
@@ -67,8 +68,6 @@ MENU_XML = """
   </menu>
 </interface>
 """
-
-FOR_JUSTICE = []
 
 
 class Content(Adw.NavigationPage):
@@ -198,6 +197,36 @@ _xml2 = """\
 """
 
 
+class Stupid(GObject.GObject):
+    __gtype_name__ = "Stupid"
+
+    def __init__(self, application, name, ref, installed):
+        super().__init__()
+        self._application = application
+        self._name = name
+        self._ref = ref
+        self._installed = installed or False
+
+    @GObject.Property(type=str)
+    def application(self):
+        return self._application
+    @GObject.Property(type=str)
+    def name(self):
+        return self._name
+
+    @GObject.Property(type=str)
+    def ref(self):
+        return self._ref
+
+    @GObject.Property(type=bool, default=False)
+    def installed(self):
+
+        return self._installed
+
+    def __repr__(self):
+        return f"Stupid(application={self.application}, name={self.name}, ref={self.ref}, installed{self.installed})"  # noqa
+
+
 # @Gtk.Template(filename="yafti/screen/assets/packages.ui")
 # class Packages(Gtk.ScrolledWindow):
 @Gtk.Template(string=_xml2)
@@ -238,45 +267,12 @@ class Packages(Adw.Bin):
         # self.scrolled_window = Gtk.ScrolledWindow()
         self.set_vexpand(True)
         self.__register_widgets = []
+        self.__app = Gtk.Application.get_default()
         # TODO get from config
-        package_manager: str = "yafti.plugins.flatpak"
         # self.bundle_list.activate_action("clicked", self.on_selection_button_clicked)
-        asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
+        self.list_store = Gio.ListStore.new(Stupid)
+
         asyncio.ensure_future(self.build_screens(package_list))
-
-    async def __async_callback(self, callback):
-        global FOR_JUSTICE
-
-        # self._all_packages = task.result()
-        # if inspect.isawaitable(callback):
-        #     results = await callback()
-        #     self._all_packages = results
-        # else:
-        #     results = callback()
-        #
-        #     self._all_packages = results
-
-        retry_count = itertools.count()
-        while True:
-            try:
-                loop = asyncio.get_running_loop()
-
-                if loop.is_running():
-                    async with asyncio.TaskGroup() as tg:
-                        task = tg.create_task(callback)
-
-                    FOR_JUSTICE = task.result()
-            except RuntimeError as e:
-                if next(retry_count) >= 5:
-                    time.sleep(30)
-                    continue
-                else:
-                    print("failed on max retries.")
-                    raise e
-            except Exception as e:
-                print("unrecoverable error")
-                raise e
-            break
 
     # @GObject.Signal
     # def noarg_signal(self, *args):
@@ -289,7 +285,7 @@ class Packages(Adw.Bin):
     #     t = loop.run_until_complete(PLUGINS.get(package_manager).list())
     #     asyncio.ensure_future(PLUGINS.get(package_manager).list())
     #     package_manager: str = "yafti.plugins.flatpak"
-    #     asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
+    #     asyncio.ensure_future(self k.__async_callback(PLUGINS.get(package_manager).list()))
 
     def __next_step(self, *args):
         """
@@ -349,11 +345,23 @@ class Packages(Adw.Bin):
         dialog.set_visible(False)
         # dialog.connect()
         # we set the current language filter to the button's label
-        widget.set_icon_name("process-completed-symbolic")
-        self.current_filter_language = dialog.get_language()
+
+        state = widget.get_icon_name()
+        print(state)
+        if state is None:
+            widget.set_icon_name("selection-checked-symbolic")
+        if state == "process-completed-symbolic":
+            widget.set_icon_name("process-error-symbolic")
+        elif state == "selection-checked-symbolic":
+            widget.set_label("install")
+        elif state == "process-error-symbolic":
+            widget.set_icon_name("process-completed-symbolic")
+
+        # widget.set_icon_name("process-completed-symbolic")
+        # self.current_filter_language = dialog.get_language()
         # print("%s language selected!" % self.current_filter_language)
         # we update the filter, which updates in turn the view
-        self.language_filter.refilter()
+        # self.language_filter.refilter()
 
         return True
 
@@ -361,15 +369,12 @@ class Packages(Adw.Bin):
         """
         set_content sets the Packages pane content in the navigation split view
         """
-        global FOR_JUSTICE
         # self.connect("noarg-signal", self.noarg_signal)
         if content is None:
             content = Gio.Application.get_default().split_view.get_content()
             content.set_title("Packages")
 
-        # TODO: get from config
-        package_manager: str = "yafti.plugins.flatpak"
-        asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
+
 
         # button.connect('clicked', lambda event: self.content_box.append(Gtk.Label()))
         # self.scrolled_window.set_child(button)
@@ -378,15 +383,15 @@ class Packages(Adw.Bin):
         asyncio.ensure_future(self.build_screens())
         content.pane.set_content(self)
         content.pane.set_reveal_bottom_bars(False)
-
-        self.show()
+        content.set_child(self)
+        # self.show()
         # self.scrolled_window.set_data(self.__window)
 
     async def build_screens(self, package_list=None):
         """
         This entire function needs to be refactored
         """
-        package_manager_defaults = Gtk.Template.Child()
+        # package_manager_defaults = Gtk.Template.Child()
 
         # results = await PLUGINS.get(package_manager).ls()
         # new_results = await PLUGINS.get(package_manager).list()
@@ -398,10 +403,6 @@ class Packages(Adw.Bin):
         # decoded_current = results.stdout.decode("utf-8").replace(
         #     "current packages: ", ""
         # )
-
-        if FOR_JUSTICE == 0:
-            package_manager: str = "yafti.plugins.flatpak"
-            asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
 
         # move to config
         headers = ["application", "ref", "name", "runtime", "installation", "options"]
@@ -420,104 +421,161 @@ class Packages(Adw.Bin):
         # print(len(FOR_JUSTICE))
         # self.test_list_store = Gtk.ListStore(str, str, bool, list)
 
-        groups = {}
-        if isinstance(package_list, dict):
-            for k, v in package_list.items():
-
-                pass
-                # log.debug(f"Building {k} ======== {v}")
+        # groups = {}
+        # if isinstance(package_list, dict):
+        #     for k, v in package_list.items():
+        #         log.debug(f"Building {k} ======== {v}")
+        #         pass
+        #         # log.debug(f"Building {k} ======== {v}")
 
 
         # self.bundle.set_icon_name("package")
         # self.bundle.set_title("Flatpaks")
         # TODO: get values from config file
         self.status_page.set_icon_name("package")
-        self.status_page.set_title("Flatpaks")
-        __packages = {}
-        if package_list is None or isinstance(package_list, list):
-            self.status_page.set_description("Generic message")
+        self.status_page.set_title(self.title)
+
+        if self.package_list is None:
+            self.status_page.set_description(
+                "Install some Packages! If you're seeing this message update the yafti.yaml file."
+            )
+        elif isinstance(self.package_list, list):
+            # for package in self.package_list:
+            #     print(package)
+            pass
         else:
             self.status_page.set_description(
-                package_list.get("description", "something went wrong")
+                self.package_list.get("description", "Should make a github issue...")
             )
-            __packages = package_list.get("packages", {})
 
-        if not isinstance(self.title, str):
-            self.title = "Application Install"
-
-        self._all_packages = []
         match self.title.lower():
             case "apply changes":
                 print(f"-----------------------------------{self.title.lower()}------------------------")
                 self.list_store = Gtk.ListStore(str, str, str, str, str)
                 new_headers = ["ref", "name", "runtime", "installation", "version", "options"]
-                for p in __packages:
+
+                for p in self.package_list:
                     for k, v in p.items():
                         self.list_store.append([k, v])
                         self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
             case "installed":
                 print(f"-----------------------------------{self.title.lower()}------------------------")
-                self.list_store = Gtk.ListStore(str, str)
+
+                # self.list_store = Gtk.ListStore(str, str)
                 # self.test_list_store = Gtk.ListStore(str, str, bool, list)
                 self.status_page.set_description("Currently installed on your system")
                 new_headers = ["ref", "application"]
-                for p in FOR_JUSTICE:
-                    self.list_store.append([p.ref, p.name])
-                    self._all_packages.append({new_headers[0]: p.name, new_headers[1]: p.ref})
+
+                for p in self.__app.config.installed:
+                    # self.list_store.append([p.ref, p.name])
+
+                    self.list_store.append(Stupid(p.application, p.ref, p.name, True))
+                    # self._all_packages.append({new_headers[0]: p.name, new_headers[1]: p.ref, "installed": True})
                         # self.list_store.append(p)
                         # self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
             case _:
-                print(f"--------------------------group package screen {self.title.lower()}--------------")
-                self.list_store = Gtk.ListStore(str, str)
+                print(f"-------------group package screen {self.title.lower()}--------------")
+                # self.list_store = Gio.ListStore(item_type=Stupid)
 
-                application = Gtk.Application.get_default()
                 # screens = application.config.apps_by_screen(self.title.lower())
-                applications = application.config.apps_by_screen(self.title.lower())
-                if applications is None:
-                    print(f"&&&&&&&&&&&&&&&&&&&& FAULLLL {self.title.lower()} &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-
-                    return
-
-                # applications = screens.get('applications')
-                print("******************************************************************************************")
-                # print(screens)
-                __test = []
-                for a, b in applications:
-                    # TODO: get from config
-                    if a == 'source' and b != 'yafti.screen.package':
-                        print(f"{a} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {b}")
-                        continue
-
-                    elif a == 'values' and isinstance(b, dict):
-                        for k, v in b.items():
-                            match k:
-                                case "title":
-                                    print(f"{k} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-
-                                case "show_terminal":
-                                    # likely not needed
-                                    print(f"SHOW TERMINAL @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-                                    pass
-                                case "package_manager":
-                                    # set package manager
-                                    print(f"PACKAGE MANAGER @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-                                    pass
-                                case "groups":
-                                    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~{k}~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                                    # {v}
-                                    for dn, te in v.items():
-                                        if dn.lower() == self.title.lower():
-                                            for n, z in te.items():
-                                                print(f"@@@@@@@@@@@@@@@@@@@@ {n} @@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-
-                                            break
-
                 new_headers = ["ref", "application"]
-                for p in __packages:
-                    for k, v in p.items():
-                        self.list_store.append([k, v])
-                        print(f"{k} ----------------------------------------------- {v}")
-                        self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
+                # applications = screens.get('applications')
+
+                # print(screens)
+                # __test = []
+                # print(applications)
+
+                # for a in applications:
+                #     # TODO: get from config
+                #     if a == 'source' and b != 'yafti.screen.package':
+                #         print(f"{a} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {b}")
+                #         continue
+                #
+                #     elif a == 'values' and isinstance(b, dict):
+                #         for k, v in b.items():
+                #             match k:
+                #                 case "title":
+                #                     print(f"{k} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
+                #
+                #                 case "show_terminal":
+                #                     # likely not needed
+                #                     print(f"SHOW TERMINAL @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
+                #                     pass
+                #                 case "package_manager":
+                #                     # set package manager
+                #                     print(f"PACKAGE MANAGER @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
+                #                     pass
+                #                 case "groups":
+                #                     print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~{k}~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                #                     # {v}
+                #                     for dn, te in v.items():
+                #                         if dn.lower() == self.title.lower():
+                #                             for n, z in te.items():
+                #                                 print(f"@@@@@@@@@@@@@@@@@@@@ {n} @@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                #
+                #                             break
+
+
+                # for p in applications:
+                #     # for k, v in p.items():
+                #     #     self.list_store.append([k, v])
+                #     #     print(f"{k} ---------------------------------------------{v}")
+                #
+                #         # installed = False
+                #         # if application.config.installed:
+                #         #
+                #         #     print(f"{k} installed")
+                #         #     for i in application.config.installed:
+                #         #         print(f"{i.name}")
+                #         #         if k in i.name:
+                #         #             installed = True
+                #
+                #     fu = [{
+                #         'name': 'Discord',
+                #         'ref': 'com.discordapp.Discord',
+                #         'installed': True},
+                #         {'name':'Slack', 'ref': 'com.slack.Slack', 'installed': False}
+                #     ]
+                #
+                #     self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": p.get("installed", False)})
+
+                if isinstance(self.package_list, dict):
+                    packages = self.package_list.get("packages", [])
+                    if packages:
+                        print(packages)
+
+                        for p in packages:
+                            print(p)
+
+                            for k, v in p.items():
+                                is_installed = self.__app.config.is_installed(v) or False
+                                # print(f"{k} ------  {self.__app.config.is_installed(v)}  ------- {v}")
+                                # update only
+                                # self.list_store.append([k,v])
+                                self.list_store.append(Stupid(k, v, k, is_installed))
+                                # self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": is_installed})
+
+                else:
+                    print("broklen")
+
+                # for p in __packages:
+                #     for k, v in p.items():
+                #         self.list_store.append([k, v])
+                #         print(f"{k} --------------------  {application.config.is_installed(v)}  -------------------------{v}")
+                #
+                #
+                #         # print(f"{k} -------------------------------------------- {v}")
+                #
+                #         # installed = False
+                #         # if applications:
+                #         #
+                #         #     print(f"{k} installed")
+                #         #     for i in applications:
+                #         #         print(f"{i.name}")
+                #         #         if k in i.name:
+                #         #             installed = True
+                #
+                #         self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": True})
 
         # if self.title.lower() == "apply changes":
         #     self.list_store = Gtk.ListStore(str,str,str,str,str)
@@ -537,18 +595,18 @@ class Packages(Adw.Bin):
         #             self.list_store.append([k, v])
         #             self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
 
-        self.list_store = Gtk.ListStore(str, str)
-        new_headers = ["ref", "application"]
-        for p in __packages:
-            for k, v in p.items():
-                self.list_store.append([k, v])
-                self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
+        # self.list_store = Gtk.ListStore(str, str)
+        # new_headers = ["ref", "application"]
+        # for p in __packages:
+        #     for k, v in p.items():
+        #         self.list_store.append([k, v])
+        #         self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
 
-        self.current_filter = None
+        # self.current_filter = None
         # Creating the filter, feeding it with the list store model
-        self.language_filter = self.list_store.filter_new()
+        # self.language_filter = self.list_store.filter_new()
         # setting the filter function, note that we're not using the
-        self.language_filter.set_visible_func(self.language_filter_func)
+        # self.language_filter.set_visible_func(self.language_filter_func)
 
         # creating the treeview, making it use the filter as a model, and adding the columns
         # self.treeview = Gtk.TreeView(model=self.language_filter)
@@ -572,16 +630,16 @@ class Packages(Adw.Bin):
 
             dialog.hide()
 
-        for item in self._all_packages:
+        # for item in self._all_packages:
+        for item in self.list_store:
             _selection_dialog = DialogBox(Gtk.Window())
-            _apps_list = self.bundle_list
             # TODO: get from config
             # _apps_list.set_description(
             #     "The following list includes a tailored list of applications for you're selection."
             # )
 
             _apps_page = Adw.PreferencesPage()
-            _apps_page.add(_apps_list)
+            # _apps_page.add(self.bundle_list)
 
             _box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
             _box.append(_apps_page)
@@ -593,25 +651,41 @@ class Packages(Adw.Bin):
             # TODO: expand on this
             _action_row = Adw.ActionRow(
                 # title=item["title"], subtitle=item.get("subtitle", "")
-                title=item["ref"]
+                # title=item["ref"]
+                title=item.ref
             )
 
-            _switcher = Adw.SwitchRow()
-            _switcher.set_active(item.get('default', False))
-            _switcher.set_valign(Gtk.Align.CENTER)
-            _action_row.add_suffix(_switcher)
-            _action_row.connect("activate", self.on_selection_button_clicked)
-            _switcher.connect("activate", self.on_selection_button_clicked)
+            # _switcher = Adw.SwitchRow()
+            # _switcher.set_active(item.get('install', True))
+            # _switcher.set_active(item.installed)
+            # _switcher.set_valign(Gtk.Align.CENTER)
+
+            # _action_row.add_suffix(_switcher)
+            # _action_row.set_name("yes")
+            # _action_row.connect("activate",lambda x: print("yes"))
+            # _switcher.connect("activate", lambda x: print("no"))
 
             _customize = Gtk.Button()
-            _customize.set_icon_name("selection-checked-symbolic")
+            _customize.set_name("install")
+            _customize.set_label("install")
+            # _customize.set_icon_name("selection-checked-symbolic")
             _customize.set_valign(Gtk.Align.CENTER)
-            _customize.add_css_class("flat")
+            _customize.add_css_class("boxed_list")
             _action_row.add_suffix(_customize)
+
+            if item.installed is True:
+            # if item.get("installed", False):
+                _customize.set_icon_name("process-completed-symbolic")
+
             _customize.connect("clicked", self.on_selection_button_clicked, selection_dialogs[-1]) # selection_dialogs[-1], _apps_list, item
 
             self.bundle_list.add(_action_row)
-            self.__register_widgets.append((item, _switcher, _index))
+            self.list_store.connect("notify", self.__on_page_changed, selection_dialogs[-1])
+
+            # self.__register_widgets.
+            # print(_index)
+            # self.__register_widgets.append(item)
+            # self.__register_widgets.append(self.bundle_list)
 
             # application = Gio.Application.get_default()
             # application.config.setttings.set_active(item["application"])
@@ -622,18 +696,74 @@ class Packages(Adw.Bin):
             #
             # log.info(f"consent has been set to: {consent_accepted}")
 
-            _index += 1
+            # _index += 1
 
-    def __on_page_changed(self, widget, page):
+    def __on_page_changed(self, widget, page, selection_dialog):
         log.debug("on_page_changed")
-        if page == self.__key:
-            tmp_finals = self.__window.builder.get_temp_finals("packages")
+        # self.__app.
+        print(self.title)
+        bundles = self.__app.config.bundles
+        print(f"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n{self.package_list}")
+        counter = []
 
-            # if no package manager is selected, use Flatpak as default
-            if tmp_finals is None:
-                self.bundle_list.set_sensitive(True)
-                return
+        if isinstance(self.package_list, dict):
+            pkgs = self.package_list.get("packages", [])
+        else:
+            pkgs = self.package_list
 
-            packages_vars = tmp_finals["vars"]
-            has_flatpak = packages_vars.get("flatpak", False)
-            self.bundle_list.set_sensitive(has_flatpak)
+        for bundle in bundles:
+            print("@"*39)
+
+            print(bundle.keys())
+            print(self.title)
+
+            if bundle is None and self.title in bundle.keys():
+                print("$" * 39)
+                print(bundle.get(self.title).get("packages"))
+                print("$" * 39)
+
+
+                print(f"*****************************************************\n{counter}")
+                for i in range(len(pkgs), len(self.list_store)):
+                    self.list_store.remove(i)
+
+            else:
+                print(f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n{counter}")
+
+                print(len(self.list_store))
+
+
+                self.list_store.remove_all()
+
+                # for i, ls in enumerate(self.list_store):
+                #
+                #
+                #     print(i)
+                #     print(ls)
+                #     if i > len(pkgs):
+                #         self.list_store.remove(i)
+                #         ls.run_dispose()
+
+                # for k in keepers:
+                #     self.list_store.append(k)
+                # for i in range(defined_count, current_count):
+                #
+                #     test = self.list_store.get_item(i)
+                #
+                #     print(test)
+                #     self.list_store.remove(i)
+
+
+
+
+        # if page == self.__key:
+        #     tmp_finals = self.__window.builder.get_temp_finals("packages")
+        #
+        #     # if no package manager is selected, use Flatpak as default
+        #     if tmp_finals is None:
+        #         self.bundle_list.set_sensitive(True)
+        #         return
+        #
+        #     packages_vars = tmp_finals["vars"]
+        #     has_flatpak = packages_vars.get("flatpak", False)
+        #     self.bundle_list.set_sensitive(has_flatpak)

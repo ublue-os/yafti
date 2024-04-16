@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import io
+import itertools
+import asyncio
+import time
 from enum import Enum
 import os
 import types
@@ -13,6 +16,7 @@ from sphinx.errors import ExtensionError
 import yafti.parser
 from yafti import __name__ as app_name
 from yafti import __version__ as app_version
+from yafti.registry import PLUGINS
 from yafti import log
 
 
@@ -87,6 +91,10 @@ class Config(BaseConfig):
         self.__title: str = "yafti"
         self.__mode: YaftiRunMode = YaftiRunMode.NONCE
         self.__enabled: bool = True
+        self.__for_justice = []
+
+        package_manager: str = "yafti.plugins.flatpak"
+        asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
 
         self.yafti_config_path = self.__yafti_config_path
 
@@ -112,15 +120,54 @@ class Config(BaseConfig):
     # public methods
     ###
     def apps_by_screen(self, name: str):
-        if name is None:
-            print("WERWERWERWERWERWERWERWERWER")
-            return None
+        print("APPS BY SCREEN")
+        # return all apps based on bundle
+        return {}
 
-        print(self.screens)
-        if name.lower() in self.screens:
-            return self.__screens[name.lower()]
-        else:
-            return {}
+    async def __async_callback(self, callback):
+        # self._all_packages = task.result()
+        # if inspect.isawaitable(callback):
+        #     results = await callback()
+        #     self._all_packages = results
+        # else:
+        #     results = callback()
+        #
+        #     self._all_packages = results
+
+        retry_count = itertools.count()
+        while True:
+            try:
+                loop = asyncio.get_running_loop()
+
+                if loop.is_running():
+                    async with asyncio.TaskGroup() as tg:
+                        task = tg.create_task(callback)
+
+                    self.__for_justice = task.result()
+            except RuntimeError as e:
+                if next(retry_count) >= 5:
+                    time.sleep(30)
+                    continue
+                else:
+                    print("failed on max retries.")
+                    raise e
+            except Exception as e:
+                print("unrecoverable error")
+                raise e
+            break
+
+    @property
+    def installed(self):
+        return self.__for_justice
+
+    def is_installed(self, application_id: str) -> bool:
+        log.debug("FOR JUSTICE APPLICATION IS INSTALLED")
+        for i in self.__for_justice:
+            # log.debug(f"{application_id} ========== {i.application}")
+            if i.application == application_id:
+                return True
+
+        return False
 
     @property
     def yafti_config_path(self):
@@ -154,12 +201,10 @@ class Config(BaseConfig):
 
     @property
     def bundles(self):
-        print(f"==================================")
-
         # fix me
         test = self.screens.get("applications", None).values
         for k, v in test.items():
-            print(f"================={k} ========= {v}=================")
+            log.debug(f"===== bundles ========{k} ========= {v}=================")
             if k == "groups":
                 self.__bundles.append(v)
 
