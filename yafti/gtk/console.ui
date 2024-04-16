@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0"/>
+    <requires lib="libadwaita" version="1.0" />
+    <template class="YaftiApplyChanges" parent="GtkScrolledWindow">
+        <property name="margin-start">40</property>
+        <property name="margin-end">40</property>
+        <property name="margin-bottom">40</property>
+        <property name="height-request">350</property>
+        <child>
+            <object class="GtkBox" id="console_output">
+                <property name="visible">True</property>
+                <property name="margin-top">12</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="orientation">vertical</property>
+            </object>
+        </child>
+        <style>
+            <class name="card"/>
+        </style>
+    </template>
+</interface>

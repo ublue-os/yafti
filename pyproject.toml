@@ -15,7 +15,8 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-yafti = "yafti.__main__:app"
+yafti = "yafti.cli.mainju:app"
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -26,16 +27,16 @@ gbulb = "^0.6.4"
 rich = "^13.3.2"
 typer = ">=0.7,<0.10"
 
-[tool.poetry.plugins."yafti.plugin"]
-"yafti.plugin.flatpak" = "yafti.plugin.flatpak:Flatpak"
-"yafti.plugin.run" = "yafti.plugin.run:Run"
-"run" = "yafti.plugin.run:Run"
+[tool.poetry.plugins."yafti.plugins"]
+"yafti.plugins.flatpak" = "yafti.plugins.flatpak:Flatpak"
+"yafti.plugins.run" = "yafti.plugins.run:Run"
+"run" = "yafti.plugins.run:Run"
 
-[tool.poetry.plugins."yafti.screen"]
-"yafti.screen.title" = "yafti.screen.title:TitleScreen"
-"yafti.screen.console" = "yafti.screen.console:ConsoleScreen"
-"yafti.screen.consent" = "yafti.screen.consent:ConsentScreen"
-"yafti.screen.package" = "yafti.screen.package:PackageScreen"
+[tool.poetry.plugins."yafti.views"]
+"yafti.views.title" = "yafti.views.title:TitleScreen"
+"yafti.views.console" = "yafti.views.console:YaftiApplyChanges"
+"yafti.views.consent" = "yafti.views.consent:ConsentScreen"
+"yafti.views.package" = "yafti.views.package:PackageScreen"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

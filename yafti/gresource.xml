@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/ublue-os/yafti">
+    <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">gtk/shortcuts.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">gtk/window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">gtk/progress.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">gtk/tour.ui</file>
+
+    <file>assets/pivot_raptor.png</file>
+    <file>assets/bluefin.svg</file>
+    <file>assets/bluefin-small.png</file>
+    <file>assets/nest.png</file>
+    <file>assets/small_logo.png</file>
+    <file>assets/flatpak_logo.svg</file>
+    <file>assets/podman.svg</file>
+    <file>assets/css/application.css</file>
+  </gresource>
+</gresources>

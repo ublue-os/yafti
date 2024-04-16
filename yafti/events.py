@@ -36,6 +36,7 @@ def register(event_name):
         raise EventAlreadyRegisteredError(
             "event is already registered", event=event_name
         )
+
     _listeners[event_name] = []
 
 
@@ -44,12 +45,14 @@ def on(event_name: str, fn: Any):
         raise EventNotRegisteredError("event name not registered", event=event_name)
     if fn in _listeners[event_name]:
         return
+
     _listeners[event_name].insert(0, fn)
 
 
 def detach(event_name: str, fn: Any):
     if event_name not in _listeners:
         raise EventNotRegisteredError("event name not registered", event=event_name)
+
     _listeners[event_name].remove(fn)
 
 

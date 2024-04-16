@@ -57,6 +57,7 @@ class YaftiScreen:
 
     def activate(self):
         self.active = True
+
         if hasattr(self, "on_activate"):
             if iscoroutinefunction(self.on_activate):
                 asyncio.ensure_future(self.on_activate())
@@ -65,6 +66,7 @@ class YaftiScreen:
 
     def deactivate(self):
         self.active = False
+
         if hasattr(self, "on_deactivate"):
             if iscoroutinefunction(self.on_deactivate):
                 asyncio.ensure_future(self.on_deactivate())

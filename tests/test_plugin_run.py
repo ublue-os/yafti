@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 from subprocess import CompletedProcess
-from yafti.plugin.run import Run
+from yafti.plugins.run import Run
 from pydantic import ValidationError
 
 

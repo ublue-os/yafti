@@ -22,7 +22,7 @@ def info(message, **kwargs):
 
 
 def warn(message, *kwargs):
-    _l.warn(f"{message} {_fmt(kwargs)}")
+    _l.warning(f"{message} {_fmt(kwargs)}")
 
 
 def error(message, *kwargs):

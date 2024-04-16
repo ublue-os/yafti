@@ -66,7 +66,7 @@ actions:
   pre:
   - run: /full/path/to/bin --with --params
   - run: /another/command run
-  - yafti.plugin.flatpak:
+  - yafti.plugins.flatpak:
       install: org.gnome.Calculator
   post:
   - run: /run/these/commands --after --all --screens
@@ -83,7 +83,7 @@ screens:
     values:
       title: Package Installation
       show_terminal: true
-      package_manager: yafti.plugin.flatpak
+      package_manager: yafti.plugins.flatpak
       groups:
         Core:
           description: All the good stuff
@@ -152,7 +152,7 @@ sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-de
 #### rhel based developer prerequisites 
 
 ```
-sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel
+sudo dnf install python3-devel cairo-devel gobject-introspection-devel cairo-gobject-devel vte291-gtk4-devel
 ```
 
 #### pyenv installer

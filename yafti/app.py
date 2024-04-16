@@ -13,43 +13,46 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
 import hashlib
 from pathlib import Path
+import os
+import yaml
 
 import gbulb
-import yaml
 from gi.repository import Adw, Gdk, Gio, Gtk
 
-from yafti import events
-from yafti.parser import Config, YaftiRunModes, YaftSaveState
-from yafti.screen.content import Content
-from yafti.screen.sidebar import Sidebar
-from yafti.screen.window import ApplicationWindow, Window
+from yafti.parser import Config, YaftiRunModes
+from yafti.views.content import Content
+from yafti.views.sidebar import Sidebar
+from yafti.windows.window import ApplicationWindow
 from yafti.settings import Config
 
 
 class Yafti(Adw.Application):
-    def __init__(self, cfg: Config = None, loop=None):
-        super().__init__(application_id="it.ublue.Yafti")
+    """
+    Yafti main application
+    https://developer.gnome.org/documentation/tutorials/menus.html
+    """
+    def __init__(self, cfg: str = None, loop=None):
+        self.config = Config(cfg)
+        super().__init__(application_id=self.config.APP_ID)
 
-        self.config = Config()
-        self._consumer_config = cfg
-        self.__bundle_list = []
-        for k, v in cfg.screens.items():
-            for kk, vv in v.values.items():
-                if kk == "groups":
-                    self.__bundle_list.append(vv)
+        resource = Gio.Resource.load(
+            os.path.join(self.config.APP_ROOT, "gresource.gresource")
+        )
+        resource._register()
 
-        self.config.__setattr__("screens", self._consumer_config.screens)
-        self.yafti_config = cfg
         self.loop = loop or gbulb.get_event_loop()
 
-    def run(self, *args, force_run: bool = False, **kwargs):
-        configured_mode = self._consumer_config.properties.mode
-        _p: Path = self._consumer_config.properties.path.expanduser()
+    @property
+    def temp_config(self) -> Config:
+        return self.config.system_config
 
-        # TODO we need to maintain state of all installed applications and this hash should be moved to dconf/GSettings
+    def run(self, *args, force_run: bool = False, **kwargs):
+        configured_mode = self.config.system_config.properties.mode
+        _p: Path = self.config.system_config.properties.path.expanduser()
+
+        # TODO we need to maintain state of all installed applications and this hash should be moved to dconf/GSettings.
         # TODO(GH-#103): Remove this prior to 1.0 release. Start.
         _old_p = Path("~/.config/yafti-last-run").expanduser()
 
@@ -60,7 +63,6 @@ class Yafti(Adw.Application):
                 _p.unlink()
 
             _old_p.rename(_p)
-
         # TODO(GH-#103): End.
 
         if not force_run:
@@ -79,14 +81,14 @@ class Yafti(Adw.Application):
     def do_activate(self):
         # self._win = Window(application=self)
         # this needs to be set in the constructor
-        self.window = ApplicationWindow(
-            application=self, width_request=280, height_request=200
-        )
+        print("@@@@@@@@@@@@@@@ Application Entrypoint @@@@@@@@@@@@@@@@@@@@@")
+        self.window = ApplicationWindow(application=self, width_request=280, height_request=200)
 
         ## GTK UI CSS Provider
         self.css = Gtk.CssProvider()
+
         # pull from resources
-        self.css.load_from_path("yafti/screen/assets/css/application.css")
+        self.css.load_from_path("yafti/assets/css/application.css")
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(), self.css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
@@ -115,7 +117,7 @@ class Yafti(Adw.Application):
         self.main_window_box.append(self.split_view)
         self.window.set_content(self.main_window_box)
 
-        self.window.__setattr__("bundle_list", self.__bundle_list)
+        self.window.__setattr__("bundle_list", self.config.bundles)
         # Set the sidebar and content panes
         self.split_view.set_sidebar(Sidebar(self.window))
         self.split_view.set_content(Content())
@@ -124,6 +126,7 @@ class Yafti(Adw.Application):
         on_deactivate.connect("activate", self.quit)
         self.add_action(on_deactivate)
 
+        self.window.connect("destroy", self.quit)
         self.window.present()
         self.loop.run()
 
@@ -140,16 +143,17 @@ class Yafti(Adw.Application):
         p.write_text(self.config_sha)
 
     def quit(self, *args, **kwargs):
-        """ """
+        """
+        https://python-gtk-3-tutorial.readthedocs.io/en/latest/builder.html#gtk-template
+        """
         self.loop.stop()
         super().quit()
-
         # This has been commented out during development
-        # if self.config.properties.save_state == YaftSaveState.always:
+        # if self.config.properties.save_state == YaftiSaveState.always:
         #     self.sync_last_run()
         #
         # if (
-        #         self.config.properties.save_state == YaftSaveState.end
+        #         self.config.properties.save_state == YaftiSaveState.end
         #         and self._win
         #         and self._win.is_last_page
         # ):

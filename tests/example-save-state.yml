@@ -6,7 +6,7 @@ actions:
   pre:
     - run: /full/path/to/bin --with --params
     - run: /another/command run
-    - yafti.plugin.flatpak:
+    - yafti.plugins.flatpak:
         install: org.gnome.Calculator
   post:
     - run: /run/these/commands --after --all --screens
@@ -35,7 +35,7 @@ screens:
     values:
       title: Install flatpaks
       show_terminal: true
-      package_manager: yafti.plugin.flatpak
+      package_manager: yafti.plugins.flatpak
       groups:
         Core:
           description: All the good stuff

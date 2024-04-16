@@ -41,6 +41,7 @@ build deps="yes": (dev deps)
 #    pre-commit
 #    poetry run pre-commit install --install-hooks # uninstall: `pre-commit uninstall`
 
+
 unit-test deps="no": (dev deps)
     @echo 'unit-tests'
     poetry run pytest --cov={{ module_path}} --cov-report=term-missing
@@ -79,8 +80,11 @@ docs deps="no": (dev deps)
     poetry run sphinx-autobuild docs docs/_build/html
 
 run deps="no": (dev deps)
-    poetry run python -m {{ project }} tests/example-multi-package.yml --debug -f
-    # poetry run python -m {{ project }} tests/example.yml --debug
+    # not sure why GTK_IM_MODULE is required in the distrobox.  I need to test on a physical installation.
+    export GTK_IM_MODULE=ibus
+    # poetry run python -m {{ project }}.cli start tests/bazzite.yaml --debug -f
+    poetry run python -m {{ project }}.cli start tests/bluefin.yml --debug -f
+    # poetry run python -m {{ project }}.cli start tests/example.yml --debug
 
 create-distrobox:
   distrobox-assemble create --file {{ project_path }}/distrobox.ini
@@ -89,9 +93,15 @@ enter-distrobox:
   distrobox-enter yaftibox
 
 ###
-# Need to add a just command for glib-compile-schemas .
+# Need to add a just command for glib-compile-schemas
 ###
 
 ###
 # Add just command for running act local github runners
 ###
+
+###
+# gnome extension mangement.
+# https://github.com/essembeh/gnome-extensions-cli/
+###
+

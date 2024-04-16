@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.ublue-os.yafti.window" path="/org/ublue-os/yafti/windows/">
+        <key name="width" type="i">
+        <default>800</default>
+        </key>
+        <key name="height" type="i">
+        <default>800</default>
+        </key>
+        <key name="is-maximized" type="b">
+        <default>false</default>
+        </key>
+        <key name="is-fullscreen" type="b">
+        <default>false</default>
+        </key>
+        <key name="dark-mode" type="b">
+        <default>false</default>
+        </key>
+    </schema>
+    <schema id="org.ublue-os.yafti.settings" path="/org/ublue-os/yafti/settings/"  gettext-domain="settings">
+        <key name="interval" type="d">
+            <default>1.0</default>
+        </key>
+        <key name="consent-accepted" type="b">
+            <default>false</default>
+        </key>
+        <key name="disabled" type="b">
+            <default>false</default>
+        </key>
+
+        <key name="included-packages" type="s">
+            <default>""</default>
+            <summary>Apps that the user included during installation.</summary>
+            <description>
+                A list applications that the user installed when using yafti or independently installed
+                by the user and defined in the yafti.yaml config file found /etc/yafti.yaml.
+            </description>
+        </key>
+
+        <key name="excluded-packages" type="s">
+            <default>""</default>
+            <summary>Apps the user did not install during installation.</summary>
+            <description>
+                A list applications that the user did not  install using yafti or independently removed
+                but are in the yafti.yaml config file found /etc/yafti.yaml.
+            </description>
+        </key>
+
+
+        <key name="start-on-startup" type="b">
+            <default>false</default>
+        </key>
+        <key name="save-format" type="s">
+        <choices>
+            <choice value='json'/>
+            <choice value='csv'/>
+            <choice value='kv'/>
+        </choices>
+        <default>'json'</default>
+    </key>
+    </schema>
+    <schema id="org.ublue-os.yafti" path="/org/ublue-os/yafti/">
+    <key name="filter" type="s">
+      <choices>
+        <choice value='All'/>
+        <choice value='Open'/>
+        <choice value='Done'/>
+      </choices>
+      <default>'All'</default>
+      <summary>Filtering for Packages</summary>
+    </key>
+  </schema>
+</schemalist>
