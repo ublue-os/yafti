@@ -1,4 +1,4 @@
-from gi.repository import Adw, Gdk, Gio, GObject, Gtk
+from gi.repository import Adw, Gio, Gtk
 
 
 class Settings:
@@ -23,12 +23,13 @@ class Settings:
             selectable=False,
             adjustment=Gtk.Adjustment(
                 value=application.config.settings.get_value("interval").get_double(),
-                lower=0.1,
-                upper=10.0,
-                step_increment=0.1,
+                lower=60.0,
+                upper=600.0,
+                step_increment=1.0,
                 page_increment=1,
                 page_size=0,
             ),
+            visible=False,
         )
 
         application.config.settings.bind(
@@ -45,7 +46,8 @@ class Settings:
             can_focus=False,
             can_target=False,
             active=False,
-            # activatable=False,
+            activatable=False,
+            visible=False,
         )
         application.config.settings.bind(
             "consent-accepted",
@@ -63,6 +65,7 @@ class Settings:
             active=False,
             activatable=True,
         )
+
         application.config.settings.bind(
             "disabled",
             self.disable_yafti,
@@ -70,52 +73,10 @@ class Settings:
             Gio.SettingsBindFlags.DEFAULT,
         )
 
-        self.included_packages = Adw.EntryRow(
-            title="Included Packages",
-            can_focus=False,
-            can_target=False,
-
-        )
-        application.config.settings.bind(
-            'included-packages',
-            self.included_packages,
-            "active",
-            Gio.SettingsBindFlags.DEFAULT
-        )
-
-        self.excluded_packages = Adw.EntryRow(
-            title="Excluded Packages",
-            can_focus=False,
-            can_target=False,
-
-        )
-        application.config.settings.bind(
-            'excluded-packages',
-            self.excluded_packages,
-            "active",
-            Gio.SettingsBindFlags.DEFAULT
-        )
-
-        # self.preferences_group.add(self.included_packages)
-        # self.consent_accepted.set_data(True)
         self.preferences_group.add(self.consent_accepted)
         self.preferences_group.add(self.interval_seconds)
         self.preferences_group.add(self.disable_yafti)
         self.preference.add(self.preferences_group)
-
-        # TODO: clean up an hide.
-        self._new_pref = Adw.PreferencesPage()
-        self._new_perf_group = Adw.PreferencesGroup()
-        self._new_perf_group.add(self.included_packages)
-        self._new_pref.add(self.preferences_group)
-        self.preference.add(self._new_perf_group)
-
-        # TODO: clean up an hide.
-        self._old_new_pref = Adw.PreferencesPage()
-        self._old_new_perf_group = Adw.PreferencesGroup()
-        self._old_new_perf_group.add(self.excluded_packages)
-        self._old_new_pref.add(self.preferences_group)
-        self.preference.add(self._old_new_perf_group)
 
         self.scrolled_window.set_child(self.preference)
 

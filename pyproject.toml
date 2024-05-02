@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "yafti"
-version = "0.8.0"
+version = "0.9.0-beta1"
 description = "Yet another first time installer"
-authors = ["Marco Ceppi <marco@ceppi.net>"]
+authors = ["Alex Banna <abanna@nerds.run>"]
 license = "Apache 2.0"
 readme = "README.md"
 homepage = "https://github.com/ublue-os/yafti"
@@ -15,8 +15,7 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-yafti = "yafti.cli.mainju:app"
-
+yafti = "yafti.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -32,11 +31,10 @@ typer = ">=0.7,<0.10"
 "yafti.plugins.run" = "yafti.plugins.run:Run"
 "run" = "yafti.plugins.run:Run"
 
-[tool.poetry.plugins."yafti.views"]
-"yafti.views.title" = "yafti.views.title:TitleScreen"
-"yafti.views.console" = "yafti.views.console:YaftiApplyChanges"
-"yafti.views.consent" = "yafti.views.consent:ConsentScreen"
-"yafti.views.package" = "yafti.views.package:PackageScreen"
+#[tool.poetry.plugins."yafti.views"]
+#"yafti.views.title" = "yafti.views.title:TitleScreen"
+#"yafti.views.console" = "yafti.views.console:YaftiApplyChanges"
+#"yafti.views.consent" = "yafti.views.consent:YaftiConsentScreen"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

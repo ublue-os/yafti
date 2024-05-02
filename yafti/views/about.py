@@ -1,4 +1,3 @@
-import gi
 from gi.repository import Gio, Gtk, Rsvg
 
 
@@ -22,9 +21,7 @@ class About:
 
         # Load the SVG file using librsvg
         # TODO get from config
-        self.svg_data = Rsvg.Handle.new_from_file(
-                "yafti/assets/bluefin.svg"
-        )
+        self.svg_data = Rsvg.Handle.new_from_file("yafti/assets/bluefin.svg")
 
         # Set the SVG colours to the theme colours
         # Check: print(self.accent_fg_color, self.accent_bg_color)
@@ -55,18 +52,6 @@ class About:
         # TODO:
         #  Deprecated since version 4.12: Use [ctor`Gtk`.Image.new_from_paintable] and [ctor`Gdk`.Texture.new_for_pixbuf] instead
         #  https://github.com/python-pillow/Pillow
-        # self.logo = Gtk.Image()
-        # self.svg_data.get_pixbuf()
-        # gst-editing-services-devel
-        # self.texture = Gdk.Texture.new_for_pixbuf(self.svg_data.get_pixbuf())
-
-        # Get the size of the GdkPixbuf
-        # pixbuf_width = pixbuf.get_width()
-        # pixbuf_height = pixbuf.get_height()
-
-        # Create a Gdk.Paintable from the Gdk.Texture
-        # self.paintable = Gdk.Texture.new_for_stream_at_scale(None, self.texture, self.texture.get_width(), self.texture.get_height())
-        # self.logo = Gtk.Image.new_from_paintable(self.texture)
 
     def set_content(self, button):
         """

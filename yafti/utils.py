@@ -19,8 +19,8 @@ def parse_packages(packages: dict | list) -> dict:
 
         return output
 
-    for pkgcfg in packages:
-        for package in pkgcfg.values():
+    for pkg_cfg in packages:
+        for package in pkg_cfg.values():
             if isinstance(package, dict):
                 package = json.dumps(package)
             output[f"pkg:{package}"] = True
@@ -29,9 +29,7 @@ def parse_packages(packages: dict | list) -> dict:
 
 
 def _format_complex(record: dict) -> dict:
-    # don't want to get rid of non-csv values, so we will
-    #  simply write them as a JSON string instead
-
+    # don't want to get rid of non-csv values, so we will simply write them as a JSON string instead
     json_opts = (",", ":")
     cast_types = (list, tuple, dict)
 

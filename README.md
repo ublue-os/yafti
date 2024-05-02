@@ -133,7 +133,7 @@ After entering the distro box
 
 ```shell
 # prints fedora info
-neofetch
+fastfetch
 
 # launches the app
 just run

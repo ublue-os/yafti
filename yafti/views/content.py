@@ -1,18 +1,14 @@
 import asyncio
-import itertools
-import pprint
-import time
-from typing import Optional
+import base64
+import hashlib
+import json
+from pprint import pformat
 
-from gi.repository import Adw, Gio, Gtk, GObject
-from poetry.console.commands import self
+from gi.repository import Adw, Gio, GLib, GObject, Gtk
 
 from yafti import log
-from yafti.abc import YaftiScreenConfig
-from yafti.registry import PLUGINS
 from yafti.views.consent import ConsentScreen
 from yafti.views.dialog import DialogBox
-from yafti.core.models import PackageConfig, PackageGroupConfig
 
 # The content pane is a shell to swap panes in and out of the content area of the navigation split view
 # The content pane must be a subclass of Adw.NavigationPage
@@ -31,33 +27,37 @@ MENU_XML = """
 <interface>
   <menu id="app-menu">
     <section>
-      <attribute name="label" translatable="yes">Change label</attribute>
+      <attribute name="label" translatable="yes">Application Menu</attribute>
       <item>
         <attribute name="action">win.change_label</attribute>
-        <attribute name="target">String 1</attribute>
+        <attribute name="target"></attribute>
         <attribute name="label" translatable="yes">String 1</attribute>
       </item>
       <item>
         <attribute name="action">win.change_label</attribute>
-        <attribute name="target">String 2</attribute>
+        <attribute name="target"></attribute>
         <attribute name="label" translatable="yes">String 2</attribute>
       </item>
       <item>
         <attribute name="action">win.change_label</attribute>
-        <attribute name="target">String 3</attribute>
+        <attribute name="target"></attribute>
         <attribute name="label" translatable="yes">String 3</attribute>
       </item>
     </section>
     <section>
       <item>
         <attribute name="action">win.maximize</attribute>
-        <attribute name="label" translatable="yes">Maximize</attribute>
+        <attribute name="label" translatable="yes">Dark Mode</attribute>
       </item>
     </section>
     <section>
       <item>
         <attribute name="action">app.about</attribute>
         <attribute name="label" translatable="yes">_About</attribute>
+      </item>
+      <item>
+        <attribute name="action">app.settings</attribute>
+        <attribute name="label" translatable="yes">Settings</attribute>
       </item>
       <item>
         <attribute name="action">app.quit</attribute>
@@ -77,37 +77,41 @@ class Content(Adw.NavigationPage):
     Other pane classes update the content pane with their content
     """
 
-    def __init__(self):
-        super().__init__()
-
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.set_visible(True)
         self.pane = Adw.ToolbarView(top_bar_style=Adw.ToolbarStyle.FLAT)
         self.header = Adw.HeaderBar()
 
-        # need to get this squared away
-        # builder = Gtk.Builder.new_from_string(MENU_XML, -1)
-        # self.menu.append(builder.get_object('app-menu'))
-
         # https://python-gtk-3-tutorial.readthedocs.io/en/latest/application.html
-        self.header.set_decoration_layout("menu:close")
-
+        self.header.set_decoration_layout("menu:false")
         self.menu = Gio.Menu()
-        self.menu.append("Dark Mode", "app.dark_mode")
-        self.menu_button = Gtk.MenuButton(
-            icon_name="open-menu-symbolic", menu_model=self.menu
+        builder = Gtk.Builder.new_from_string(MENU_XML, -1)
+
+        # self.menu.append("Dark Mode", "app.dark_mode")
+        # self.menu_button = Gtk.MenuButton(
+        #     icon_name="open-menu-symbolic", menu_model=self.menu
+        # )
+
+        self.end_menu_button = Gtk.MenuButton(
+            icon_name="system-shutdown-symbolic",
+            menu_model=builder.get_object("app-menu"),
         )
 
-        self.header.pack_start(self.menu_button)
+        # self.header.pack_start(self.menu_button)
+        self.header.pack_end(self.end_menu_button)
+
         # self.pane.replace_data
         self.pane.add_top_bar(self.header)
         self.set_child(self.pane)
 
+        # next button
         next_button = Gtk.Button()
         next_button.set_label("Next")
         next_button.set_halign(Gtk.Align.CENTER)
         next_button.set_css_classes(["suggested-action"])
         next_button.connect("clicked", lambda x: self.next())
-
+        # bottom bar
         bottom_bar = Gtk.Box()
         bottom_bar.set_margin_top(12)
         bottom_bar.set_margin_bottom(12)
@@ -115,7 +119,7 @@ class Content(Adw.NavigationPage):
         bottom_bar.set_halign(Gtk.Align.END)
         bottom_bar.append(next_button)
         bottom_bar.set_css_classes([".toolbar"])
-
+        # setting pane
         self.pane.add_bottom_bar(bottom_bar)
         self.pane.set_reveal_bottom_bars(True)
 
@@ -130,15 +134,18 @@ class Content(Adw.NavigationPage):
         log.info(f"consent has been set to: {consent_accepted}")
 
         if consent_accepted is True:
+            self.set_title("Welcome Travelers")
             pkg = Packages("Welcome", self, [])
             pkg.set_content(None, self)
+
         else:
+            # TODO: get from config file and load as view
             self.set_title("Welcome Travelers")
             welcome = ConsentScreen()
             welcome.set_content(next_button, self)
 
     def _closed(self, obj, pspec):
-        print("######################################################################################")
+        log.debug(f"Closing {obj}")
 
     def next(self, **kwargs):
         """
@@ -146,11 +153,11 @@ class Content(Adw.NavigationPage):
         """
         log.debug("Next screen")
         application = Gio.Application.get_default()
-        pprint.pprint(kwargs, indent=4)
-        thing = self.pane.set_content(application.split_view.get_content())
-        pkg = Packages(self, package_list=[], window=application.get_default().split_view)
-        pkg.set_content(thing, self)
-        # application.split_view.set_content()
+        current = self.pane.set_content(application.split_view.get_content())
+        pkg = Packages(
+            self, package_list=[], window=application.get_default().split_view
+        )
+        pkg.set_content(current, self)
 
 
 # TODO: move to .ui file.
@@ -197,19 +204,124 @@ _xml2 = """\
 """
 
 
-class Stupid(GObject.GObject):
-    __gtype_name__ = "Stupid"
+class Package(GObject.GObject):
+    __gtype_name__ = "Package"
 
     def __init__(self, application, name, ref, installed):
         super().__init__()
+        self.__app = Gtk.Application.get_default()
         self._application = application
+        self._action = None
+        self._checksum: str = ""
         self._name = name
         self._ref = ref
         self._installed = installed or False
+        self._modified: bool = False
+        self._install_button = Gtk.Button()
+        self._window = Gtk.Window()
+        self._dialog_box = DialogBox(self._window)
+        self._apps_page = Adw.PreferencesPage()
+        self._box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
+        self._box.append(self._apps_page)
+        self._dialog_box.set_content(self._box)
+        self._dialog_box.set_default_size(500, 600)
+        self._action_row = Adw.ActionRow(title=self._ref)
+        self._install_button.set_name("install")
+        self._install_button.set_label("install")
+        self._install_button.set_label("install")
+        self._install_button.set_valign(Gtk.Align.CENTER)
+        self._install_button.add_css_class("boxed_list")
+        self._action_row.add_suffix(self._install_button)
+
+        if self._installed is True and self._modified is False:
+            log.debug(
+                f"package was installed and not modified setting initial icon {self._name}"
+            )
+            self._install_button.set_icon_name("process-completed-symbolic")
+
+    def to_dict(self):
+        return {
+            "action": self._action,
+            "application": self._application,
+            "name": self._name,
+            "ref": self._ref,
+            "installed": self._installed,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
+    def __base64_encode(self):
+        encoded_json = self.to_json().encode("utf-8")
+
+        return base64.b64encode(encoded_json).decode("utf-8")
+
+    @property
+    def action(self):
+        return self._action
+
+    @action.setter
+    def action(self, value: str or None):
+        if value not in ["install", "uninstall", None]:
+            raise ValueError("Action must be either 'install' or 'uninstall'")
+
+        self._action = value
+
+    @property
+    def checksum(self):
+        sha256 = hashlib.sha256(self.to_json().encode("utf-8"))
+        self._checksum = sha256.hexdigest()
+
+        return self._checksum
+
+    def __get_from_settings(self):
+        pkg_settings = self.__app.config.settings.get_value("included-packages")
+        encoded_pkgs = pkg_settings.get_data_as_bytes().get_data().decode("utf-8")
+
+        all_pkgs = ""
+        try:
+            all_pkgs = json.loads(base64.b64decode(encoded_pkgs))
+        except Exception:
+            # attempt to rebuild full included package settings
+            pass
+
+        return all_pkgs
+
+    def __get_installed(self):
+        pass
+
+    def __update_settings(self):
+        included_packages = self.__app.config.settings.get_value("included-packages")
+        pkg_data = included_packages.get_data_as_bytes().get_data().decode("utf-8")
+
+        try:
+            pkgs_loaded = json.loads(base64.b64decode(pkg_data))
+        except json.JSONDecodeError as e:
+            log.debug(
+                f"failed to decode and json load package data updating settings: {pkg_data} -- {e}"
+            )
+            pkgs_loaded = {}
+            pass
+
+        exists = pkgs_loaded.get(self.application)
+        if exists is None or exists.get("checksum") != self.checksum:
+            self_dict = self.to_dict()
+            self_dict["checksum"] = self.checksum
+            pkgs_loaded[self.application] = self_dict
+            pkgs_encoded = json.dumps(pkgs_loaded).encode("utf-8")
+            b64 = base64.b64encode(pkgs_encoded).decode("utf-8")
+            self.__app.config.settings.set_value(
+                "included-packages", GLib.Variant.new_string(b64)
+            )
+
+    def update_state(self):
+        self._modified = True
+        self.__update_settings()
 
     @GObject.Property(type=str)
     def application(self):
         return self._application
+
     @GObject.Property(type=str)
     def name(self):
         return self._name
@@ -220,11 +332,40 @@ class Stupid(GObject.GObject):
 
     @GObject.Property(type=bool, default=False)
     def installed(self):
+        if self._installed is True and self._modified is False:
+            self._install_button.set_icon_name("process-completed-symbolic")
 
         return self._installed
 
+    @installed.setter
+    def installed(self, value: bool):
+        if value is True and self._modified is False:
+            self._install_button.set_icon_name("process-completed-symbolic")
+
+        self._installed = value
+
+    @property
+    def install_button(self):
+        return self._install_button
+
+    @property
+    def dialog_box(self):
+        return self._dialog_box
+
+    @property
+    def action_row(self):
+        return self._action_row
+
     def __repr__(self):
-        return f"Stupid(application={self.application}, name={self.name}, ref={self.ref}, installed{self.installed})"  # noqa
+        return f"""
+                Package(
+                    action={self._action}
+                    application={self._application},
+                    name={self._name},
+                    ref={self._ref},
+                    installed{self._installed}
+                )
+            """  # noqa
 
 
 # @Gtk.Template(filename="yafti/screen/assets/packages.ui")
@@ -246,21 +387,12 @@ class Packages(Adw.Bin):
     # bundle = Gtk.Template.Child()
     # btn_next = Gtk.Template.Child()
 
-    class Config(YaftiScreenConfig):
-        title: str
-        show_terminal: bool = True
-        package_manager: str
-        groups: Optional[PackageGroupConfig] = None
-        packages: Optional[list[PackageConfig]] = None
-        package_manager_defaults: Optional[dict] = None
-
     def __init__(self, title, window, package_list, **kwargs):
         super().__init__(**kwargs)
 
         self.__window = window
         # self.btn_next.connect("clicked", self.__next_step)
         self.title: str = title
-        # print(GObject.signal_list_names(self))
         self.set_property("visible", True)
         self.package_list = package_list or []
         self._all_packages = []
@@ -270,55 +402,26 @@ class Packages(Adw.Bin):
         self.__app = Gtk.Application.get_default()
         # TODO get from config
         # self.bundle_list.activate_action("clicked", self.on_selection_button_clicked)
-        self.list_store = Gio.ListStore.new(Stupid)
+        self.list_store = Gio.ListStore.new(Package)
+        self._currently_installed = []
+        self.__loaded = []
 
         asyncio.ensure_future(self.build_screens(package_list))
 
-    # @GObject.Signal
-    # def noarg_signal(self, *args):
-    #
-    #     package_manager: str = "yafti.plugins.flatpak"
-    #     if len(self._all_packages) == 0:
-    #         asyncio.ensure_future(self.__async_callback(PLUGINS.get(package_manager).list()))
-    #
-    #     loop = asyncio.new_event_loop()
-    #     t = loop.run_until_complete(PLUGINS.get(package_manager).list())
-    #     asyncio.ensure_future(PLUGINS.get(package_manager).list())
-    #     package_manager: str = "yafti.plugins.flatpak"
-    #     asyncio.ensure_future(self k.__async_callback(PLUGINS.get(package_manager).list()))
+    def currently_installed(self, force=False):
+        if not self._currently_installed or force is True:
+            self._currently_installed = []
+            for pkg in self.__app.config.installed:
+                self._currently_installed.append(pkg)
+
+        return self._currently_installed
 
     def __next_step(self, *args):
         """
         This still does not work
         """
-        print("next_step", args)
+        log.debug(f"next_step: {args}")
         self.__window.next()
-
-        # if self.packages_overview is None:
-        #     print(self.packages_overview)
-        #     self.content_box = Gtk.Box()
-        # else:
-        #     self.content_box = self.packages_overview
-        #
-        #
-        # self.packages_overview.set_halign(Gtk.Align.CENTER)
-        # self.packages_overview.set_valign(Gtk.Align.CENTER)
-        # self.packages_overview.append(Gtk.Label(label='Packages'))
-
-        # self.connect("")
-        # self.bind_template_child_full(self.packages_overview)
-        # self.set_child(self.content_box)
-
-        # textview = Gtk.TextView(vexpand=True)
-        # self.textbuffer = textview.get_buffer()
-        # self.set_child(textview)
-        # self.progress = Gtk.ProgressBar(show_text=True)
-        # self.set_child(self.progress)
-
-        # if self.package_list is not None:
-        #     print(self.package_list)
-        #     for package in self.package_list:
-        #         self.package_list.connect()
 
     def language_filter_func(self, model, iter, data):
         """
@@ -333,37 +436,44 @@ class Packages(Adw.Bin):
         """
         Not working
         """
-        print("on_ready_callback")
+        log.debug("on_ready_callback")
 
     # @Gtk.Template.Callback()
-    def on_selection_button_clicked(self, widget, dialog):
-        """
-        not working
-        """
-        print("on_selection_button_clicked", widget)
-        print("on_selection_button_clicked", dialog)
+    def on_selection_button_clicked(self, widget, dialog, item):
+        """ """
+        log.debug("on_selection_button_clicked")
         dialog.set_visible(False)
         # dialog.connect()
         # we set the current language filter to the button's label
 
         state = widget.get_icon_name()
-        print(state)
+        log.debug(f"package action state: {state}")
         if state is None:
             widget.set_icon_name("selection-checked-symbolic")
+            item.action = "install"
         if state == "process-completed-symbolic":
             widget.set_icon_name("process-error-symbolic")
+            item.install_button.set_icon_name("process-error-symbolic")
+            item.action = "uninstall"
         elif state == "selection-checked-symbolic":
             widget.set_label("install")
+            item.action = None
         elif state == "process-error-symbolic":
             widget.set_icon_name("process-completed-symbolic")
+            item.action = None
 
-        # widget.set_icon_name("process-completed-symbolic")
-        # self.current_filter_language = dialog.get_language()
-        # print("%s language selected!" % self.current_filter_language)
-        # we update the filter, which updates in turn the view
-        # self.language_filter.refilter()
+        item.update_state()
 
-        return True
+        # self.__app.config.setttings.set_active(item["application"])
+        # self.__app.config.settings.preferences_group.get_value("")
+
+        included_packages = self.__app.config.settings.get_value("included-packages")
+        inc_bytes = included_packages.get_data_as_bytes().get_data().decode("utf-8")
+        try:
+            log.debug(pformat(json.loads(base64.b64decode(inc_bytes)), indent=4))
+        except Exception as e:
+            log.error(f"content button state error json loads: {e}", e)
+            return
 
     def set_content(self, button, content=None):
         """
@@ -374,66 +484,27 @@ class Packages(Adw.Bin):
             content = Gio.Application.get_default().split_view.get_content()
             content.set_title("Packages")
 
-
-
-        # button.connect('clicked', lambda event: self.content_box.append(Gtk.Label()))
-        # self.scrolled_window.set_child(button)
-        # pprint.pprint(self.bundle_list)
-        # asyncio.create_task(self.build_screens(self._all_packages))
-        asyncio.ensure_future(self.build_screens())
         content.pane.set_content(self)
         content.pane.set_reveal_bottom_bars(False)
         content.set_child(self)
         # self.show()
         # self.scrolled_window.set_data(self.__window)
+        asyncio.ensure_future(self.build_screens())
 
     async def build_screens(self, package_list=None):
         """
         This entire function needs to be refactored
         """
-        # package_manager_defaults = Gtk.Template.Child()
-
-        # results = await PLUGINS.get(package_manager).ls()
-        # new_results = await PLUGINS.get(package_manager).list()
-
-        # print(self.status_page.__dir__())
-        # for r in new_results:
-        #     print(r.name, r.version)
-        #
-        # decoded_current = results.stdout.decode("utf-8").replace(
-        #     "current packages: ", ""
-        # )
-
-        # move to config
-        headers = ["application", "ref", "name", "runtime", "installation", "options"]
-        # view = Gtk.ListView.new(self.task_selection, tasks_signals)
-        # view.set_show_separators(True)
-        # view.add_css_class('task-list')
-        # self.init_template()
-
-        # for p in decoded_current.splitlines():
-        #     turds = p.split("\t")
-        #
-        #     with_headers = {headers[i]: t for i, t in enumerate(turds)}
-        #     self._all_packages.append(with_headers.copy())
-        #
-        # print(FOR_JUSTICE)
-        # print(len(FOR_JUSTICE))
-        # self.test_list_store = Gtk.ListStore(str, str, bool, list)
-
-        # groups = {}
-        # if isinstance(package_list, dict):
-        #     for k, v in package_list.items():
-        #         log.debug(f"Building {k} ======== {v}")
-        #         pass
-        #         # log.debug(f"Building {k} ======== {v}")
-
-
-        # self.bundle.set_icon_name("package")
-        # self.bundle.set_title("Flatpaks")
         # TODO: get values from config file
         self.status_page.set_icon_name("package")
-        self.status_page.set_title(self.title)
+        if isinstance(self.title, Content):
+            _content = self.title
+
+            self.title = _content.get_title().title()
+            self.status_page.set_title(self.title)
+            self.set_content(None, _content)
+        else:
+            self.status_page.set_title(self.title)
 
         if self.package_list is None:
             self.status_page.set_description(
@@ -442,7 +513,11 @@ class Packages(Adw.Bin):
         elif isinstance(self.package_list, list):
             # for package in self.package_list:
             #     print(package)
-            pass
+            # TODO: make work
+            log.debug(
+                f"^^^^^^^^^^^^^^^^^^^^^^^ self.package_list is {self.package_list} ^^^^^^^^^^^^^^^^^^^^^^^"
+            )
+
         else:
             self.status_page.set_description(
                 self.package_list.get("description", "Should make a github issue...")
@@ -450,320 +525,88 @@ class Packages(Adw.Bin):
 
         match self.title.lower():
             case "apply changes":
-                print(f"-----------------------------------{self.title.lower()}------------------------")
+                log.debug(
+                    f"-----------------------------------{self.title.lower()}-----------------------------------"
+                )
                 self.list_store = Gtk.ListStore(str, str, str, str, str)
-                new_headers = ["ref", "name", "runtime", "installation", "version", "options"]
+                new_headers = [
+                    "ref",
+                    "name",
+                    "runtime",
+                    "installation",
+                    "version",
+                    "options",
+                ]
 
                 for p in self.package_list:
                     for k, v in p.items():
                         self.list_store.append([k, v])
-                        self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
+                        self._all_packages.append(
+                            {new_headers[0]: k, new_headers[1]: v}
+                        )
             case "installed":
-                print(f"-----------------------------------{self.title.lower()}------------------------")
-
-                # self.list_store = Gtk.ListStore(str, str)
-                # self.test_list_store = Gtk.ListStore(str, str, bool, list)
+                log.debug(
+                    f"-----------------------------------{self.title.lower()}-----------------------------------"
+                )
                 self.status_page.set_description("Currently installed on your system")
-                new_headers = ["ref", "application"]
-
-                for p in self.__app.config.installed:
+                self.list_store.remove_all()
+                for p in self.currently_installed():
                     # self.list_store.append([p.ref, p.name])
+                    pkg = Package(p.application, p.name, p.ref, True)
+                    self.list_store.append(pkg)
 
-                    self.list_store.append(Stupid(p.application, p.ref, p.name, True))
-                    # self._all_packages.append({new_headers[0]: p.name, new_headers[1]: p.ref, "installed": True})
-                        # self.list_store.append(p)
-                        # self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
+                # not sure why installed is being called twice
+                if self.title.lower() not in self.__loaded:
+                    self.__loaded.append(self.title.lower())
+                    self.__load_pages()
+                elif "currently-installed" not in self.__loaded:
+                    self.__loaded.append("currently-installed")
+                    self.__load_pages()
+
             case _:
-                print(f"-------------group package screen {self.title.lower()}--------------")
-                # self.list_store = Gio.ListStore(item_type=Stupid)
-
-                # screens = application.config.apps_by_screen(self.title.lower())
-                new_headers = ["ref", "application"]
-                # applications = screens.get('applications')
-
-                # print(screens)
-                # __test = []
-                # print(applications)
-
-                # for a in applications:
-                #     # TODO: get from config
-                #     if a == 'source' and b != 'yafti.screen.package':
-                #         print(f"{a} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {b}")
-                #         continue
-                #
-                #     elif a == 'values' and isinstance(b, dict):
-                #         for k, v in b.items():
-                #             match k:
-                #                 case "title":
-                #                     print(f"{k} @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-                #
-                #                 case "show_terminal":
-                #                     # likely not needed
-                #                     print(f"SHOW TERMINAL @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-                #                     pass
-                #                 case "package_manager":
-                #                     # set package manager
-                #                     print(f"PACKAGE MANAGER @@@@@@@@@@@@@@@@@@@@@@@@@@@@ {v}")
-                #                     pass
-                #                 case "groups":
-                #                     print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~{k}~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                #                     # {v}
-                #                     for dn, te in v.items():
-                #                         if dn.lower() == self.title.lower():
-                #                             for n, z in te.items():
-                #                                 print(f"@@@@@@@@@@@@@@@@@@@@ {n} @@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-                #
-                #                             break
-
-
-                # for p in applications:
-                #     # for k, v in p.items():
-                #     #     self.list_store.append([k, v])
-                #     #     print(f"{k} ---------------------------------------------{v}")
-                #
-                #         # installed = False
-                #         # if application.config.installed:
-                #         #
-                #         #     print(f"{k} installed")
-                #         #     for i in application.config.installed:
-                #         #         print(f"{i.name}")
-                #         #         if k in i.name:
-                #         #             installed = True
-                #
-                #     fu = [{
-                #         'name': 'Discord',
-                #         'ref': 'com.discordapp.Discord',
-                #         'installed': True},
-                #         {'name':'Slack', 'ref': 'com.slack.Slack', 'installed': False}
-                #     ]
-                #
-                #     self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": p.get("installed", False)})
-
+                log.debug(
+                    f"-------------group package screen {self.title.lower()}--------------"
+                )
                 if isinstance(self.package_list, dict):
                     packages = self.package_list.get("packages", [])
                     if packages:
-                        print(packages)
-
+                        self.list_store.remove_all()
                         for p in packages:
-                            print(p)
-
                             for k, v in p.items():
-                                is_installed = self.__app.config.is_installed(v) or False
-                                # print(f"{k} ------  {self.__app.config.is_installed(v)}  ------- {v}")
-                                # update only
-                                # self.list_store.append([k,v])
-                                self.list_store.append(Stupid(k, v, k, is_installed))
-                                # self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": is_installed})
+                                is_installed = self.__app.config.is_installed(v)
+
+                                pkg = Package(v, v, k, is_installed)
+                                self.list_store.append(pkg)
+                                self.list_store.connect(
+                                    "notify", self.__on_page_changed, pkg
+                                )
+
+                        if self.title.lower() not in self.__loaded:
+                            self.__loaded.append(self.title.lower())
+                            self.__load_pages()
 
                 else:
-                    print("broklen")
+                    # TODO: this needs to be handled correctly
+                    log.debug("something went wrong -- before loop started")
 
-                # for p in __packages:
-                #     for k, v in p.items():
-                #         self.list_store.append([k, v])
-                #         print(f"{k} --------------------  {application.config.is_installed(v)}  -------------------------{v}")
-                #
-                #
-                #         # print(f"{k} -------------------------------------------- {v}")
-                #
-                #         # installed = False
-                #         # if applications:
-                #         #
-                #         #     print(f"{k} installed")
-                #         #     for i in applications:
-                #         #         print(f"{i.name}")
-                #         #         if k in i.name:
-                #         #             installed = True
-                #
-                #         self._all_packages.append({new_headers[0]: k, new_headers[1]: v, "installed": True})
-
-        # if self.title.lower() == "apply changes":
-        #     self.list_store = Gtk.ListStore(str,str,str,str,str)
-        #     new_headers = ["ref", "name", "runtime", "installation", "version", "options"]
-        #     for p in __packages:
-        #         for k, v in p.items():
-        #             self.list_store.append([k, v])
-        #             print(k)
-        #             print(v)
-        #             self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
-
-        # else:
-        #     self.list_store = Gtk.ListStore(str, str)
-        #     new_headers = ["ref", "application"]
-        #     for p in __packages:
-        #         for k, v in p.items():
-        #             self.list_store.append([k, v])
-        #             self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
-
-        # self.list_store = Gtk.ListStore(str, str)
-        # new_headers = ["ref", "application"]
-        # for p in __packages:
-        #     for k, v in p.items():
-        #         self.list_store.append([k, v])
-        #         self._all_packages.append({new_headers[0]: k, new_headers[1]: v})
-
-        # self.current_filter = None
-        # Creating the filter, feeding it with the list store model
-        # self.language_filter = self.list_store.filter_new()
-        # setting the filter function, note that we're not using the
-        # self.language_filter.set_visible_func(self.language_filter_func)
-
-        # creating the treeview, making it use the filter as a model, and adding the columns
-        # self.treeview = Gtk.TreeView(model=self.language_filter)
-        # for i, column_title in enumerate(headers):
-        #     renderer = Gtk.CellRendererText()
-
-            # column = Gtk.TreeViewColumn(i, cell_area=self.language_filter, True, True, title=column_title)
-            # self.treeview.append_column(column)
-
+    def __load_pages(self):
         selection_dialogs = []
         _index = 0
 
-        def close_customize(widget, dialog):
-            dialog.hide()
-
-        def apply_preferences(widget, dialog, apps_list, item):
-            # experimental
-
-            for app in item["applications"]:
-                app["active"] = app["switch"].get_active()
-
-            dialog.hide()
-
-        # for item in self._all_packages:
         for item in self.list_store:
-            _selection_dialog = DialogBox(Gtk.Window())
-            # TODO: get from config
-            # _apps_list.set_description(
-            #     "The following list includes a tailored list of applications for you're selection."
-            # )
-
-            _apps_page = Adw.PreferencesPage()
-            # _apps_page.add(self.bundle_list)
-
-            _box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
-            _box.append(_apps_page)
-
-            _selection_dialog.set_content(_box)
-            _selection_dialog.set_default_size(500, 600)
-            selection_dialogs.append(_selection_dialog)
-
-            # TODO: expand on this
-            _action_row = Adw.ActionRow(
-                # title=item["title"], subtitle=item.get("subtitle", "")
-                # title=item["ref"]
-                title=item.ref
+            selection_dialogs.append(item.dialog_box)
+            # _customize.connect("clicked", self.on_selection_button_clicked, selection_dialogs[-1])  # selection_dialogs[-1], _apps_list, item
+            item.install_button.connect(
+                "clicked",
+                self.on_selection_button_clicked,
+                selection_dialogs[_index],
+                item,
             )
+            self.bundle_list.add(item.action_row)
 
-            # _switcher = Adw.SwitchRow()
-            # _switcher.set_active(item.get('install', True))
-            # _switcher.set_active(item.installed)
-            # _switcher.set_valign(Gtk.Align.CENTER)
+            _index += 1
 
-            # _action_row.add_suffix(_switcher)
-            # _action_row.set_name("yes")
-            # _action_row.connect("activate",lambda x: print("yes"))
-            # _switcher.connect("activate", lambda x: print("no"))
-
-            _customize = Gtk.Button()
-            _customize.set_name("install")
-            _customize.set_label("install")
-            # _customize.set_icon_name("selection-checked-symbolic")
-            _customize.set_valign(Gtk.Align.CENTER)
-            _customize.add_css_class("boxed_list")
-            _action_row.add_suffix(_customize)
-
-            if item.installed is True:
-            # if item.get("installed", False):
-                _customize.set_icon_name("process-completed-symbolic")
-
-            _customize.connect("clicked", self.on_selection_button_clicked, selection_dialogs[-1]) # selection_dialogs[-1], _apps_list, item
-
-            self.bundle_list.add(_action_row)
-            self.list_store.connect("notify", self.__on_page_changed, selection_dialogs[-1])
-
-            # self.__register_widgets.
-            # print(_index)
-            # self.__register_widgets.append(item)
-            # self.__register_widgets.append(self.bundle_list)
-
-            # application = Gio.Application.get_default()
-            # application.config.setttings.set_active(item["application"])
-            # application.config.settings.preferences_group.get_value("")
-            # consent_accepted = application.config.settings.get_value(
-            #     "consent-accepted"
-            # ).get_boolean()
-            #
-            # log.info(f"consent has been set to: {consent_accepted}")
-
-            # _index += 1
-
-    def __on_page_changed(self, widget, page, selection_dialog):
+    def __on_page_changed(self, list_store, page, item):
         log.debug("on_page_changed")
-        # self.__app.
-        print(self.title)
-        bundles = self.__app.config.bundles
-        print(f"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n{self.package_list}")
-        counter = []
-
-        if isinstance(self.package_list, dict):
-            pkgs = self.package_list.get("packages", [])
-        else:
-            pkgs = self.package_list
-
-        for bundle in bundles:
-            print("@"*39)
-
-            print(bundle.keys())
-            print(self.title)
-
-            if bundle is None and self.title in bundle.keys():
-                print("$" * 39)
-                print(bundle.get(self.title).get("packages"))
-                print("$" * 39)
-
-
-                print(f"*****************************************************\n{counter}")
-                for i in range(len(pkgs), len(self.list_store)):
-                    self.list_store.remove(i)
-
-            else:
-                print(f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n{counter}")
-
-                print(len(self.list_store))
-
-
-                self.list_store.remove_all()
-
-                # for i, ls in enumerate(self.list_store):
-                #
-                #
-                #     print(i)
-                #     print(ls)
-                #     if i > len(pkgs):
-                #         self.list_store.remove(i)
-                #         ls.run_dispose()
-
-                # for k in keepers:
-                #     self.list_store.append(k)
-                # for i in range(defined_count, current_count):
-                #
-                #     test = self.list_store.get_item(i)
-                #
-                #     print(test)
-                #     self.list_store.remove(i)
-
-
-
-
-        # if page == self.__key:
-        #     tmp_finals = self.__window.builder.get_temp_finals("packages")
-        #
-        #     # if no package manager is selected, use Flatpak as default
-        #     if tmp_finals is None:
-        #         self.bundle_list.set_sensitive(True)
-        #         return
-        #
-        #     packages_vars = tmp_finals["vars"]
-        #     has_flatpak = packages_vars.get("flatpak", False)
-        #     self.bundle_list.set_sensitive(has_flatpak)
+        if item.installed is False:
+            item.installed = self.__app.config.is_installed(item.application)

@@ -13,6 +13,7 @@
     <file>assets/small_logo.png</file>
     <file>assets/flatpak_logo.svg</file>
     <file>assets/podman.svg</file>
+    <file>assets/bazzite.gif</file>
     <file>assets/css/application.css</file>
   </gresource>
 </gresources>

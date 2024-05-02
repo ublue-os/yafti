@@ -1,10 +1,10 @@
 from gi.repository import Adw, Gdk, Gio, GObject, Gtk
 
 from yafti import log
+from yafti.core.apply import YaftiProgress
 from yafti.views.about import About
 from yafti.views.content import Packages
 from yafti.views.settings import Settings
-from yafti.core.apply import YaftiProgress
 
 
 class ListItem:
@@ -23,8 +23,8 @@ class Sidebar(Adw.NavigationPage):
     Sidebar class defines the sidebar pane
     """
 
-    def __init__(self, window=None):
-        super().__init__()
+    def __init__(self, window=None, **kwargs):
+        super().__init__(**kwargs)
 
         # Primary Settings for Sidebar
         self.set_title("yafti")
@@ -35,7 +35,6 @@ class Sidebar(Adw.NavigationPage):
 
         # Define sidebar header box
         self.header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-
         self.theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.theme.add_search_path(path="icons")
 
@@ -78,10 +77,13 @@ class Sidebar(Adw.NavigationPage):
         self.header.set_can_focus(False)
         self.header.set_decoration_layout("menu:close")
         self.header.pack_end(self.show_button)
-
         self.toolbar.set_content()
         self.toolbar.add_top_bar(self.header)
-        self.set_child(self.toolbar)
+
+        try:
+            self.set_child(self.toolbar)
+        except Exception:
+            self.set_child(Adw.ToolbarView())
 
         self.list = Gtk.ListBox()
         self.list.set_vexpand(False)
@@ -92,12 +94,7 @@ class Sidebar(Adw.NavigationPage):
 
         # Connect the signal
         self.list.connect("row-activated", self.on_row_activated)
-
-        # The sidebar list items to render as buttons
-        # These need to be defined in the sidebar class otherwise the
-        # primary Adw.ApplicationWindow and settings is undefined
-
-        # TODO: need to add this to the applications still
+        # TODO: need to add start and end screens to workflow still
         # for name, details  in self.application.yafti_config.screens.items():
         #     if details.source not in SCREENS:
         #         continue
@@ -105,42 +102,17 @@ class Sidebar(Adw.NavigationPage):
         #     screen = SCREENS.get(details.source)
         #     s = asyncio.ensure_future(screen.from_config(details.values))
 
-        # get all installed applications here
-        # __installed_packages = []
-
-        # async def crap(callback):
-        #     loop = asyncio.get_running_loop()
-        #
-        #     async with asyncio.TaskGroup() as tg:
-        #         task = tg.create_task(callback)
-        #         loop.create_task(task, callback, 'tst')
-        #
-        #     __installed_packages.append(task.result())
-
-        # get from config file
-        # package_manager: str = "yafti.plugins.flatpak"
-        # things = crap(PLUGINS.get(package_manager).list())
-
         # get plugins and make sidebar.
-        # log.debug(window.bundle_list)
         __list_items = []
-        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-        print(window.bundle_list)
         for b in window.bundle_list:
-            print("##########################################################################")
-            print(b)
             for k, v in b.items():
-                log.debug(f"{k} ========= {v}")
                 # TODO: get a icon from config
                 __list_items.append(
                     ListItem(k, "package-x-generic-symbolic", Packages(k, window, v))
                 )
 
-        # need to find out how to handle this.  how to we group and want them seperated.
-        # container-terminal-symbolic
-        # org.gnome.Terminal-symbolic
         top_list_items = __list_items + [
+            # TODO: future support incoming
             # ListItem(
             #     "Flatpaks",
             #     "package-x-generic-symbolic",
@@ -151,39 +123,33 @@ class Sidebar(Adw.NavigationPage):
             #     "extension",
             #     Packages("gnome_extensions", window, package_list=[])
             # ),
-            # ListItem(
-            #     "Apply Changes",
-            #     "thunderbolt-symbolic",
-            #     YaftiApplyChanges(
-            #         "install",
-            #         window,
-            #         package_list=[])
-            # ),
             ListItem(
-                "Apply",
-                "thunderbolt-symbolic",
-                YaftiProgress(
-                    "apply",
-                    window,
-                    package_list=[]
-                )
+                "Currently Installed",
+                "applications-system-symbolic",
+                Packages("Installed", window, package_list=[]),
             ),
         ]
 
         # TODO: remove currently installed tab for initial release
         # store all installed apps in glib settings. along with a sha256.
         bottom_list_items = [
-            ListItem(
-                "Currently Installed",
-                "applications-system-symbolic",
-                Packages("installed", window, package_list=[])
-            ),
             ListItem("Settings", "emblem-system-symbolic", Settings()),
             ListItem("About", "help-about-symbolic", About()),
+            ListItem(
+                "Apply",
+                "thunderbolt-symbolic",
+                YaftiProgress("apply", window, package_list=[]),
+            ),
         ]
 
         separator = Gtk.Separator(
-            orientation=Gtk.Orientation.HORIZONTAL, margin_start=2, margin_end=2
+            orientation=Gtk.Orientation.HORIZONTAL,
+            margin_start=2,
+            margin_end=2,
+            focusable=False,
+            focus_on_click=False,
+            can_focus=False,
+            can_target=False,
         )
 
         # Populate the sidebar list buttons
@@ -200,30 +166,6 @@ class Sidebar(Adw.NavigationPage):
             button.set_can_focus(True)
             button.connect("activated", self.on_button_activated, k.pane)
             self.list.append(button)
-
-        # ListItem(
-        #     "Old Screen",
-        #     "skull",
-        #     PackageScreen(
-        #         title=self.application.yafti_config.screens[
-        #             "applications-two"
-        #         ].values["title"],
-        #         package_manager=self.application.yafti_config.screens[
-        #             "applications-two"
-        #         ].values["package_manager"],
-        #         # packages=self.application.yafti_config.screens['applications-two'].values['packages'],
-        #         groups=self.application.yafti_config.screens[
-        #             "applications-two"
-        #         ].values["groups"],
-        #         # groups=g.json(),
-        #         show_terminal=self.application.yafti_config.screens[
-        #             "applications-two"
-        #         ].values["show_terminal"],
-        #     )),
-
-
-        # app = Gio.Application.get_default()
-        # app.__setattr__("please", self.list)
 
         # Separator
         self.list.append(separator)
@@ -247,26 +189,47 @@ class Sidebar(Adw.NavigationPage):
 
     def on_button_activated(self, button, content):
         """
-        Set the content of the content pane when a button is clicked
+        Set the accepted consent when a button is clicked
         """
-        log.debug("on btn activated")
+        log.debug("on btn activated: sidebar")
         try:
-            content.set_content(button)
+            btn_title = button.get_title()
+            for i in self.list:
+                invert_op = getattr(i, "get_title", None)
+                if callable(invert_op):
+                    title = invert_op()
+
+                    if title == btn_title:
+                        # content.set_parent(i.get_child())
+                        # i.set_parent(button)
+                        # button.set_parent(i)
+                        # self.get_child().set_focus_child(content)
+                        content.set_content(button)
+                        break
+                else:
+                    continue
+
+            # content.set_parent()
+            # content.set_content(button)
+            log.debug("XxXxXx" * 14)
             # content.emit("noarg-signal")
-        except:
+        except Exception as e:
             content.connect("activate", button)
             content.set_parent(button)
+            log.debug(f"on_button_activated Exception: {e}")
+            # TODO: this should be handled correctly
 
     def on_row_activated(self, list_box, row):
-        log.debug("on row activated")
-        # self.application.split_view.emit("noarg-signal")
+        log.debug("on row activated: side bar")
+
+        # self.set_child(list_box)
         self.application.split_view.set_property("show-content", True)
 
     def on_split_view_folded(self, split_view, allocation, button):
         """
         on_split_view_folded shows a button to return to content view in collapsed sidebar mode
         """
-        log.debug("on_split_view_folded")
+        log.debug(f"on_split_view_folded: {allocation}")
         # If the Adw.NavigationSplitView is folded, show the button
         # If the Adw.NavigationSplitView is not folded, hide the button
         if self.application.split_view.get_collapsed():

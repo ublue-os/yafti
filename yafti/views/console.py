@@ -1,11 +1,11 @@
 import asyncio
 from typing import Optional
 
+from gi.repository import Adw, Gdk, Gio, GObject, Gtk, Pango, Vte
+
+from yafti import log
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.core.models import PackageConfig, PackageGroupConfig
-
-from gi.repository import Adw, Gtk, Gio, Vte, Pango, Gdk, GObject
-
 
 # TODO: move to .ui file this might be able to just be removed.
 __xml = """\
@@ -165,22 +165,21 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
         package_manager_defaults: Optional[dict] = None
 
     def __init__(self, title, window, package_list, **kwargs):
-        """
-        """
+        """ """
 
-        print("YaftiApplyChanges")
+        log.debug("YaftiApplyChanges")
         super().__init__(**kwargs)
 
         self.__window = window
         self.title: str = title
-        print(GObject.signal_list_names(self))
+        log.debug(GObject.signal_list_names(self))
         self.set_property("visible", True)
         self.set_vexpand(True)
         self.__packages = package_list or []
         # self.__success_fn = None
         # self.__terminal = Vte.Terminal()
         # self.__font = Pango.FontDescription()
-        # self.__font.set_family("Monospace")
+        # self.__font.set_family("Source Code Pro 10")
         # self.__font.set_size(13 * Pango.SCALE)
         # self.__font.set_weight(Pango.Weight.NORMAL)
         # self.__font.set_stretch(Pango.Stretch.NORMAL)
@@ -208,19 +207,18 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
         This entire function needs to be refactored
         theming - cappica mocca
         """
-        package_manager: str = "yafti.plugins.flatpak"
-
+        # package_manager: str = "yafti.plugins.flatpak"
         self.__success_fn = None
         self.__terminal = Vte.Terminal()
         self.__font = Pango.FontDescription()
-        self.__font.set_family("Monospace")
+        self.__font.set_family("Source Code Pro 10")
         self.__font.set_size(13 * Pango.SCALE)
         self.__font.set_weight(Pango.Weight.NORMAL)
         self.__font.set_stretch(Pango.Stretch.NORMAL)
         self.__style_manager = self.__window.style_manager
         self.__build_ui()
-        self.__on_setup_terminal_colors()
 
+        self.__on_setup_terminal_colors()
         self.__style_manager.connect("notify::dark", self.__on_setup_terminal_colors)
         self.tour_button.connect("clicked", self.__on_tour_button)
         self.console_button.connect("clicked", self.__on_console_button)
@@ -233,9 +231,9 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
         # self.content_box.set_valign(Gtk.Align.CENTER)
         self.status_page.set_title(self.title)
         # Connect to root application to get config object
-        application = Gio.Application.get_default()
+        # application = Gio.Application.get_default()
         self.status_page.set_child(self.console_box)
-        # self.scrolled_window.set_child(self.content_box)
+        self.scrolled_window.set_child(self.content_box)
 
     def __on_setup_terminal_colors(self, *args):
         is_dark: bool = self.__style_manager.get_dark()
@@ -269,7 +267,7 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
 
         self.colors = [Gdk.RGBA() for c in palette]
         # TODO come back to this later
-        # [color.parse(s) for (color, s) in zip(self.colors, palette)]
+        [color.parse(s) for (color, s) in zip(self.colors, palette)]
 
         if is_dark:
             self.fg.parse(FOREGROUND_DARK)
@@ -304,33 +302,21 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
         self.console_output.append(self.__terminal)
         self.__terminal.connect("child-exited", self.on_vte_child_exited)
 
-        # for _, tour in self.__tour.items():
-        #     self.carousel_tour.append(pictures(self.__window, tour))
-
-        self.__start_tour()
-
-    def __start_tour(self):
-        # async def run_async():
-        #     while True:
-        #         GLib.idle_add(self.progressbar.pulse)
-        #         # GLib.idle_add(self.__switch_tour)
-        #         time.sleep(5)
-        #
-        # asyncio.ensure_future(run_async())
-        print("STARTING THE TOUR")
-
-        pass
-
     def __packages(self):
+        """ """
         print("PACKAGES ACTIVATED")
 
+        raise NotImplementedError
+
     def __install_packages(self, content):
+        """ """
         print("INSTALLED PACKAGES ACTIVATED")
+
+        raise NotImplementedError
 
     def on_vte_child_exited(self, terminal, status, *args):
         terminal.get_parent().remove(terminal)
         status = not bool(status)
-
         if self.__success_fn is not None and status:
             self.__success_fn(*self.__success_fn_args)
 
@@ -342,6 +328,7 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
             for line in t.split("\n"):
                 if not line:
                     continue
+
                 self.stdout(Gtk.Text(text=line))
         else:
             self.console_output.append(text)
@@ -385,5 +372,5 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
         content.pane.set_content(self)
         content.set_title("Installation")
         content.set_visible(True)
-        # content.pane.set_content(self.scrolled_window)
+        content.pane.set_content(self.scrolled_window)
         content.pane.set_reveal_bottom_bars(False)

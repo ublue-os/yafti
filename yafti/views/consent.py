@@ -66,8 +66,10 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
 
         events.register("accept")
         events.on("accept", self.next)
-        self.status_page.set_title("Consent")
-        self.status_page.set_description("Allowing us add and modify flatpaks to this system.")
+        self.status_page.set_title("Accept Consent")
+        self.status_page.set_description(
+            "This Allows us to add and/or modify flatpaks on this system."
+        )
         self.actions = actions
         self.condition = condition
         self.already_run = False
@@ -101,7 +103,6 @@ class ConsentScreen(YaftiScreen, Adw.Bin):
 
         to_run = []
         if self.actions is not None:
-
             for action in self.actions:
                 plugin_name = list(action.keys())[0]
                 plugin = PLUGINS.get(plugin_name)

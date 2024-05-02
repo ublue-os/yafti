@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema id="org.ublue-os.yafti.window" path="/org/ublue-os/yafti/windows/">
+    <schema id="org.ublue-os.yafti.windows" path="/org/ublue-os/yafti/windows/">
         <key name="width" type="i">
         <default>800</default>
         </key>
@@ -28,6 +28,14 @@
             <default>false</default>
         </key>
 
+        <key name="config-sum" type="s">
+            <default>""</default>
+            <summary>The check sum of the yafti configuration file.</summary>
+            <description>
+                System defined configuration via the yafti.yaml config file found /etc/yafti.yaml.
+            </description>
+        </key>
+
         <key name="included-packages" type="s">
             <default>""</default>
             <summary>Apps that the user included during installation.</summary>
@@ -37,15 +45,13 @@
             </description>
         </key>
 
-        <key name="excluded-packages" type="s">
+        <key name="installed-packages" type="s">
             <default>""</default>
-            <summary>Apps the user did not install during installation.</summary>
+            <summary>Apps the user has installed on the system.</summary>
             <description>
-                A list applications that the user did not  install using yafti or independently removed
-                but are in the yafti.yaml config file found /etc/yafti.yaml.
+                A list applications that the user installed using yafti or independently.
             </description>
         </key>
-
 
         <key name="start-on-startup" type="b">
             <default>false</default>

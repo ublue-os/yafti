@@ -14,18 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import hashlib
-from pathlib import Path
 import os
-import yaml
+from pathlib import Path
 
 import gbulb
+import yaml
 from gi.repository import Adw, Gdk, Gio, Gtk
 
-from yafti.parser import Config, YaftiRunModes
+from yafti import log
+from yafti.parser import YaftiRunModes
+from yafti.settings import Config
 from yafti.views.content import Content
 from yafti.views.sidebar import Sidebar
 from yafti.windows.window import ApplicationWindow
-from yafti.settings import Config
 
 
 class Yafti(Adw.Application):
@@ -33,6 +34,7 @@ class Yafti(Adw.Application):
     Yafti main application
     https://developer.gnome.org/documentation/tutorials/menus.html
     """
+
     def __init__(self, cfg: str = None, loop=None):
         self.config = Config(cfg)
         super().__init__(application_id=self.config.APP_ID)
@@ -40,6 +42,7 @@ class Yafti(Adw.Application):
         resource = Gio.Resource.load(
             os.path.join(self.config.APP_ROOT, "gresource.gresource")
         )
+
         resource._register()
 
         self.loop = loop or gbulb.get_event_loop()
@@ -53,6 +56,7 @@ class Yafti(Adw.Application):
         _p: Path = self.config.system_config.properties.path.expanduser()
 
         # TODO we need to maintain state of all installed applications and this hash should be moved to dconf/GSettings.
+        #   this still needs to be cleaned up and moved to above mentioned.
         # TODO(GH-#103): Remove this prior to 1.0 release. Start.
         _old_p = Path("~/.config/yafti-last-run").expanduser()
 
@@ -81,8 +85,11 @@ class Yafti(Adw.Application):
     def do_activate(self):
         # self._win = Window(application=self)
         # this needs to be set in the constructor
-        print("@@@@@@@@@@@@@@@ Application Entrypoint @@@@@@@@@@@@@@@@@@@@@")
-        self.window = ApplicationWindow(application=self, width_request=280, height_request=200)
+
+        log.debug("@@@@@@@@@@@@@@@ Application Entrypoint @@@@@@@@@@@@@@@@@@@@")
+        self.window = ApplicationWindow(
+            application=self, width_request=280, height_request=200
+        )
 
         ## GTK UI CSS Provider
         self.css = Gtk.CssProvider()
@@ -93,7 +100,7 @@ class Yafti(Adw.Application):
             Gdk.Display.get_default(), self.css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        ## Establish the navigation split view object & properties
+        # Establish the navigation split view object & properties
         self.split_view = Adw.NavigationSplitView()
         self.split_view.set_vexpand(True)
 
@@ -103,9 +110,8 @@ class Yafti(Adw.Application):
         )
         self.breakpoint.add_setter(self.split_view, property="collapsed", value=True)
         self.window.add_breakpoint(self.breakpoint)
-
-        # In order to ge the split headerbar view in the navigation split view,
-        # an invisible headerbar is added to the window
+        # In order to ge the split header bar view in the navigation split view,
+        # an invisible header bar is added to the window
         # TODO: Check if there is a way to avoid this
         self.dummy_header_bar = Adw.HeaderBar()
         self.dummy_header_bar.set_visible(False)
@@ -148,6 +154,7 @@ class Yafti(Adw.Application):
         """
         self.loop.stop()
         super().quit()
+        # TODO: this was once used. will be deleted soon.
         # This has been commented out during development
         # if self.config.properties.save_state == YaftiSaveState.always:
         #     self.sync_last_run()

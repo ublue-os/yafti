@@ -21,6 +21,8 @@ from typing import Optional
 import yaml
 from pydantic import BaseModel
 
+# TODO: need to update or remove pydantic
+
 
 class ActionConfig(BaseModel):
     pre: Optional[list[dict[str, str | dict]]]

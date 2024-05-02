@@ -1,4 +1,5 @@
 from gi.repository import Adw, Gtk
+
 from yafti.windows.dialog import YaftiDialog
 
 

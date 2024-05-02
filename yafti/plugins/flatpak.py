@@ -60,14 +60,13 @@ Programmatic usage example:
 """
 
 import asyncio
-from typing import Any, Optional, List
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, ValidationError, root_validator
 
 from yafti import log
 from yafti.abc import YaftiPluginReturn
 from yafti.plugins.run import Run
-
 
 # TODO: refactor
 
@@ -84,6 +83,7 @@ class ApplicationDetail(BaseModel):
 
 class FlatpakListItem(BaseModel):
     """Flatpak application list results"""
+
     application: str
     ref: str
     name: str
@@ -171,7 +171,7 @@ class Flatpak(Run):
         system: bool = False,
         assumeyes: bool = True,
         reinstall: bool = False,
-        noninteractive: bool = True,
+        noninteractive: bool = False,
         update: bool = True,
     ) -> YaftiPluginReturn:
         """Install flatpak package on the host system
@@ -196,7 +196,7 @@ class Flatpak(Run):
             update=update,
             noninteractive=noninteractive,
         )
-        cmd = [self.bin, "install"]
+        cmd = [self.bin, "install", "-y"]
         cmd.extend(args)
         cmd.append(package)
 
@@ -208,17 +208,17 @@ class Flatpak(Run):
         user: bool = False,
         system: bool = True,
         force: bool = False,
-        noninteractive: bool = True,
+        noninteractive: bool = False,
     ) -> YaftiPluginReturn:
         """Remove flatpak package on the host system"""
         args = self._parse_args(
             user=user, system=system, force=force, noninteractive=noninteractive
         )
-        cmd = [self.bin, "remove"]
+        cmd = [self.bin, "remove", "-y"]
         cmd.extend(args)
         cmd.append(package)
 
-        return self.exec(cmd)
+        return await self.exec(" ".join(cmd))
 
     async def list(self) -> list[FlatpakListItem]:
         """
@@ -246,7 +246,16 @@ class Flatpak(Run):
         :return: list of Flatpack list
 
         """
-        headers = ["application", "ref", "name", "runtime", "installation", "version", "options", "origin"]
+        headers = [
+            "application",
+            "ref",
+            "name",
+            "runtime",
+            "installation",
+            "version",
+            "options",
+            "origin",
+        ]
         cmd = [
             self.bin,
             "list",
@@ -290,7 +299,15 @@ class Flatpak(Run):
             size
             Options
         """
-        headers = ["application", "ref", "name", "runtime", "installation", "version", "options"]
+        headers = [
+            "application",
+            "ref",
+            "name",
+            "runtime",
+            "installation",
+            "version",
+            "options",
+        ]
         cmd = [
             self.bin,
             "list",
@@ -302,7 +319,9 @@ class Flatpak(Run):
     async def __parse_stdout(self, line: str):
         pass
 
-    async def __parse_package_list(self, headers: List[str], response: str) -> List[FlatpakListItem]:
+    async def __parse_package_list(
+        self, headers: List[str], response: str
+    ) -> List[FlatpakListItem]:
         _package_list = []
         for p in response.splitlines():
             chunks = p.split("\t")
@@ -323,8 +342,7 @@ class Flatpak(Run):
         try:
             params = self.validate(options)
         except ValidationError as e:
-
-            log.error(f"{str(e)}  ERRORROEOEOEOROROROROORRRRRORROOOOOR")
+            log.error(f"plugin:flatpak:__call__ {str(e)}")
             return YaftiPluginReturn(errors=str(e), code=1)
 
         # TODO: when a string is passed, make sure it maps to the "pkg" key.
@@ -340,5 +358,22 @@ class Flatpak(Run):
             r = asyncio.ensure_future(self.remove(**params.install))
 
         # log.debug(**params.install)
-
         return YaftiPluginReturn(output=r.stdout, errors=r.stderr, code=r.returncode)
+
+    # TODO: this should be the way...
+    async def build_command(
+        self, pkg: str, auto_approve: bool = False, force: bool = False, **kwargs
+    ):
+        """
+        Build a flat pak package on the host system
+        """
+        # build rules
+        # install = {
+        #     "base": "install",
+        # }
+        #
+        # user = kwargs.get("user", False)
+        # system = kwargs.get("system", False)
+        # noninteractive = kwargs.get("noninteractive", False)
+
+        raise NotImplementedError

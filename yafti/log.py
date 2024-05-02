@@ -4,6 +4,8 @@ __all__ = ["info", "warn", "error", "debug", "set_level"]
 
 _l = logging.getLogger("yafti")
 
+# TODO: this generally needs an update to fix the _fmt issues and support async
+
 
 def _fmt(msg: dict) -> str:
     return " ".join([f"{k}={v}" for k, v in msg.items()])

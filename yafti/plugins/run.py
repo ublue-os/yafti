@@ -57,9 +57,7 @@ from pydantic import validate_arguments
 from yafti import log
 from yafti.abc import YaftiPlugin, YaftiPluginReturn
 
-
-
-# TODO refactor
+# TODO refactor whole
 
 
 class Run(YaftiPlugin):
@@ -103,7 +101,7 @@ class Run(YaftiPlugin):
         Returns:
           An object containing the stdout and stderr from the command
         """
-
+        # TODO: ...
         return await self.exec(package)
 
     @validate_arguments

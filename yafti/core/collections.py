@@ -1,13 +1,4 @@
-import asyncio
-import logging
-import pprint
-from functools import partial
 from typing import Dict, List
-
-from gi.repository import Adw, Gdk
-
-from yafti import events
-from yafti.registry import PLUGINS, SCREENS
 
 
 class CollectionsMapper:

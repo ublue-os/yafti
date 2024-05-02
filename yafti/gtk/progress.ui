@@ -176,5 +176,10 @@
               <property name="margin-end">40</property>
             </object>
         </child>
+        <child>
+            <object class="AdwToastOverlay" id="toasts">
+
+            </object>
+        </child>>
     </template>
 </interface>

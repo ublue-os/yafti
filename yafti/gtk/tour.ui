@@ -12,7 +12,7 @@
                 <property name="valign">fill</property>
                 <property name="hexpand">true</property>
                 <child>
-                    <object class="GtkPicture" id="assets_svg">
+                    <object class="GtkPicture" id="assets_media">
                         <property name="can-shrink">True</property>
                     </object>
                 </child>

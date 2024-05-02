@@ -41,7 +41,6 @@ build deps="yes": (dev deps)
 #    pre-commit
 #    poetry run pre-commit install --install-hooks # uninstall: `pre-commit uninstall`
 
-
 unit-test deps="no": (dev deps)
     @echo 'unit-tests'
     poetry run pytest --cov={{ module_path}} --cov-report=term-missing
@@ -54,14 +53,15 @@ format deps="no": (dev deps)
     @echo 'black isort and ruff being called into action'
     poetry run black {{ module_path }}
     poetry run isort {{ module_path }}
-    poetry run ruff {{ module_path }}
+    poetry run ruff check {{ module_path }}
 
-lint deps="no": (dev deps)
-    @echo "linting code base"
-    poetry run flake8 {{ module_path }} \
-    --max-line-length 100 \
-    --ignore=F401,E731,F403,E501,W503 \
-    --count
+# TODO: i like flake8
+#lint deps="no": (dev deps)
+#    @echo "linting code base"
+#    poetry run flake8 {{ module_path }} \
+#    --max-line-length 100 \
+#    --ignore=F401,E731,F403,E501,W503 \
+#    --count
 
 coverage-report:
     @echo "Building test coverage report"
@@ -91,6 +91,10 @@ create-distrobox:
 
 enter-distrobox:
   distrobox-enter yaftibox
+
+help:
+    just -l
+
 
 ###
 # Need to add a just command for glib-compile-schemas

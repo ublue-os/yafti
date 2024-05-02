@@ -1,8 +1,4 @@
-import subprocess
-from gettext import gettext as _
-
 from gi.repository import Adw, Gtk
-
 
 # TODO: MAKE WORK
 

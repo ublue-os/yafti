@@ -9,6 +9,8 @@ from yafti import events
 from yafti.abc import YaftiScreen, YaftiScreenConfig
 from yafti.registry import PLUGINS
 
+# TODO: use for welcome screen after accepted content page sourced from yafti.yaml
+
 
 @Gtk.Template(filename="yafti/gtk/title.ui")
 class TitleScreen(YaftiScreen, Adw.Bin):

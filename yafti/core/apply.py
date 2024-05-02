@@ -1,12 +1,17 @@
+import base64
 import json
 import time
+
+# for localization
+from gettext import gettext as _  # noqa
 from typing import Optional
 
-from gi.repository import Gdk, Gio, GLib, Gtk, Pango, Vte, Adw
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango, Vte
 
+from yafti import log
 from yafti.abc import YaftiScreen, YaftiScreenConfig
-from yafti.core.tasks import YaftiTasks
 from yafti.core.models import PackageConfig, PackageGroupConfig
+from yafti.core.tasks import YaftiTasks
 from yafti.views.tour import YaftiTour
 
 
@@ -16,6 +21,7 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
 
     carousel_tour = Gtk.Template.Child()
     tour_button = Gtk.Template.Child()
+    toasts = Gtk.Template.Child()
     tour_box = Gtk.Template.Child()
     tour_btn_back = Gtk.Template.Child()
     tour_btn_next = Gtk.Template.Child()
@@ -24,7 +30,6 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
     console_box = Gtk.Template.Child()
     console_output = Gtk.Template.Child()
     install_button = Gtk.Template.Child()
-    # log_output = Gtk.Template.Child()
 
     class Config(YaftiScreenConfig):
         title: str
@@ -40,7 +45,10 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
         """
         super().__init__(**kwargs)
         self.__window = window
-        self.__tour = json.loads(b'''
+
+        # TODO: needs to be retrieved from yafti config
+        self.__tour = json.loads(
+            b"""
         { 
             "apply": {
                 "resource": "/org/ublue-os/yafti/assets/bluefin-small.png",
@@ -58,29 +66,28 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
                 "description": "we got you!"
             },
             "completed": {
-                "resource": "/org/ublue-os/yafti/assets/nest.png",
+                "resource": "/org/ublue-os/yafti/assets/bluefin.svg",
                 "title": "Our Mission",
                 "description": "Bluefin is designed to be the tool you depend on to do what you do best. Bluefin is about sustainability, encompassing the software, the hardware, and the people."
             }
         }
-        ''')
+        """
+        )
 
-        application = Gio.Application.get_default()
-
-        print(application.config.system_config)
+        self.__app = Gio.Application.get_default()
         self.__title = title
         self.__package_list = package_list or []
         self.__terminal = Vte.Terminal()
+        self.__pty = Vte.Pty().new_sync(Vte.PtyFlags.DEFAULT)
+        self.__terminal.set_pty(self.__pty)
         self.__font = Pango.FontDescription()
         self.__font.set_family("Monospace")
         self.__font.set_size(13 * Pango.SCALE)
         self.__font.set_weight(Pango.Weight.NORMAL)
         self.__font.set_stretch(Pango.Stretch.NORMAL)
-        self.style_manager = Adw.StyleManager().get_default()
-
+        self.style_manager = self.__window.style_manager
         self.__build_ui()
         self.__on_setup_terminal_colors()
-
         self.style_manager.connect("notify::dark", self.__on_setup_terminal_colors)
         self.tour_button.connect("clicked", self.__on_tour_button)
         self.tour_btn_back.connect("clicked", self.__on_tour_back)
@@ -90,7 +97,7 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
         self.console_button.connect("clicked", self.__on_console_button)
 
     def __on_setup_terminal_colors(self, *args):
-
+        """ """
         is_dark: bool = self.style_manager.get_dark()
 
         palette = [
@@ -149,8 +156,6 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
         self.carousel_tour.scroll_to(page, True)
 
     def __on_page_changed(self, *args):
-
-        print("$$$$$$$$$ on page change $$$$$$$$$$$")
         position = self.carousel_tour.get_position()
         pages = self.carousel_tour.get_n_pages()
 
@@ -171,8 +176,10 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
         self.console_output.append(self.__terminal)
         self.__terminal.connect("child-exited", self.on_vte_child_exited)
 
-        for _, tour in self.__tour.items():
+        for k, tour in self.__tour.items():
             self.carousel_tour.append(YaftiTour(self.__window, tour))
+
+        self.__start_tour()
 
     def __switch_tour(self, *args):
         cur_index = self.carousel_tour.get_position() + 1
@@ -180,61 +187,36 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
             cur_index = 0
 
         page = self.carousel_tour.get_nth_page(cur_index)
-
         self.carousel_tour.scroll_to(page, True)
 
     def __start_tour(self):
-        print("$$$$$$$$$ start tour $$$$$$$$$$$")
+        log.debug("@@@@@ Tour Starting @@@@@")
 
         def squirrel():
             while True:
                 GLib.idle_add(self.progressbar.pulse)
                 GLib.idle_add(self.__switch_tour)
-                time.sleep(5)
+                time.sleep(10)
 
+        # TODO: add callback
         YaftiTasks(squirrel, None)
 
     def on_vte_child_exited(self, terminal, status, *args):
-
-        # TODO pop up complete button
-        # terminal.get_parent().remove(terminal)
-
-        # Terminal applications return 0 on success and 1 on failure, so we need
+        terminal.get_parent().remove(terminal)
         # to invert the status to get the correct result.
         status = not bool(status)
-
-        # out = terminal.get_text()
-        # test = terminal.get_text(lambda x: print(x))
-        # if len(test) > 0:
-        #     print(test)
-        #     self.log_output.set_text(test[0])
-
         # TODO: set results
-        # self.__window.set_installation_result(status, self.__terminal)
 
     def start(self, cmd, *fn_args):
-        print("$$$$$$$$$ start $$$$$$$$$$$")
+        log.debug("@@@@@@ Starting to apply changes @@@@@@")
         if not cmd:
             self.__window.set_installation_result(False, None)
-            return
+            return None
 
-        # user = os.environ.get("USER")
-        # self.__success_fn = print
-        # self.__success_fn_args = fn_args
-
-        # self.__terminal.spawn_sync(
-        #     Vte.PtyFlags.DEFAULT,
-        #     "~",
-        #     [cmd],
-        #     [],
-        #     GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-        #     None,
-        # )
-
-        self.__terminal.feed(f"Running: {' '.join(cmd)}\n".encode())
+        self.__terminal.pty_new_sync(Vte.PtyFlags.DEFAULT)
+        self.__pty.new_sync(Vte.PtyFlags.DEFAULT, None)
         try:
-            self.__terminal.spawn_async(
-                Vte.PtyFlags.DEFAULT,
+            self.__pty.spawn_async(
                 None,
                 cmd,
                 None,
@@ -242,65 +224,64 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
                 None,
                 None,
                 -1,
+                None,
+                self.ready,
             )
+
         except AttributeError:
             # See issue #1.
             self.__terminal.spawn_sync(
                 Vte.PtyFlags.DEFAULT,
                 None,
-                ["/bin/bash", "-c", cmd],
+                cmd,
                 None,
-                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                GLib.SpawnFlags.CLOEXEC_PIPES,
                 None,
-                None,
+                self.ready,
             )
 
-        self.__terminal.feed_child(f"{cmd}\n".encode())
-
-
-        # self.__terminal.feed("ps aux".encode("utf-8"))
-        # self.__terminal.get_text_range()
-        # self.__terminal.get_text()
-
-        # self.__terminal.spawn_async(
-        #     Vte.PtyFlags.DEFAULT,
-        #     "~",
-        #     ["/bin/bash", "-c", cmd],
-        #     None,
-        #     GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-        #     None,
-        #     -1,
-        #     None,
-        #     None,
-        #     None,
-        #     None,
-        # )
-
     def __apply(self, button):
-        print("Apply Changes, somethings...")
+        log.debug("Apply Changes, somethings...")
         self.progressbar.set_visible(True)
         self.console_button.set_visible(True)
         button.set_visible(False)
-        self.__start_tour()
-        # pprint.pprint(self.__package_list)
-        # pp = pprint.PrettyPrinter(indent=4)
         # application = Gio.Application.get_default()
         # package_list = application.config.settings.included_packages
-        # pp.pprint(f"looking in settings for the package list: {package_list}")
-        # pp.pprint(self.__package_list)
-        # print(f"Applying {g} ====== {gi}")
 
-        # self.__on_setup_terminal_colors()
+        included_packages = self.__app.config.settings.get_value("included-packages")
+        bpkg_data = included_packages.get_data_as_bytes().get_data().decode("utf-8")
+        try:
+            pkg_data = json.loads(base64.b64decode(bpkg_data))
+        except json.JSONDecodeError:
+            pkg_data = {}
+            pass
 
-        # self.start(["top"])
-        self.start(["ls", "-la"])
-        # self.start(["echo", "hello world"])
-        # self.__terminal.feed("ps aux".encode("utf-8"))
+        self.toast(_("{} Launched. Applying changes...").format("YAFTI Installer"))
+        # plug_and_play = PLUGINS.get(self.__app.config.package_manager)
+        real_stupid = [b"/usr/bin/flatpak", "install", "--user", "-y", "--or-update"]
+        real_stupid_remove = [b"/usr/bin/flatpak", "remove", "-y", "--user"]
+        for k, v in pkg_data.items():
+            action = v.get("action")
+            if action is None:
+                log.debug(f"noop --- {k}")
+                continue
 
-        # self.__terminal.get_text()
-        # self.start(["flatpak", "list"])
+            elif action == "install":
+                log.debug(f"install -----  {k}")
+                real_stupid.append(k)
 
-        pass
+            elif action == "uninstall":
+                log.debug(f"uninstall -----  {k}")
+                real_stupid_remove.append(k)
+            else:
+                raise RuntimeError(f"Unknown action: {action}")
+
+        if len(real_stupid_remove) > 4:
+            self.start(real_stupid_remove)
+        elif len(real_stupid) > 5:
+            self.start(real_stupid)
+        else:
+            pass
 
     def set_content(self, button):
         self.progressbar.set_visible(False)
@@ -308,10 +289,13 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
         # button.set_visible(True)
         # button.set_text("Apply Changes")
         content = Gio.Application.get_default().split_view.get_content()
-        # self.__build_ui()
         content.pane.set_content(self)
         content.set_title("Installation")
-        self.__start_tour()
 
-        # content.pane.set_content(self.scrolled_window)
+    def toast(self, message, timeout=2):
+        toast = Adw.Toast.new(message)
+        toast.props.timeout = timeout
+        self.toasts.add_toast(toast)
 
+    def ready(self, pty, task):
+        pty.spawn_finish(task)

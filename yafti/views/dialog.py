@@ -1,6 +1,4 @@
-import gi
 from gi.repository import Adw, Gtk
-# from gi.repository import Gtk, Adw
 
 
 @Gtk.Template(filename="yafti/gtk/dialog.ui")
@@ -22,7 +20,8 @@ class DialogBox(Adw.Window):
         self.add_controller(sc)
 
 
-# @Gtk.Template(filename="yafti/screen/assets/dialog.ui")
+# TODO: will move to this later.
+# @Gtk.Template(filename="yafti/gtk/dialog.ui")
 # class DialogBox(Adw.Window):
 #     __gtype_name__ = "YaftiDialog"
 #
