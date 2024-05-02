@@ -258,8 +258,8 @@ class YaftiProgress(YaftiScreen, Gtk.Box):
 
         self.toast(_("{} Launched. Applying changes...").format("YAFTI Installer"))
         # plug_and_play = PLUGINS.get(self.__app.config.package_manager)
-        real_stupid = [b"/usr/bin/flatpak", "install", "--user", "-y", "--or-update"]
-        real_stupid_remove = [b"/usr/bin/flatpak", "remove", "-y", "--user"]
+        real_stupid = [b"/usr/bin/flatpak", "install", "--system", "-y", "--or-update"]
+        real_stupid_remove = [b"/usr/bin/flatpak", "remove", "-y", "--system"]
         for k, v in pkg_data.items():
             action = v.get("action")
             if action is None:
