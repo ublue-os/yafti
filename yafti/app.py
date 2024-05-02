@@ -21,7 +21,7 @@ import yaml
 from gi.repository import Adw
 from pathlib import Path
 
-from yafti.parser import Config, YaftiRunModes, YaftSaveState
+from yafti.core.config import Config, YaftiRunModes, YaftSaveState
 from yafti.screen.window import Window
 
 
