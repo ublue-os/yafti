@@ -238,23 +238,42 @@ class YaftiApplyChanges(YaftiScreen, Adw.Bin):
     def __on_setup_terminal_colors(self, *args):
         is_dark: bool = self.__style_manager.get_dark()
 
+        # scheme: "Catppuccin Mocha"
+        # author: "https://github.com/catppuccin/catppuccin"
+        # base00: "1e1e2e" # base
+        # base01: "181825" # mantle
+        # base02: "313244" # surface0
+        # base03: "45475a" # surface1
+        # base04: "585b70" # surface2
+        # base05: "cdd6f4" # text
+        # base06: "f5e0dc" # rosewater
+        # base07: "b4befe" # lavender
+        # base08: "f38ba8" # red
+        # base09: "fab387" # peach
+        # base0A: "f9e2af" # yellow
+        # base0B: "a6e3a1" # green
+        # base0C: "94e2d5" # teal
+        # base0D: "89b4fa" # blue
+        # base0E: "cba6f7" # mauve
+        # base0F: "f2cdcd" # flamingo
+
         palette = [
-            "#363636",
-            "#c01c28",
-            "#26a269",
-            "#a2734c",
-            "#12488b",
-            "#a347ba",
-            "#2aa1b3",
-            "#cfcfcf",
-            "#5d5d5d",
-            "#f66151",
-            "#33d17a",
-            "#e9ad0c",
-            "#2a7bde",
-            "#c061cb",
-            "#33c7de",
-            "#ffffff",
+            "#1e1e2e",  # base
+            "#181825",  # mantle
+            "#313244",  # surface0
+            "#45475a",  # surface1
+            "#585b70",  # surface2
+            "#cdd6f4",  # text
+            "#f5e0dc",  # rosewater
+            "#b4befe",  # lavender
+            "#f38ba8",  # red
+            "#fab387",  # peach
+            "#f9e2af",  # yellow
+            "#a6e3a1",  # green
+            "#94e2d5",  # teal
+            "#89b4fa",  # blue
+            "#cba6f7",  # mauve
+            "#f2cdcd"   # flamingo
         ]
 
         FOREGROUND = palette[0]

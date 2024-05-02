@@ -134,12 +134,7 @@ class Content(Adw.NavigationPage):
         log.info(f"consent has been set to: {consent_accepted}")
 
         if consent_accepted is True:
-            print(application.config.bundles)
-            print(application.config.screens)
-
-
             first_screen = application.config.screens.get('first-screen')
-
             if first_screen is None:
                 self.set_title("Welcome Travelers")
                 pkg = Packages("Welcome", self, [])
