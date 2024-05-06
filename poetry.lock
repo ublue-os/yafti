@@ -135,17 +135,20 @@ toml = ["tomli"]
 
 [[package]]
 name = "gbulb"
-version = "0.6.4"
-description = "GLib event loop for tulip (PEP 3156)"
+version = "0.6.5"
+description = "GLib event loop for Python asyncio"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "gbulb-0.6.4-py3-none-any.whl", hash = "sha256:31d64ede2e7aac8f871ce914f884b949e4891b1faa2ef45800db9eaa9c4b371b"},
-    {file = "gbulb-0.6.4.tar.gz", hash = "sha256:4a6dddd9b8f958393e9ace60def7feacee6528136504bea3407e5ffe79f1a89f"},
+    {file = "gbulb-0.6.5-py3-none-any.whl", hash = "sha256:5d029fceeffa3694b058002a265bd50e55e52f1fb26f0d4336dff32b33a4ae2b"},
+    {file = "gbulb-0.6.5.tar.gz", hash = "sha256:1571634f34b7a98f04adfb3072f97a8bef4bdf62a36a3816b94b402569b12f9b"},
 ]
 
 [package.dependencies]
 pygobject = ">=3.14.0"
+
+[package.extras]
+dev = ["coverage[toml] (==7.5.0)", "pre-commit (==3.5.0)", "pre-commit (==3.7.0)", "pytest (==8.1.1)", "tox (==4.15.0)"]
 
 [[package]]
 name = "iniconfig"
