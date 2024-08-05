@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.0](https://github.com/ublue-os/yafti/compare/v0.8.0...v0.9.0) (2024-08-05)
+
+
+### Features
+
+* add PKGBUILD for Arch packaging ([#163](https://github.com/ublue-os/yafti/issues/163)) ([a827362](https://github.com/ublue-os/yafti/commit/a8273626e84e707e400212ca3d1d412cb85df019))
+* update pydantic to v2 ([#260](https://github.com/ublue-os/yafti/issues/260)) ([8da8264](https://github.com/ublue-os/yafti/commit/8da82645e028ef80651325ccc4223ebb2adbc4d9))
+* **window:** Move "Next" button to top right ([#156](https://github.com/ublue-os/yafti/issues/156)) ([4abb8d4](https://github.com/ublue-os/yafti/commit/4abb8d42cde5cdc6b1eb13790cdd17a1772662ef))
+
+
+### Bug Fixes
+
+* Correct a spacing issue between preferred and package in text ([#183](https://github.com/ublue-os/yafti/issues/183)) ([57bcee5](https://github.com/ublue-os/yafti/commit/57bcee571a06c1bcaef3da5f8836a4f3e106c23c))
+* Revert pydantic upgrade until required fixes can be made ([#184](https://github.com/ublue-os/yafti/issues/184)) ([1ff59d3](https://github.com/ublue-os/yafti/commit/1ff59d36ff81b2e71f774b404f66df4b256b1194))
+
 ## [0.8.0](https://github.com/ublue-os/yafti/compare/v0.7.1...v0.8.0) (2023-08-07)
 
 
