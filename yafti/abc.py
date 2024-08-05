@@ -73,6 +73,6 @@ class YaftiScreen:
 
 
 class YaftiPluginReturn(BaseModel):
-    output: Optional[str | list[str]]
-    errors: Optional[str | list[str]]
+    output: Optional[str | list[str]] = None
+    errors: Optional[str | list[str]] = None
     code: int = 0
