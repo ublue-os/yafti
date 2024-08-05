@@ -62,7 +62,7 @@ Programmatic usage example:
 import asyncio
 from typing import Any, Optional
 
-from pydantic import BaseModel, ValidationError, root_validator
+from pydantic import BaseModel, ValidationError, field_validator
 
 from yafti.abc import YaftiPluginReturn
 from yafti.plugin.run import Run
@@ -104,7 +104,7 @@ class Flatpak(Run):
         install: Optional[str | dict] = None
         remove: Optional[str | dict] = None
 
-        @root_validator
+        @field_validator("install", "remove")
         def must_have_atleast_one(cls, values):
             """Validate one, and only one, key is passed
 

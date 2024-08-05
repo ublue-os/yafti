@@ -52,7 +52,7 @@ import subprocess
 from os.path import isfile
 from shutil import which
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from yafti import log
 from yafti.abc import YaftiPlugin, YaftiPluginReturn
@@ -100,7 +100,7 @@ class Run(YaftiPlugin):
         """
         return await self.exec(package)
 
-    @validate_arguments
+    @validate_call
     async def __call__(self, cmd: list[str] | str) -> YaftiPluginReturn:
         log.debug("run called", cmd=cmd)
         if isinstance(cmd, list):
