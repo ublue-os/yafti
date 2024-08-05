@@ -23,13 +23,13 @@ from pydantic import BaseModel
 
 
 class ActionConfig(BaseModel):
-    pre: Optional[list[dict[str, str | dict]]]
-    post: Optional[list[dict[str, str | dict]]]
+    pre: Optional[list[dict[str, str | dict]]] = None
+    post: Optional[list[dict[str, str | dict]]] = None
 
 
 class ScreenConfig(BaseModel):
     source: str
-    values: Optional[dict]
+    values: Optional[dict] = None
 
 
 class YaftiRunModes(str, Enum):
@@ -52,8 +52,8 @@ class YaftiProperties(BaseModel):
 class Config(BaseModel):
     title: str
     properties: YaftiProperties = YaftiProperties()
-    actions: Optional[ActionConfig]
-    screens: Optional[dict[str, ScreenConfig]]  # Screens are parsed per plugin
+    actions: Optional[ActionConfig] = None
+    screens: Optional[dict[str, ScreenConfig]] = None  # Screens are parsed per plugin
 
 
 def parse(config_file: str) -> Config:

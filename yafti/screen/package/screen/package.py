@@ -38,6 +38,8 @@ class PackageScreen(YaftiScreen, Adw.Bin):
 
     pkg_carousel = Gtk.Template.Child()
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(YaftiScreenConfig):
         title: str
         show_terminal: bool = True
