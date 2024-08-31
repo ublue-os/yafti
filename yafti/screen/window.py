@@ -30,6 +30,7 @@ _xml = """\
                 <property name="orientation">horizontal</property>
               </object>
             </property>
+            <property name="show-end-title-buttons">False</property>
             <child type="start">
               <object class="GtkButton" id="btn_back">
                 <property name="label" translatable="yes">Back</property>
