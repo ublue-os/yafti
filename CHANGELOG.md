@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/ublue-os/yafti/compare/v0.9.0...v0.10.0) (2024-09-04)
+
+
+### Features
+
+* Split up CI tests ([#263](https://github.com/ublue-os/yafti/issues/263)) ([e949d3a](https://github.com/ublue-os/yafti/commit/e949d3a50cf16f5331acf6cc4d2d8a38e910ac58))
+
+
+### Bug Fixes
+
+* [[#149](https://github.com/ublue-os/yafti/issues/149)] Remove quit option ([#262](https://github.com/ublue-os/yafti/issues/262)) ([1fcd8c4](https://github.com/ublue-os/yafti/commit/1fcd8c4d95011029417621d31074d05e9e256ed7))
+
 ## [0.9.0](https://github.com/ublue-os/yafti/compare/v0.8.0...v0.9.0) (2024-08-05)
 
 
