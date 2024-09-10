@@ -10,6 +10,7 @@ Source0:        https://pypi.io/packages/source/y/%{modname}/%{modname}-%{versio
 
 BuildArch:      noarch
 
+Requires: libadwaita
 BuildRequires:  pyproject-rpm-macros
 
 %generate_buildrequires
