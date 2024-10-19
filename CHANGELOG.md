@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.0](https://github.com/ublue-os/yafti/compare/v0.9.0...v0.10.0) (2024-10-19)
+
+
+### Features
+
+* Split up CI tests ([#263](https://github.com/ublue-os/yafti/issues/263)) ([e949d3a](https://github.com/ublue-os/yafti/commit/e949d3a50cf16f5331acf6cc4d2d8a38e910ac58))
+
+
+### Bug Fixes
+
+* [[#149](https://github.com/ublue-os/yafti/issues/149)] Remove quit option ([#262](https://github.com/ublue-os/yafti/issues/262)) ([1fcd8c4](https://github.com/ublue-os/yafti/commit/1fcd8c4d95011029417621d31074d05e9e256ed7))
+* allow any pydantic version from 2.8.2 to 3.0.0 (exclusive) for F41 compat ([#266](https://github.com/ublue-os/yafti/issues/266)) ([f978a48](https://github.com/ublue-os/yafti/commit/f978a4803a53ebda622e9b64942b19280e425624))
+* RPM spec file misses `libadwaita` as an dependency ([#265](https://github.com/ublue-os/yafti/issues/265)) ([6f8de5c](https://github.com/ublue-os/yafti/commit/6f8de5c5a35641d620ff83907580a284bc5af3b3))
+
 ## [0.9.0](https://github.com/ublue-os/yafti/compare/v0.8.0...v0.9.0) (2024-08-05)
 
 
