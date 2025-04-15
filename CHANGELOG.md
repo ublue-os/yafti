@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.10.1](https://github.com/ublue-os/yafti/compare/v0.10.0...v0.10.1) (2025-04-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency gbulb to v0.6.6 ([#271](https://github.com/ublue-os/yafti/issues/271)) ([1da10fa](https://github.com/ublue-os/yafti/commit/1da10fa38e64c80f4308ad52f6813147c550c0c2))
+* **deps:** update dependency gbulb to v0.6.6 ([#285](https://github.com/ublue-os/yafti/issues/285)) ([f3b6bf7](https://github.com/ublue-os/yafti/commit/f3b6bf7f473fe30b98a1782096d16c4f670f54d2))
+* **deps:** update dependency gbulb to v0.6.6 ([#287](https://github.com/ublue-os/yafti/issues/287)) ([0e1025b](https://github.com/ublue-os/yafti/commit/0e1025b89ee89b3c5b90855eeaddd42e83b7753c))
+* **deps:** update dependency gbulb to v0.6.6 ([#290](https://github.com/ublue-os/yafti/issues/290)) ([27b615d](https://github.com/ublue-os/yafti/commit/27b615df597a50b71d824b6e884e6c99b6ddce13))
+* **deps:** update dependency pydantic to v2.10.4 ([#276](https://github.com/ublue-os/yafti/issues/276)) ([d62556a](https://github.com/ublue-os/yafti/commit/d62556abeefaff30c827ef4aee7a6e05e2f5ea67))
+* **deps:** update dependency pygobject to v3.50.0 ([#277](https://github.com/ublue-os/yafti/issues/277)) ([7036505](https://github.com/ublue-os/yafti/commit/70365058f1d5ab9cec60ecf16e2061fc8adfbbb9))
+* **deps:** update dependency pygobject to v3.50.0 ([#286](https://github.com/ublue-os/yafti/issues/286)) ([3a7ee30](https://github.com/ublue-os/yafti/commit/3a7ee30be4a2b50dba55c580549fb5cd7b24f0a5))
+* **deps:** update dependency pygobject to v3.50.0 ([#288](https://github.com/ublue-os/yafti/issues/288)) ([52ad97d](https://github.com/ublue-os/yafti/commit/52ad97da9201f11eacccd42e69f58bf00003e7c2))
+* **deps:** update dependency pygobject to v3.52.3 ([#292](https://github.com/ublue-os/yafti/issues/292)) ([139bd71](https://github.com/ublue-os/yafti/commit/139bd716140808ce85f8181edce5759936c6da24))
+* **deps:** update dependency rich to v13.9.4 ([#272](https://github.com/ublue-os/yafti/issues/272)) ([47e43a2](https://github.com/ublue-os/yafti/commit/47e43a25ddbc7211ad97330df9125f087c9cfde6))
+* **deps:** update dependency typer to v0.15.1 ([#278](https://github.com/ublue-os/yafti/issues/278)) ([fb5ff38](https://github.com/ublue-os/yafti/commit/fb5ff385a8acc01802d1a2dc3077e49cae44cd59))
+
 ## [0.10.0](https://github.com/ublue-os/yafti/compare/v0.9.0...v0.10.0) (2024-10-19)
 
 
