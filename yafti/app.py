@@ -16,7 +16,6 @@ limitations under the License.
 
 import hashlib
 
-import gbulb
 import yaml
 from gi.repository import Adw
 from pathlib import Path
@@ -26,10 +25,9 @@ from yafti.screen.window import Window
 
 
 class Yafti(Adw.Application):
-    def __init__(self, cfg: Config = None, loop=None):
+    def __init__(self, cfg: Config = None):
         super().__init__(application_id="it.ublue.Yafti")
         self.config = cfg
-        self.loop = loop or gbulb.get_event_loop()
 
     def run(self, *args, force_run: bool = False, **kwargs):
         configured_mode = self.config.properties.mode
@@ -59,7 +57,6 @@ class Yafti(Adw.Application):
     def do_activate(self):
         self._win = Window(application=self)
         self._win.present()
-        self.loop.run()
 
     @property
     def config_sha(self):
@@ -72,7 +69,6 @@ class Yafti(Adw.Application):
         p.write_text(self.config_sha)
 
     def quit(self, *args, **kwargs):
-        self.loop.stop()
         if self.config.properties.save_state == YaftSaveState.always:
             self.sync_last_run()
 
