@@ -1,7 +1,8 @@
+import asyncio
 import logging
 
-import gbulb
 import gi
+from gi.events import GLibEventLoopPolicy
 from rich.logging import RichHandler
 
 logging.basicConfig(
@@ -21,4 +22,4 @@ logging.basicConfig(
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-gbulb.install(gtk=True)
+asyncio.set_event_loop_policy(GLibEventLoopPolicy())
