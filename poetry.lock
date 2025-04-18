@@ -155,23 +155,6 @@ files = [
 toml = ["tomli"]
 
 [[package]]
-name = "gbulb"
-version = "0.6.5"
-description = "GLib event loop for Python asyncio"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "gbulb-0.6.5-py3-none-any.whl", hash = "sha256:5d029fceeffa3694b058002a265bd50e55e52f1fb26f0d4336dff32b33a4ae2b"},
-    {file = "gbulb-0.6.5.tar.gz", hash = "sha256:1571634f34b7a98f04adfb3072f97a8bef4bdf62a36a3816b94b402569b12f9b"},
-]
-
-[package.dependencies]
-pygobject = ">=3.14.0"
-
-[package.extras]
-dev = ["coverage[toml] (==7.5.0)", "pre-commit (==3.5.0)", "pre-commit (==3.7.0)", "pytest (==8.1.1)", "tox (==4.15.0)"]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -594,13 +577,13 @@ files = [
 
 [[package]]
 name = "rich"
-version = "13.9.4"
+version = "14.0.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "rich-13.9.4-py3-none-any.whl", hash = "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90"},
-    {file = "rich-13.9.4.tar.gz", hash = "sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098"},
+    {file = "rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0"},
+    {file = "rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725"},
 ]
 
 [package.dependencies]
@@ -678,4 +661,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "af1f237fe4bee75163bae8a49e75ebc765f62e999386ff4092503adcffec10c6"
+content-hash = "99492981db342fcb82fbed76234b83412577fe38c380ed1d11217c7ba5e51b3b"

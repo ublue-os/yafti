@@ -22,7 +22,7 @@ python = "^3.11"
 pydantic = "^2.8.2"
 pygobject = "^3.50.0"
 pyyaml = "^6.0"
-rich = "^13.3.2"
+rich = "^14.0.0"
 typer = ">=0.7"
 
 [tool.poetry.plugins."yafti.plugin"]
