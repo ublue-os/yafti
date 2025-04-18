@@ -1,7 +1,7 @@
 %global modname yafti
 
 Name:           yafti
-Version:        0.10.1
+Version:        0.10.2
 Release:        0%{?dist}
 Summary:        Yet Another First Time Installer 
 License:        Apache-2.0
