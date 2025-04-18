@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/ublue-os/yafti/compare/v0.10.1...v0.10.2) (2025-04-18)
+
+
+### Bug Fixes
+
+* remove GBulb, require PyGObject 3.50.0+ ([#328](https://github.com/ublue-os/yafti/issues/328)) ([650a8c2](https://github.com/ublue-os/yafti/commit/650a8c2ce50784d1416cf650af3820c7c6a3998e))
+
 ## [0.10.1](https://github.com/ublue-os/yafti/compare/v0.10.0...v0.10.1) (2025-04-15)
 
 
