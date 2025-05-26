@@ -155,23 +155,6 @@ files = [
 toml = ["tomli"]
 
 [[package]]
-name = "gbulb"
-version = "0.6.5"
-description = "GLib event loop for Python asyncio"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "gbulb-0.6.5-py3-none-any.whl", hash = "sha256:5d029fceeffa3694b058002a265bd50e55e52f1fb26f0d4336dff32b33a4ae2b"},
-    {file = "gbulb-0.6.5.tar.gz", hash = "sha256:1571634f34b7a98f04adfb3072f97a8bef4bdf62a36a3816b94b402569b12f9b"},
-]
-
-[package.dependencies]
-pygobject = ">=3.14.0"
-
-[package.extras]
-dev = ["coverage[toml] (==7.5.0)", "pre-commit (==3.5.0)", "pre-commit (==3.7.0)", "pytest (==8.1.1)", "tox (==4.15.0)"]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -649,13 +632,13 @@ files = [
 
 [[package]]
 name = "typer"
-version = "0.15.1"
+version = "0.16.0"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "typer-0.15.1-py3-none-any.whl", hash = "sha256:7994fb7b8155b64d3402518560648446072864beefd44aa2dc36972a5972e847"},
-    {file = "typer-0.15.1.tar.gz", hash = "sha256:a0588c0a7fa68a1978a069818657778f86abe6ff5ea6abf472f940a08bfe4f0a"},
+    {file = "typer-0.16.0-py3-none-any.whl", hash = "sha256:1f79bed11d4d02d4310e3c1b7ba594183bcedb0ac73b27a9e5f28f6fb5b98855"},
+    {file = "typer-0.16.0.tar.gz", hash = "sha256:af377ffaee1dbe37ae9440cb4e8f11686ea5ce4e9bae01b84ae7c63b87f1dd3b"},
 ]
 
 [package.dependencies]
@@ -678,4 +661,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "af1f237fe4bee75163bae8a49e75ebc765f62e999386ff4092503adcffec10c6"
+content-hash = "f65e5970cada32cf80fcd6715a0cbcf561dd127ae74cce4cadba863efb3c1819"
