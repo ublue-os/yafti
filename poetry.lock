@@ -155,23 +155,6 @@ files = [
 toml = ["tomli"]
 
 [[package]]
-name = "gbulb"
-version = "0.6.5"
-description = "GLib event loop for Python asyncio"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "gbulb-0.6.5-py3-none-any.whl", hash = "sha256:5d029fceeffa3694b058002a265bd50e55e52f1fb26f0d4336dff32b33a4ae2b"},
-    {file = "gbulb-0.6.5.tar.gz", hash = "sha256:1571634f34b7a98f04adfb3072f97a8bef4bdf62a36a3816b94b402569b12f9b"},
-]
-
-[package.dependencies]
-pygobject = ">=3.14.0"
-
-[package.extras]
-dev = ["coverage[toml] (==7.5.0)", "pre-commit (==3.5.0)", "pre-commit (==3.7.0)", "pytest (==8.1.1)", "tox (==4.15.0)"]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -496,13 +479,13 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments
 
 [[package]]
 name = "pytest-asyncio"
-version = "0.25.2"
+version = "1.0.0"
 description = "Pytest support for asyncio"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pytest_asyncio-0.25.2-py3-none-any.whl", hash = "sha256:0d0bb693f7b99da304a0634afc0a4b19e49d5e0de2d670f38dc4bfa5727c5075"},
-    {file = "pytest_asyncio-0.25.2.tar.gz", hash = "sha256:3f8ef9a98f45948ea91a0ed3dc4268b5326c0e7bce73892acc654df4262ad45f"},
+    {file = "pytest_asyncio-1.0.0-py3-none-any.whl", hash = "sha256:4f024da9f1ef945e680dc68610b52550e36590a67fd31bb3b4943979a1f90ef3"},
+    {file = "pytest_asyncio-1.0.0.tar.gz", hash = "sha256:d15463d13f4456e1ead2594520216b225a16f781e144f8fdf6c5bb4667c48b3f"},
 ]
 
 [package.dependencies]
@@ -678,4 +661,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "af1f237fe4bee75163bae8a49e75ebc765f62e999386ff4092503adcffec10c6"
+content-hash = "254fc3fb6fd030cb7e4e1fd71017f40700615ac063e1a0a59518393f7f1e2e9e"
