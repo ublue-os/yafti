@@ -1,12 +1,12 @@
 pkgname=yafti
-pkgver=0.8.0
+pkgver=0.10.2
 pkgrel=1
 pkgdesc="Yet Another First Time Installer"
 arch=(any)
 depends=(libadwaita gtk4 gobject-introspection python-{pydantic,rich,typer,yaml})
 source=(https://github.com/ublue-os/yafti/archive/refs/tags/v$pkgver.zip)
-sha512sums=('a1491eb6348b9286c0ca5330e864d1e986efb80eb28dcf8869b97d048e12181ca858da69c61cdf3835c81f2e249580ea09946ff3308ffb2beff41d2486f4fddb')
-makedepends=(python-{build,installer,wheel,poetry})
+sha512sums=('e37e72f0cf53c0f1593b1feaeb2499bb038f70b2788a01140a935599a1c846db868082f0eaff17e5312d32c9000bfd40cd078d022fc371d629c5040211c4c920')
+makedepends=(python-{build,installer,wheel,poetry,gobject})
 
 build() {
     cd "$pkgname-$pkgver"
